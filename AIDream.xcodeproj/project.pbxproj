@@ -7,40 +7,40 @@
 	objects = {
 
 /* Begin PBXContainerItemProxy section */
-		05E608542FC8827C005B09A3 /* PBXContainerItemProxy */ = {
+		05E608C92FC88CDA005B09A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 05E6083E2FC88279005B09A3 /* Project object */;
+			containerPortal = 05E608B32FC88CD8005B09A3 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 05E608452FC88279005B09A3;
+			remoteGlobalIDString = 05E608BA2FC88CD8005B09A3;
 			remoteInfo = AIDream;
 		};
-		05E6085E2FC8827C005B09A3 /* PBXContainerItemProxy */ = {
+		05E608D32FC88CDA005B09A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 05E6083E2FC88279005B09A3 /* Project object */;
+			containerPortal = 05E608B32FC88CD8005B09A3 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 05E608452FC88279005B09A3;
+			remoteGlobalIDString = 05E608BA2FC88CD8005B09A3;
 			remoteInfo = AIDream;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		05E608462FC88279005B09A3 /* AIDream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AIDream.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		05E608532FC8827C005B09A3 /* AIDreamTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIDreamTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		05E6085D2FC8827C005B09A3 /* AIDreamUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIDreamUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		05E608BB2FC88CD8005B09A3 /* AIDream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AIDream.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		05E608C82FC88CDA005B09A3 /* AIDreamTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIDreamTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		05E608D22FC88CDA005B09A3 /* AIDreamUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIDreamUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		05E608482FC88279005B09A3 /* AIDream */ = {
+		05E608BD2FC88CD8005B09A3 /* AIDream */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = AIDream;
 			sourceTree = "<group>";
 		};
-		05E608562FC8827C005B09A3 /* AIDreamTests */ = {
+		05E608CB2FC88CDA005B09A3 /* AIDreamTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = AIDreamTests;
 			sourceTree = "<group>";
 		};
-		05E608602FC8827C005B09A3 /* AIDreamUITests */ = {
+		05E608D52FC88CDA005B09A3 /* AIDreamUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = AIDreamUITests;
 			sourceTree = "<group>";
@@ -48,21 +48,21 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		05E608432FC88279005B09A3 /* Frameworks */ = {
+		05E608B82FC88CD8005B09A3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		05E608502FC8827C005B09A3 /* Frameworks */ = {
+		05E608C52FC88CDA005B09A3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		05E6085A2FC8827C005B09A3 /* Frameworks */ = {
+		05E608CF2FC88CDA005B09A3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -72,22 +72,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		05E6083D2FC88279005B09A3 = {
+		05E608B22FC88CD8005B09A3 = {
 			isa = PBXGroup;
 			children = (
-				05E608482FC88279005B09A3 /* AIDream */,
-				05E608562FC8827C005B09A3 /* AIDreamTests */,
-				05E608602FC8827C005B09A3 /* AIDreamUITests */,
-				05E608472FC88279005B09A3 /* Products */,
+				05E608BD2FC88CD8005B09A3 /* AIDream */,
+				05E608CB2FC88CDA005B09A3 /* AIDreamTests */,
+				05E608D52FC88CDA005B09A3 /* AIDreamUITests */,
+				05E608BC2FC88CD8005B09A3 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		05E608472FC88279005B09A3 /* Products */ = {
+		05E608BC2FC88CD8005B09A3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				05E608462FC88279005B09A3 /* AIDream.app */,
-				05E608532FC8827C005B09A3 /* AIDreamTests.xctest */,
-				05E6085D2FC8827C005B09A3 /* AIDreamUITests.xctest */,
+				05E608BB2FC88CD8005B09A3 /* AIDream.app */,
+				05E608C82FC88CDA005B09A3 /* AIDreamTests.xctest */,
+				05E608D22FC88CDA005B09A3 /* AIDreamUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,134 +95,134 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		05E608452FC88279005B09A3 /* AIDream */ = {
+		05E608BA2FC88CD8005B09A3 /* AIDream */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 05E608672FC8827C005B09A3 /* Build configuration list for PBXNativeTarget "AIDream" */;
+			buildConfigurationList = 05E608DC2FC88CDA005B09A3 /* Build configuration list for PBXNativeTarget "AIDream" */;
 			buildPhases = (
-				05E608422FC88279005B09A3 /* Sources */,
-				05E608432FC88279005B09A3 /* Frameworks */,
-				05E608442FC88279005B09A3 /* Resources */,
+				05E608B72FC88CD8005B09A3 /* Sources */,
+				05E608B82FC88CD8005B09A3 /* Frameworks */,
+				05E608B92FC88CD8005B09A3 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				05E608482FC88279005B09A3 /* AIDream */,
+				05E608BD2FC88CD8005B09A3 /* AIDream */,
 			);
 			name = AIDream;
 			packageProductDependencies = (
 			);
 			productName = AIDream;
-			productReference = 05E608462FC88279005B09A3 /* AIDream.app */;
+			productReference = 05E608BB2FC88CD8005B09A3 /* AIDream.app */;
 			productType = "com.apple.product-type.application";
 		};
-		05E608522FC8827C005B09A3 /* AIDreamTests */ = {
+		05E608C72FC88CDA005B09A3 /* AIDreamTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 05E6086A2FC8827C005B09A3 /* Build configuration list for PBXNativeTarget "AIDreamTests" */;
+			buildConfigurationList = 05E608DF2FC88CDA005B09A3 /* Build configuration list for PBXNativeTarget "AIDreamTests" */;
 			buildPhases = (
-				05E6084F2FC8827C005B09A3 /* Sources */,
-				05E608502FC8827C005B09A3 /* Frameworks */,
-				05E608512FC8827C005B09A3 /* Resources */,
+				05E608C42FC88CDA005B09A3 /* Sources */,
+				05E608C52FC88CDA005B09A3 /* Frameworks */,
+				05E608C62FC88CDA005B09A3 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				05E608552FC8827C005B09A3 /* PBXTargetDependency */,
+				05E608CA2FC88CDA005B09A3 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				05E608562FC8827C005B09A3 /* AIDreamTests */,
+				05E608CB2FC88CDA005B09A3 /* AIDreamTests */,
 			);
 			name = AIDreamTests;
 			packageProductDependencies = (
 			);
 			productName = AIDreamTests;
-			productReference = 05E608532FC8827C005B09A3 /* AIDreamTests.xctest */;
+			productReference = 05E608C82FC88CDA005B09A3 /* AIDreamTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		05E6085C2FC8827C005B09A3 /* AIDreamUITests */ = {
+		05E608D12FC88CDA005B09A3 /* AIDreamUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 05E6086D2FC8827C005B09A3 /* Build configuration list for PBXNativeTarget "AIDreamUITests" */;
+			buildConfigurationList = 05E608E22FC88CDA005B09A3 /* Build configuration list for PBXNativeTarget "AIDreamUITests" */;
 			buildPhases = (
-				05E608592FC8827C005B09A3 /* Sources */,
-				05E6085A2FC8827C005B09A3 /* Frameworks */,
-				05E6085B2FC8827C005B09A3 /* Resources */,
+				05E608CE2FC88CDA005B09A3 /* Sources */,
+				05E608CF2FC88CDA005B09A3 /* Frameworks */,
+				05E608D02FC88CDA005B09A3 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				05E6085F2FC8827C005B09A3 /* PBXTargetDependency */,
+				05E608D42FC88CDA005B09A3 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				05E608602FC8827C005B09A3 /* AIDreamUITests */,
+				05E608D52FC88CDA005B09A3 /* AIDreamUITests */,
 			);
 			name = AIDreamUITests;
 			packageProductDependencies = (
 			);
 			productName = AIDreamUITests;
-			productReference = 05E6085D2FC8827C005B09A3 /* AIDreamUITests.xctest */;
+			productReference = 05E608D22FC88CDA005B09A3 /* AIDreamUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		05E6083E2FC88279005B09A3 /* Project object */ = {
+		05E608B32FC88CD8005B09A3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2640;
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
-					05E608452FC88279005B09A3 = {
+					05E608BA2FC88CD8005B09A3 = {
 						CreatedOnToolsVersion = 26.4.1;
 					};
-					05E608522FC8827C005B09A3 = {
+					05E608C72FC88CDA005B09A3 = {
 						CreatedOnToolsVersion = 26.4.1;
-						TestTargetID = 05E608452FC88279005B09A3;
+						TestTargetID = 05E608BA2FC88CD8005B09A3;
 					};
-					05E6085C2FC8827C005B09A3 = {
+					05E608D12FC88CDA005B09A3 = {
 						CreatedOnToolsVersion = 26.4.1;
-						TestTargetID = 05E608452FC88279005B09A3;
+						TestTargetID = 05E608BA2FC88CD8005B09A3;
 					};
 				};
 			};
-			buildConfigurationList = 05E608412FC88279005B09A3 /* Build configuration list for PBXProject "AIDream" */;
+			buildConfigurationList = 05E608B62FC88CD8005B09A3 /* Build configuration list for PBXProject "AIDream" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 05E6083D2FC88279005B09A3;
+			mainGroup = 05E608B22FC88CD8005B09A3;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 05E608472FC88279005B09A3 /* Products */;
+			productRefGroup = 05E608BC2FC88CD8005B09A3 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				05E608452FC88279005B09A3 /* AIDream */,
-				05E608522FC8827C005B09A3 /* AIDreamTests */,
-				05E6085C2FC8827C005B09A3 /* AIDreamUITests */,
+				05E608BA2FC88CD8005B09A3 /* AIDream */,
+				05E608C72FC88CDA005B09A3 /* AIDreamTests */,
+				05E608D12FC88CDA005B09A3 /* AIDreamUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		05E608442FC88279005B09A3 /* Resources */ = {
+		05E608B92FC88CD8005B09A3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		05E608512FC8827C005B09A3 /* Resources */ = {
+		05E608C62FC88CDA005B09A3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		05E6085B2FC8827C005B09A3 /* Resources */ = {
+		05E608D02FC88CDA005B09A3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -232,21 +232,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		05E608422FC88279005B09A3 /* Sources */ = {
+		05E608B72FC88CD8005B09A3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		05E6084F2FC8827C005B09A3 /* Sources */ = {
+		05E608C42FC88CDA005B09A3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		05E608592FC8827C005B09A3 /* Sources */ = {
+		05E608CE2FC88CDA005B09A3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -256,20 +256,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		05E608552FC8827C005B09A3 /* PBXTargetDependency */ = {
+		05E608CA2FC88CDA005B09A3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 05E608452FC88279005B09A3 /* AIDream */;
-			targetProxy = 05E608542FC8827C005B09A3 /* PBXContainerItemProxy */;
+			target = 05E608BA2FC88CD8005B09A3 /* AIDream */;
+			targetProxy = 05E608C92FC88CDA005B09A3 /* PBXContainerItemProxy */;
 		};
-		05E6085F2FC8827C005B09A3 /* PBXTargetDependency */ = {
+		05E608D42FC88CDA005B09A3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 05E608452FC88279005B09A3 /* AIDream */;
-			targetProxy = 05E6085E2FC8827C005B09A3 /* PBXContainerItemProxy */;
+			target = 05E608BA2FC88CD8005B09A3 /* AIDream */;
+			targetProxy = 05E608D32FC88CDA005B09A3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		05E608652FC8827C005B09A3 /* Debug */ = {
+		05E608DA2FC88CDA005B09A3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -321,18 +321,18 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
+				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
-		05E608662FC8827C005B09A3 /* Release */ = {
+		05E608DB2FC88CDA005B09A3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -378,99 +378,90 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				SDKROOT = macosx;
+				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		05E608682FC8827C005B09A3 /* Debug */ = {
+		05E608DD2FC88CDA005B09A3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5738CWZ4VT;
-				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
-					"@executable_path/../Frameworks",
+					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gzk.dream.AIDream;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		05E608692FC8827C005B09A3 /* Release */ = {
+		05E608DE2FC88CDA005B09A3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5738CWZ4VT;
-				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
-					"@executable_path/../Frameworks",
+					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gzk.dream.AIDream;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
-		05E6086B2FC8827C005B09A3 /* Debug */ = {
+		05E608E02FC88CDA005B09A3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gzk.dream.AIDreamTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -479,18 +470,19 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AIDream.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AIDream";
 			};
 			name = Debug;
 		};
-		05E6086C2FC8827C005B09A3 /* Release */ = {
+		05E608E12FC88CDA005B09A3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gzk.dream.AIDreamTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -499,11 +491,12 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AIDream.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AIDream";
 			};
 			name = Release;
 		};
-		05E6086E2FC8827C005B09A3 /* Debug */ = {
+		05E608E32FC88CDA005B09A3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -517,11 +510,12 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = AIDream;
 			};
 			name = Debug;
 		};
-		05E6086F2FC8827C005B09A3 /* Release */ = {
+		05E608E42FC88CDA005B09A3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -535,6 +529,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = AIDream;
 			};
 			name = Release;
@@ -542,43 +537,43 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		05E608412FC88279005B09A3 /* Build configuration list for PBXProject "AIDream" */ = {
+		05E608B62FC88CD8005B09A3 /* Build configuration list for PBXProject "AIDream" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				05E608652FC8827C005B09A3 /* Debug */,
-				05E608662FC8827C005B09A3 /* Release */,
+				05E608DA2FC88CDA005B09A3 /* Debug */,
+				05E608DB2FC88CDA005B09A3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		05E608672FC8827C005B09A3 /* Build configuration list for PBXNativeTarget "AIDream" */ = {
+		05E608DC2FC88CDA005B09A3 /* Build configuration list for PBXNativeTarget "AIDream" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				05E608682FC8827C005B09A3 /* Debug */,
-				05E608692FC8827C005B09A3 /* Release */,
+				05E608DD2FC88CDA005B09A3 /* Debug */,
+				05E608DE2FC88CDA005B09A3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		05E6086A2FC8827C005B09A3 /* Build configuration list for PBXNativeTarget "AIDreamTests" */ = {
+		05E608DF2FC88CDA005B09A3 /* Build configuration list for PBXNativeTarget "AIDreamTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				05E6086B2FC8827C005B09A3 /* Debug */,
-				05E6086C2FC8827C005B09A3 /* Release */,
+				05E608E02FC88CDA005B09A3 /* Debug */,
+				05E608E12FC88CDA005B09A3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		05E6086D2FC8827C005B09A3 /* Build configuration list for PBXNativeTarget "AIDreamUITests" */ = {
+		05E608E22FC88CDA005B09A3 /* Build configuration list for PBXNativeTarget "AIDreamUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				05E6086E2FC8827C005B09A3 /* Debug */,
-				05E6086F2FC8827C005B09A3 /* Release */,
+				05E608E32FC88CDA005B09A3 /* Debug */,
+				05E608E42FC88CDA005B09A3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 05E6083E2FC88279005B09A3 /* Project object */;
+	rootObject = 05E608B32FC88CD8005B09A3 /* Project object */;
 }
