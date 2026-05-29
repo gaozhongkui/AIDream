@@ -23,11 +23,7 @@ struct ContentView: View {
             ProfileView()
                 .tabItem {
                     Label("我的", systemImage: "person")
-                }
+            }
         }
     }
-}
-
-#Preview {
-    ContentView()
 }
