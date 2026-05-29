@@ -37,12 +37,21 @@ class VideoService {
                 return
             }
 
+            if let rawString = String(data: data, encoding: .utf8) {
+                print("=== VideoService RAW RESPONSE ===")
+                print(rawString)
+                print("=================================")
+            }
+
             Task { @MainActor in
                 do {
                     let decodedResponse = try JSONDecoder().decode(HFResponse.self, from: data)
                     let videos = decodedResponse.rows.map { $0.row }
                     completion(.success(videos))
                 } catch {
+                    print("=== VideoService DECODE ERROR ===")
+                    print(error)
+                    print("=================================")
                     completion(.failure(error))
                 }
             }

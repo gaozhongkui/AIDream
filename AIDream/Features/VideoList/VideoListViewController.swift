@@ -44,7 +44,8 @@ final class VideoListViewController: UIViewController {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.alignment = .center
-        stackView.spacing = 10
+        stackView.distribution = .equalSpacing
+        stackView.spacing = 8
         return stackView
     }()
 
@@ -89,6 +90,7 @@ final class VideoListViewController: UIViewController {
             filterContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
             filterContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             filterContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            filterContainer.heightAnchor.constraint(equalToConstant: 52),
 
             filterScrollView.topAnchor.constraint(equalTo: filterContainer.topAnchor, constant: 8),
             filterScrollView.leadingAnchor.constraint(equalTo: filterContainer.leadingAnchor, constant: 12),
@@ -136,19 +138,11 @@ final class VideoListViewController: UIViewController {
 
                 switch result {
                 case .success(let videos):
-                    let pageVideos = videos
-                        .filter { $0.isPlayable }
-                        .sorted {
-                            let leftTime = $0.publishTime ?? $0.createTime
-                            let rightTime = $1.publishTime ?? $1.createTime
-                            return leftTime > rightTime
-                        }
-
                     if reset {
                         self.allVideos = []
                     }
 
-                    self.append(videos: pageVideos)
+                    self.append(videos: videos)
                     self.currentOffset += videos.count
                     self.hasMorePages = videos.count == self.pageSize
                     self.updateFilterOptions()
@@ -169,15 +163,9 @@ final class VideoListViewController: UIViewController {
     private func append(videos: [VideoData]) {
         guard !videos.isEmpty else { return }
 
-        var seenWorkIDs = Set(allVideos.map(\.workId))
-        for video in videos where seenWorkIDs.insert(video.workId).inserted {
+        var seenIDs = Set(allVideos.map(\.id))
+        for video in videos where seenIDs.insert(video.id).inserted {
             allVideos.append(video)
-        }
-
-        allVideos.sort {
-            let leftTime = $0.publishTime ?? $0.createTime
-            let rightTime = $1.publishTime ?? $1.createTime
-            return leftTime > rightTime
         }
     }
 
@@ -206,13 +194,19 @@ final class VideoListViewController: UIViewController {
             let button = UIButton(type: .system)
             var configuration = UIButton.Configuration.plain()
             configuration.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 14, bottom: 8, trailing: 14)
+            configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attrs in
+                var a = attrs
+                a.font = .systemFont(ofSize: 13, weight: .semibold)
+                return a
+            }
+            configuration.title = option.title
             button.configuration = configuration
-            button.setTitle(option.title, for: .normal)
             button.tag = filterButtons.count
-            button.titleLabel?.font = .systemFont(ofSize: 13, weight: .semibold)
             button.layer.cornerRadius = 16
             button.layer.masksToBounds = true
             button.layer.borderWidth = 1
+            button.setContentHuggingPriority(.required, for: .horizontal)
+            button.setContentCompressionResistancePriority(.required, for: .horizontal)
             button.addTarget(self, action: #selector(handleFilterTapped(_:)), for: .touchUpInside)
             filterStackView.addArrangedSubview(button)
             filterButtons.append(button)
@@ -229,7 +223,7 @@ final class VideoListViewController: UIViewController {
 
     private func applyCurrentFilter(loadMoreIfNeeded: Bool = false) {
         filteredVideos = allVideos.filter { video in
-            selectedFilterID == VideoFilterOption.all.id || video.type == selectedFilterID
+            selectedFilterID == VideoFilterOption.all.id || video.category == selectedFilterID
         }
 
         updateFilterButtonAppearance()
@@ -275,16 +269,7 @@ final class VideoListViewController: UIViewController {
         }
     }
 
-    private func textHeight(for text: String, font: UIFont, width: CGFloat) -> CGFloat {
-        guard !text.isEmpty else { return 0 }
-        let bounding = text.boundingRect(
-            with: CGSize(width: width, height: .greatestFiniteMagnitude),
-            options: [.usesLineFragmentOrigin, .usesFontLeading],
-            attributes: [.font: font],
-            context: nil
-        )
-        return ceil(bounding.height)
-    }
+
 }
 
 extension VideoListViewController: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -319,18 +304,6 @@ extension VideoListViewController: UICollectionViewDataSource, UICollectionViewD
 extension VideoListViewController: WaterfallLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, heightForItemAt indexPath: IndexPath, with width: CGFloat) -> CGFloat {
         let video = filteredVideos[indexPath.item]
-        let mediaHeight = width / max(video.aspectRatio, 0.6)
-        let titleHeight = textHeight(
-            for: video.displayTitle,
-            font: .systemFont(ofSize: 14, weight: .semibold),
-            width: width - 24
-        )
-
-        let secondaryText = video.secondaryText
-        let secondaryHeight = secondaryText.isEmpty
-            ? 0
-            : min(textHeight(for: secondaryText, font: .systemFont(ofSize: 12), width: width - 24), 34)
-
-        return mediaHeight + 10 + titleHeight + (secondaryHeight > 0 ? 4 : 0) + secondaryHeight + 12
+        return width / max(video.aspectRatio, 0.3)
     }
 }
