@@ -7,26 +7,24 @@ final class VideoDetailCell: UICollectionViewCell {
 
     private var player: AVPlayer?
     private var playerLayer: AVPlayerLayer?
-    private var playerItemContext = 0
     private var videoURL: URL?
+    private var playerItemObserver: NSKeyValueObservation?
 
     // UI Components
     private let playerContainer = UIView()
+
+    private let coverImageView: UIImageView = {
+        let iv = UIImageView()
+        iv.contentMode = .scaleAspectFill
+        iv.clipsToBounds = true
+        iv.backgroundColor = .black
+        return iv
+    }()
 
     private let backButton: UIButton = {
         let btn = UIButton(type: .system)
         let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
         btn.setImage(UIImage(systemName: "chevron.left", withConfiguration: config), for: .normal)
-        btn.tintColor = .white
-        btn.backgroundColor = .black.withAlphaComponent(0.3)
-        btn.layer.cornerRadius = 20
-        return btn
-    }()
-
-    private let reportButton: UIButton = {
-        let btn = UIButton(type: .system)
-        let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .bold)
-        btn.setImage(UIImage(systemName: "exclamationmark.triangle", withConfiguration: config), for: .normal)
         btn.tintColor = .white
         btn.backgroundColor = .black.withAlphaComponent(0.3)
         btn.layer.cornerRadius = 20
@@ -41,35 +39,13 @@ final class VideoDetailCell: UICollectionViewCell {
         return stack
     }()
 
-    private let avatarContainer: UIView = {
-        let view = UIView()
-        view.layer.cornerRadius = 28
-        view.layer.borderWidth = 2
-        view.layer.borderColor = UIColor.white.cgColor
-        view.clipsToBounds = true
-        return view
-    }()
-
-    private let avatarImageView: UIImageView = {
-        let iv = UIImageView()
-        iv.contentMode = .scaleAspectFill
-        iv.backgroundColor = .systemGray6
-        return iv
-    }()
-
-    private let addButton: UIButton = {
-        let btn = UIButton()
-        btn.setImage(UIImage(systemName: "plus.circle.fill"), for: .normal)
-        btn.tintColor = .systemPurple
-        btn.backgroundColor = .white
-        btn.layer.cornerRadius = 10
-        return btn
-    }()
-
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 15, weight: .bold)
         label.textColor = .white
+        label.layer.shadowColor = UIColor.black.cgColor
+        label.layer.shadowOffset = CGSize(width: 1, height: 1)
+        label.layer.shadowOpacity = 0.5
         return label
     }()
 
@@ -77,6 +53,9 @@ final class VideoDetailCell: UICollectionViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 20, weight: .black)
         label.textColor = .white
+        label.layer.shadowColor = UIColor.black.cgColor
+        label.layer.shadowOffset = CGSize(width: 1, height: 1)
+        label.layer.shadowOpacity = 0.5
         return label
     }()
 
@@ -85,6 +64,9 @@ final class VideoDetailCell: UICollectionViewCell {
         label.font = .systemFont(ofSize: 14, weight: .medium)
         label.textColor = .white.withAlphaComponent(0.9)
         label.numberOfLines = 0
+        label.layer.shadowColor = UIColor.black.cgColor
+        label.layer.shadowOffset = CGSize(width: 1, height: 1)
+        label.layer.shadowOpacity = 0.5
         return label
     }()
 
@@ -96,9 +78,7 @@ final class VideoDetailCell: UICollectionViewCell {
         config.baseBackgroundColor = .black.withAlphaComponent(0.3)
         config.baseForegroundColor = .white
         config.cornerStyle = .medium
-
-        let btn = UIButton(configuration: config)
-        return btn
+        return UIButton(configuration: config)
     }()
 
     private let useTemplateButton: UIButton = {
@@ -129,24 +109,18 @@ final class VideoDetailCell: UICollectionViewCell {
 
     private func setupUI() {
         contentView.addSubview(playerContainer)
+        contentView.addSubview(coverImageView)
         contentView.addSubview(backButton)
-        contentView.addSubview(reportButton)
         contentView.addSubview(infoStackView)
         contentView.addSubview(likeButton)
         contentView.addSubview(useTemplateButton)
-        contentView.addSubview(avatarContainer)
-        avatarContainer.addSubview(avatarImageView)
-        contentView.addSubview(addButton)
 
         playerContainer.translatesAutoresizingMaskIntoConstraints = false
+        coverImageView.translatesAutoresizingMaskIntoConstraints = false
         backButton.translatesAutoresizingMaskIntoConstraints = false
-        reportButton.translatesAutoresizingMaskIntoConstraints = false
         infoStackView.translatesAutoresizingMaskIntoConstraints = false
         likeButton.translatesAutoresizingMaskIntoConstraints = false
         useTemplateButton.translatesAutoresizingMaskIntoConstraints = false
-        avatarContainer.translatesAutoresizingMaskIntoConstraints = false
-        avatarImageView.translatesAutoresizingMaskIntoConstraints = false
-        addButton.translatesAutoresizingMaskIntoConstraints = false
 
         infoStackView.addArrangedSubview(nameLabel)
         infoStackView.addArrangedSubview(titleLabel)
@@ -158,15 +132,15 @@ final class VideoDetailCell: UICollectionViewCell {
             playerContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             playerContainer.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
 
+            coverImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            coverImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            coverImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            coverImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+
             backButton.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 10),
             backButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             backButton.widthAnchor.constraint(equalToConstant: 40),
             backButton.heightAnchor.constraint(equalToConstant: 40),
-
-            reportButton.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 10),
-            reportButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            reportButton.widthAnchor.constraint(equalToConstant: 40),
-            reportButton.heightAnchor.constraint(equalToConstant: 40),
 
             useTemplateButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             useTemplateButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
@@ -176,21 +150,6 @@ final class VideoDetailCell: UICollectionViewCell {
             infoStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             infoStackView.bottomAnchor.constraint(equalTo: useTemplateButton.topAnchor, constant: -30),
             infoStackView.trailingAnchor.constraint(equalTo: likeButton.leadingAnchor, constant: -20),
-
-            avatarContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            avatarContainer.bottomAnchor.constraint(equalTo: infoStackView.topAnchor, constant: -20),
-            avatarContainer.widthAnchor.constraint(equalToConstant: 56),
-            avatarContainer.heightAnchor.constraint(equalToConstant: 56),
-
-            avatarImageView.topAnchor.constraint(equalTo: avatarContainer.topAnchor),
-            avatarImageView.leadingAnchor.constraint(equalTo: avatarContainer.leadingAnchor),
-            avatarImageView.trailingAnchor.constraint(equalTo: avatarContainer.trailingAnchor),
-            avatarImageView.bottomAnchor.constraint(equalTo: avatarContainer.bottomAnchor),
-
-            addButton.centerXAnchor.constraint(equalTo: avatarContainer.leadingAnchor, constant: 8),
-            addButton.centerYAnchor.constraint(equalTo: avatarContainer.topAnchor, constant: 45),
-            addButton.widthAnchor.constraint(equalToConstant: 20),
-            addButton.heightAnchor.constraint(equalToConstant: 20),
 
             likeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             likeButton.bottomAnchor.constraint(equalTo: useTemplateButton.topAnchor, constant: -40),
@@ -214,14 +173,20 @@ final class VideoDetailCell: UICollectionViewCell {
         let starText = video.starCount >= 1000 ? String(format: "%.1fK", Double(video.starCount)/1000.0) : "\(video.starCount)"
         likeButton.setTitle(starText, for: .normal)
 
-        avatarImageView.kf.setImage(with: video.userAvatarURL, options: [.transition(.fade(0.2))])
+        // 显示封面图作为占位，直到视频准备好播放
+        coverImageView.isHidden = false
+        coverImageView.alpha = 1
+        if let coverURL = video.coverURL {
+            coverImageView.kf.setImage(with: coverURL)
+        } else {
+            coverImageView.image = nil
+        }
 
         setupPlayer()
     }
 
     private func setupPlayer() {
         guard let url = videoURL else { return }
-
         stopPlayback()
 
         let playerItem = AVPlayerItem(url: url)
@@ -235,8 +200,20 @@ final class VideoDetailCell: UICollectionViewCell {
         self.player = player
         self.playerLayer = playerLayer
 
-        NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
+        // 监听视频准备状态，准备好后再隐藏封面图，解决黑屏问题
+        playerItemObserver = playerItem.observe(\.status, options: [.new]) { [weak self] item, _ in
+            if item.status == .readyToPlay {
+                DispatchQueue.main.async {
+                    UIView.animate(withDuration: 0.3) {
+                        self?.coverImageView.alpha = 0
+                    } completion: { _ in
+                        self?.coverImageView.isHidden = true
+                    }
+                }
+            }
+        }
 
+        NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
         player.play()
     }
 
@@ -250,6 +227,8 @@ final class VideoDetailCell: UICollectionViewCell {
         playerLayer?.removeFromSuperlayer()
         player = nil
         playerLayer = nil
+        playerItemObserver?.invalidate()
+        playerItemObserver = nil
         NotificationCenter.default.removeObserver(self)
     }
 
@@ -261,8 +240,10 @@ final class VideoDetailCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         stopPlayback()
-        avatarImageView.kf.cancelDownloadTask()
-        avatarImageView.image = nil
+        coverImageView.kf.cancelDownloadTask()
+        coverImageView.image = nil
+        coverImageView.isHidden = false
+        coverImageView.alpha = 1
         nameLabel.text = nil
         titleLabel.text = nil
         introLabel.text = nil

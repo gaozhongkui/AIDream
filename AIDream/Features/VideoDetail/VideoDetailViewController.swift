@@ -3,6 +3,7 @@ import UIKit
 final class VideoDetailViewController: UIViewController {
     private var videos: [VideoData]
     private var initialIndex: Int
+    private var isInitialScrollDone = false
 
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -36,7 +37,6 @@ final class VideoDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
-
         view.addSubview(collectionView)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -45,10 +45,15 @@ final class VideoDetailViewController: UIViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+    }
 
-        // 滚动到初始位置
-        DispatchQueue.main.async {
-            self.collectionView.scrollToItem(at: IndexPath(item: self.initialIndex, section: 0), at: .top, animated: false)
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        // 核心：在布局完成后，且仅执行一次精准滚动
+        if !isInitialScrollDone {
+            isInitialScrollDone = true
+            let indexPath = IndexPath(item: initialIndex, section: 0)
+            collectionView.scrollToItem(at: indexPath, at: .top, animated: false)
         }
     }
 
