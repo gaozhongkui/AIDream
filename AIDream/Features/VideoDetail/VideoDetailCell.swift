@@ -9,9 +9,17 @@ final class VideoDetailCell: UICollectionViewCell {
     private var playerLayer: AVPlayerLayer?
     private var videoURL: URL?
     private var playerItemObserver: NSKeyValueObservation?
+    private var playerLayerObserver: NSKeyValueObservation?
+
+    private var isLiked: Bool = false
+    private var currentStarCount: Int = 0
 
     // UI Components
-    private let playerContainer = UIView()
+    private let playerContainer: UIView = {
+        let view = UIView()
+        view.backgroundColor = .black
+        return view
+    }()
 
     private let coverImageView: UIImageView = {
         let iv = UIImageView()
@@ -158,10 +166,47 @@ final class VideoDetailCell: UICollectionViewCell {
         ])
 
         backButton.addTarget(self, action: #selector(backTapped), for: .touchUpInside)
+        likeButton.addTarget(self, action: #selector(likeTapped), for: .touchUpInside)
     }
 
     @objc private func backTapped() {
         onBackTapped?()
+    }
+
+    @objc private func likeTapped() {
+        isLiked.toggle()
+
+        // 更新点赞数（简单逻辑：点赞+1，取消-1）
+        if isLiked {
+            currentStarCount += 1
+        } else {
+            currentStarCount = max(0, currentStarCount - 1)
+        }
+
+        updateLikeButtonStyle(animated: true)
+    }
+
+    private func updateLikeButtonStyle(animated: Bool) {
+        let color = isLiked ? UIColor.systemRed : UIColor.white
+        let starText = currentStarCount >= 1000 ? String(format: "%.1fK", Double(currentStarCount)/1000.0) : "\(currentStarCount)"
+
+        var config = likeButton.configuration
+        config?.baseForegroundColor = color
+        likeButton.configuration = config
+        likeButton.setTitle(starText, for: .normal)
+
+        if animated {
+            // 抖音风格的缩放动画
+            let animation = CAKeyframeAnimation(keyPath: "transform.scale")
+            animation.values = [1.0, 1.3, 0.9, 1.0]
+            animation.keyTimes = [0, 0.3, 0.6, 1.0]
+            animation.duration = 0.3
+            likeButton.layer.add(animation, forKey: "bounce")
+
+            // 触感反馈
+            let generator = UIImpactFeedbackGenerator(style: .medium)
+            generator.impactOccurred()
+        }
     }
 
     func configure(with video: VideoData) {
@@ -170,14 +215,15 @@ final class VideoDetailCell: UICollectionViewCell {
         titleLabel.text = video.title.lowercased() == "untitled" ? "" : video.title
         introLabel.text = video.introduction
 
-        let starText = video.starCount >= 1000 ? String(format: "%.1fK", Double(video.starCount)/1000.0) : "\(video.starCount)"
-        likeButton.setTitle(starText, for: .normal)
+        self.currentStarCount = video.starCount
+        self.isLiked = false // 默认未点赞，实际应从持久化或后端获取
+        updateLikeButtonStyle(animated: false)
 
-        // 显示封面图作为占位，直到视频准备好播放
+        // 核心优化：配置时确保封面完全显示，重置透明度
         coverImageView.isHidden = false
         coverImageView.alpha = 1
         if let coverURL = video.coverURL {
-            coverImageView.kf.setImage(with: coverURL)
+            coverImageView.kf.setImage(with: coverURL, options: [.transition(.none)])
         } else {
             coverImageView.image = nil
         }
@@ -194,17 +240,19 @@ final class VideoDetailCell: UICollectionViewCell {
         let playerLayer = AVPlayerLayer(player: player)
         playerLayer.videoGravity = .resizeAspectFill
         playerLayer.frame = contentView.bounds
+        // 设置背景色为透明，防止切换瞬时露出黑色背景
+        playerLayer.backgroundColor = UIColor.clear.cgColor
 
         playerContainer.layer.addSublayer(playerLayer)
 
         self.player = player
         self.playerLayer = playerLayer
 
-        // 监听视频准备状态，准备好后再隐藏封面图，解决黑屏问题
-        playerItemObserver = playerItem.observe(\.status, options: [.new]) { [weak self] item, _ in
-            if item.status == .readyToPlay {
+        // 核心优化：监听 playerLayer.isReadyForDisplay
+        playerLayerObserver = playerLayer.observe(\.isReadyForDisplay, options: [.new]) { [weak self] layer, change in
+            if layer.isReadyForDisplay {
                 DispatchQueue.main.async {
-                    UIView.animate(withDuration: 0.3) {
+                    UIView.animate(withDuration: 0.2) {
                         self?.coverImageView.alpha = 0
                     } completion: { _ in
                         self?.coverImageView.isHidden = true
@@ -229,6 +277,8 @@ final class VideoDetailCell: UICollectionViewCell {
         playerLayer = nil
         playerItemObserver?.invalidate()
         playerItemObserver = nil
+        playerLayerObserver?.invalidate()
+        playerLayerObserver = nil
         NotificationCenter.default.removeObserver(self)
     }
 
@@ -247,5 +297,6 @@ final class VideoDetailCell: UICollectionViewCell {
         nameLabel.text = nil
         titleLabel.text = nil
         introLabel.text = nil
+        isLiked = false
     }
 }
