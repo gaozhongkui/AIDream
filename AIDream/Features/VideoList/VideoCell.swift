@@ -1,14 +1,11 @@
 import AVFoundation
 import UIKit
+import Kingfisher
 
 final class VideoCell: UICollectionViewCell {
     static let identifier = "VideoCell"
 
-    private var coverTask: URLSessionDataTask?
-    private var avatarTask: URLSessionDataTask?
     private var videoURL: URL?
-    private var pendingCoverURL: URL?
-    private var pendingAvatarURL: URL?
 
     private var player: AVPlayer?
     private var playerLayer: AVPlayerLayer?
@@ -157,13 +154,9 @@ final class VideoCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         stopPlayback()
-        coverTask?.cancel()
-        avatarTask?.cancel()
-        coverTask = nil
-        avatarTask = nil
+        coverImageView.kf.cancelDownloadTask()
+        avatarImageView.kf.cancelDownloadTask()
         videoURL = nil
-        pendingCoverURL = nil
-        pendingAvatarURL = nil
         coverImageView.image = nil
         avatarImageView.image = nil
         titleLabel.text = nil
@@ -182,8 +175,6 @@ final class VideoCell: UICollectionViewCell {
 
     func configure(with video: VideoData) {
         videoURL = video.videoURL
-        pendingCoverURL = video.coverURL
-        pendingAvatarURL = video.userAvatarURL
 
         // 标题降噪：过滤 "Untitled"，优先使用 introduction
         let displayTitle = video.title.lowercased() == "untitled" ? "" : video.title
@@ -271,27 +262,25 @@ final class VideoCell: UICollectionViewCell {
     }
 
     private func loadCoverImage(from url: URL?) {
-        guard let url else { return }
-        coverTask = URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
-            guard let data, let image = UIImage(data: data) else { return }
-            DispatchQueue.main.async {
-                guard let self, self.pendingCoverURL == url else { return }
-                self.coverImageView.image = image
-            }
-        }
-        coverTask?.resume()
+        coverImageView.kf.setImage(
+            with: url,
+            options: [
+                .transition(.fade(0.3)),
+                .cacheSerializer(DefaultCacheSerializer.default)
+            ]
+        )
     }
 
     private func loadAvatarImage(from url: URL?) {
-        guard let url else { return }
-        avatarTask = URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
-            guard let data, let image = UIImage(data: data) else { return }
-            DispatchQueue.main.async {
-                guard let self, self.pendingAvatarURL == url else { return }
-                self.avatarImageView.image = image
-                self.avatarInitialLabel.isHidden = true // 加载成功后隐藏文字
+        avatarImageView.kf.setImage(
+            with: url,
+            options: [
+                .transition(.fade(0.2))
+            ]
+        ) { [weak self] result in
+            if case .success = result {
+                self?.avatarInitialLabel.isHidden = true
             }
         }
-        avatarTask?.resume()
     }
 }

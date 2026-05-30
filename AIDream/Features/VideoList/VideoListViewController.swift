@@ -136,7 +136,7 @@ final class VideoListViewController: UIViewController {
 
                     self.append(videos: videos)
                     let newVideoCount = self.allVideos.count
-                    self.currentOffset += videos.count
+                    self.currentOffset += self.pageSize
                     self.hasMorePages =  true //videos.count == self.pageSize
 
                     if reset {
@@ -173,14 +173,9 @@ final class VideoListViewController: UIViewController {
         }
     }
 
-    private func presentPlayer(for video: VideoData) {
-        guard let url = video.videoURL else { return }
-        let player = AVPlayer(url: url)
-        let viewController = AVPlayerViewController()
-        viewController.player = player
-        present(viewController, animated: true) {
-            player.play()
-        }
+    private func presentDetail(at indexPath: IndexPath) {
+        let detailVC = VideoDetailViewController(videos: allVideos, initialIndex: indexPath.item)
+        present(detailVC, animated: true)
     }
 }
 
@@ -205,7 +200,7 @@ extension VideoListViewController: UICollectionViewDataSource, UICollectionViewD
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        presentPlayer(for: allVideos[indexPath.item])
+        presentDetail(at: indexPath)
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
