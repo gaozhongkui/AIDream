@@ -82,8 +82,7 @@ final class VideoListViewController: UIViewController {
         }
 
         isLoadingPage = true
-        // 刷新一下 CollectionView 以便 Footer 显示加载状态
-        collectionView.reloadData()
+        updateLoadingFooter()
 
         VideoService.shared.fetchVideos(offset: currentOffset, limit: pageSize) { [weak self] result in
             DispatchQueue.main.async {
@@ -95,18 +94,46 @@ final class VideoListViewController: UIViewController {
                 case .success(let videos):
                     if reset {
                         self.allVideos = []
+                        self.append(videos: videos)
+                        self.currentOffset += videos.count
+                        self.hasMorePages = videos.count == self.pageSize
+                        self.collectionView.reloadData()
+                        self.collectionView.layoutIfNeeded()
+                        self.triggerPaginationIfNeeded()
+                    } else {
+                        let oldCount = self.allVideos.count
+                        self.append(videos: videos)
+                        let newCount = self.allVideos.count
+                        self.currentOffset += videos.count
+                        self.hasMorePages = videos.count == self.pageSize
+
+                        let newIndexPaths = (oldCount..<newCount).map { IndexPath(item: $0, section: 0) }
+                        if newIndexPaths.isEmpty {
+                            self.updateLoadingFooter()
+                            self.triggerPaginationIfNeeded()
+                        } else {
+                            self.collectionView.performBatchUpdates({
+                                self.collectionView.insertItems(at: newIndexPaths)
+                            }, completion: { _ in
+                                self.triggerPaginationIfNeeded()
+                            })
+                        }
                     }
-                    self.append(videos: videos)
-                    self.currentOffset += videos.count
-                    self.hasMorePages = videos.count == self.pageSize
-                    self.collectionView.reloadData()
-                    self.collectionView.layoutIfNeeded()
-                    self.triggerPaginationIfNeeded()
                 case .failure(let error):
                     print("Video fetch error: \(error)")
+                    self.updateLoadingFooter()
                 }
             }
         }
+    }
+
+    private func updateLoadingFooter() {
+        let footerIndexPath = IndexPath(item: 0, section: 0)
+        guard let footer = collectionView.supplementaryView(
+            forElementKind: UICollectionView.elementKindSectionFooter,
+            at: footerIndexPath
+        ) as? LoadingFooterView else { return }
+        footer.setStatus(isLoading: isLoadingPage, hasMore: hasMorePages)
     }
 
     private func append(videos: [VideoData]) {

@@ -126,36 +126,6 @@
             endingLineNumber = "83"
             landmarkName = "loadPage(reset:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "980ABC2F-63E5-42EA-9A0F-664BD03D4C49 - 5da1352c5aca7f18"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "AIDream.VideoListViewController.loadPage(reset: Swift.Bool) -&gt; ()"
-                  moduleName = "AIDream.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/gaozhongkui/gzkProject/AIDream/AIDream/Features/VideoList/VideoListViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "83"
-                  endingLineNumber = "83">
-               </Location>
-               <Location
-                  uuid = "980ABC2F-63E5-42EA-9A0F-664BD03D4C49 - 5da1352c5aca7f3b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "AIDream.VideoListViewController.loadPage(reset: Swift.Bool) -&gt; ()"
-                  moduleName = "AIDream.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/gaozhongkui/gzkProject/AIDream/AIDream/Features/VideoList/VideoListViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "84"
-                  endingLineNumber = "84">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -172,36 +142,6 @@
             endingLineNumber = "75"
             landmarkName = "loadPage(reset:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "8C9671A7-732F-4BBB-ACA5-C96DED19697C - 5da1352c5aca7023"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "AIDream.VideoListViewController.loadPage(reset: Swift.Bool) -&gt; ()"
-                  moduleName = "AIDream.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/gaozhongkui/gzkProject/AIDream/AIDream/Features/VideoList/VideoListViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "76"
-                  endingLineNumber = "76">
-               </Location>
-               <Location
-                  uuid = "8C9671A7-732F-4BBB-ACA5-C96DED19697C - 5da1352c5aca7000"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "AIDream.VideoListViewController.loadPage(reset: Swift.Bool) -&gt; ()"
-                  moduleName = "AIDream.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/gaozhongkui/gzkProject/AIDream/AIDream/Features/VideoList/VideoListViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "75"
-                  endingLineNumber = "75">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -218,36 +158,86 @@
             endingLineNumber = "73"
             landmarkName = "VideoListViewController"
             landmarkType = "3">
-            <Locations>
-               <Location
-                  uuid = "9B3D8421-1593-4CBD-883C-86304151C028 - 5da1352c5aca7046"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "AIDream.VideoListViewController.loadPage(reset: Swift.Bool) -&gt; ()"
-                  moduleName = "AIDream.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/gaozhongkui/gzkProject/AIDream/AIDream/Features/VideoList/VideoListViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "73"
-                  endingLineNumber = "73">
-               </Location>
-               <Location
-                  uuid = "9B3D8421-1593-4CBD-883C-86304151C028 - 5da1352c5aca7061"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "AIDream.VideoListViewController.loadPage(reset: Swift.Bool) -&gt; ()"
-                  moduleName = "AIDream.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/gaozhongkui/gzkProject/AIDream/AIDream/Features/VideoList/VideoListViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "74"
-                  endingLineNumber = "74">
-               </Location>
-            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CA5F4094-A801-49BA-8B5C-25E1C14149B9"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AIDream/Features/VideoList/VideoListViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "78"
+            endingLineNumber = "78"
+            landmarkName = "loadPage(reset:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8D0544CE-1800-4540-BBA1-346F34EAD1F0"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AIDream/Features/VideoList/VideoListViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "252"
+            endingLineNumber = "252"
+            landmarkName = "triggerPaginationIfNeeded(triggerIndex:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7F8D121E-9AAD-4214-AB93-6A5D717AF7C1"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AIDream/Features/VideoList/VideoListViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "257"
+            endingLineNumber = "257"
+            landmarkName = "triggerPaginationIfNeeded(triggerIndex:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "90D88C80-88F3-418B-B0DE-FEA259F28A6B"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AIDream/Features/VideoList/VideoListViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "253"
+            endingLineNumber = "253"
+            landmarkName = "triggerPaginationIfNeeded(triggerIndex:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F0F4448E-0E8E-4306-8ABB-158CE4E9D4E7"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AIDream/Features/VideoList/VideoListViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "258"
+            endingLineNumber = "258"
+            landmarkName = "triggerPaginationIfNeeded(triggerIndex:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
