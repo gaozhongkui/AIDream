@@ -42,7 +42,7 @@ class VideoService {
             Task { @MainActor in
                 do {
                     let decodedResponse = try JSONDecoder().decode(HFResponse.self, from: data)
-                    let videos = decodedResponse.rows.map { $0.row }
+                    let videos = decodedResponse.rows.map { $0.row.toVideoData() }
                     completion(.success(videos))
                 } catch {
                     completion(.failure(error))

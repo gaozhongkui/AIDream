@@ -4,7 +4,6 @@ import UIKit
 final class VideoListViewController: UIViewController {
     private let pageSize = 20
     private var allVideos: [VideoData] = []
-    private var filteredVideos: [VideoData] = []
     private var currentOffset = 0
     private var isLoadingPage = false
     private var hasMorePages = true
@@ -12,49 +11,48 @@ final class VideoListViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let layout = WaterfallLayout()
         layout.delegate = self
+
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .clear
+        collectionView.backgroundColor = .systemBackground
         collectionView.register(VideoCell.self, forCellWithReuseIdentifier: VideoCell.identifier)
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.alwaysBounceVertical = true
         collectionView.refreshControl = refreshControl
+        collectionView.contentInset = UIEdgeInsets(top: 12, left: 12, bottom: 24, right: 12)
         return collectionView
     }()
 
-    private let refreshControl = UIRefreshControl()
+    private let refreshControl: UIRefreshControl = {
+        let rc = UIRefreshControl()
+        rc.tintColor = .systemPink
+        return rc
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "发现灵感"
-        view.backgroundColor = .systemGroupedBackground
+        title = "探索灵感"
+        view.backgroundColor = .systemBackground
         setupNavigationBar()
         setupUI()
         setupRefreshControl()
         loadPage(reset: true)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        playVisibleCells()
-    }
-
     private func setupNavigationBar() {
         navigationController?.navigationBar.prefersLargeTitles = true
         let appearance = UINavigationBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = .systemGroupedBackground.withAlphaComponent(0.9)
+        appearance.configureWithDefaultBackground()
+        appearance.backgroundColor = .systemBackground
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
     }
 
     private func setupUI() {
         view.addSubview(collectionView)
-
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -92,12 +90,10 @@ final class VideoListViewController: UIViewController {
                     if reset {
                         self.allVideos = []
                     }
-
                     self.append(videos: videos)
                     self.currentOffset += videos.count
                     self.hasMorePages = videos.count == self.pageSize
-                    self.filteredVideos = self.allVideos
-                    self.reloadVideos(loadMoreIfNeeded: true)
+                    self.collectionView.reloadData()
                 case .failure(let error):
                     print("Video fetch error: \(error)")
                 }
@@ -105,89 +101,65 @@ final class VideoListViewController: UIViewController {
         }
     }
 
-    private func loadMoreIfNeeded(for indexPath: IndexPath) {
-        guard indexPath.item >= filteredVideos.count - 4 else { return }
-        guard hasMorePages, !isLoadingPage else { return }
-        loadPage(reset: false)
-    }
-
     private func append(videos: [VideoData]) {
-        guard !videos.isEmpty else { return }
-
         var seenIDs = Set(allVideos.map(\.id))
         for video in videos where seenIDs.insert(video.id).inserted {
             allVideos.append(video)
         }
     }
 
-    private func reloadVideos(loadMoreIfNeeded: Bool = false) {
-        collectionView.collectionViewLayout.invalidateLayout()
-        collectionView.reloadData()
-
-        DispatchQueue.main.async { [weak self] in
-            self?.playVisibleCells()
-            if loadMoreIfNeeded, let self, self.filteredVideos.isEmpty {
-                self.loadPage(reset: false)
-            }
-        }
-    }
-
-    private func playVisibleCells() {
-        for case let cell as VideoCell in collectionView.visibleCells {
-            cell.startPlayback()
-        }
-    }
-
     private func presentPlayer(for video: VideoData) {
         guard let url = video.videoURL else { return }
-
         let player = AVPlayer(url: url)
-        player.automaticallyWaitsToMinimizeStalling = true
-
         let viewController = AVPlayerViewController()
         viewController.player = player
-        viewController.modalPresentationStyle = .fullScreen
-
         present(viewController, animated: true) {
             player.play()
         }
     }
-
-
 }
 
 extension VideoListViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        filteredVideos.count
+        return allVideos.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VideoCell.identifier, for: indexPath) as? VideoCell else {
-            return UICollectionViewCell()
-        }
-        cell.configure(with: filteredVideos[indexPath.item])
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VideoCell.identifier, for: indexPath) as! VideoCell
+        cell.configure(with: allVideos[indexPath.item])
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        presentPlayer(for: filteredVideos[indexPath.item])
+        presentPlayer(for: allVideos[indexPath.item])
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        guard let videoCell = cell as? VideoCell else { return }
-        videoCell.startPlayback()
-        loadMoreIfNeeded(for: indexPath)
+        (cell as? VideoCell)?.startPlayback()
+        if indexPath.item >= allVideos.count - 4 {
+            loadPage(reset: false)
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        guard let videoCell = cell as? VideoCell else { return }
-        videoCell.stopPlayback()
+        (cell as? VideoCell)?.stopPlayback()
     }
 }
 
 extension VideoListViewController: WaterfallLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, heightForItemAt indexPath: IndexPath, with width: CGFloat) -> CGFloat {
-        let video = filteredVideos[indexPath.item]
-        return width / max(video.aspectRatio, 0.3)
+        let video = allVideos[indexPath.item]
+        // 根据比例计算高度，添加一个基础高度用于显示底部信息
+        let aspectRatio = CGFloat(video.height) / CGFloat(video.width)
+        return width * aspectRatio
+    }
+
+    func collectionView(_ collectionView: UICollectionView, columnSpanForItemAt indexPath: IndexPath) -> Int {
+        // 如果是某些特定的宽屏视频，可以占用两列
+        return 1
+    }
+
+    func collectionView(_ collectionView: UICollectionView, heightForFullWidthItemAt indexPath: IndexPath, with width: CGFloat) -> CGFloat {
+        return 220
     }
 }

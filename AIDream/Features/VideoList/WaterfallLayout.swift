@@ -2,6 +2,8 @@ import UIKit
 
 protocol WaterfallLayoutDelegate: AnyObject {
     func collectionView(_ collectionView: UICollectionView, heightForItemAt indexPath: IndexPath, with width: CGFloat) -> CGFloat
+    func collectionView(_ collectionView: UICollectionView, columnSpanForItemAt indexPath: IndexPath) -> Int
+    func collectionView(_ collectionView: UICollectionView, heightForFullWidthItemAt indexPath: IndexPath, with width: CGFloat) -> CGFloat
 }
 
 class WaterfallLayout: UICollectionViewLayout {
@@ -45,6 +47,27 @@ class WaterfallLayout: UICollectionViewLayout {
 
         for item in 0..<collectionView.numberOfItems(inSection: 0) {
             let indexPath = IndexPath(item: item, section: 0)
+            let span = max(1, min(numberOfColumns, delegate?.collectionView(collectionView, columnSpanForItemAt: indexPath) ?? 1))
+
+            if span == numberOfColumns {
+                let width = contentWidth - cellPadding * 2
+                let photoHeight = delegate?.collectionView(collectionView, heightForFullWidthItemAt: indexPath, with: width) ?? 220
+                let height = cellPadding * 2 + photoHeight
+                let topY = max(yOffset[0], yOffset[1])
+                let frame = CGRect(x: 12, y: topY, width: contentWidth, height: height)
+                let insetFrame = frame.insetBy(dx: cellPadding, dy: cellPadding)
+
+                let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
+                attributes.frame = insetFrame
+                cache.append(attributes)
+
+                let newY = frame.maxY
+                yOffset[0] = newY
+                yOffset[1] = newY
+                contentHeight = max(contentHeight, newY)
+                column = yOffset[0] <= yOffset[1] ? 0 : 1
+                continue
+            }
 
             let width = columnWidth - cellPadding * 2
             let photoHeight = delegate?.collectionView(collectionView, heightForItemAt: indexPath, with: width) ?? 180

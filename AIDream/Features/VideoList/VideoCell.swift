@@ -5,8 +5,11 @@ final class VideoCell: UICollectionViewCell {
     static let identifier = "VideoCell"
 
     private var coverTask: URLSessionDataTask?
+    private var avatarTask: URLSessionDataTask?
     private var videoURL: URL?
     private var pendingCoverURL: URL?
+    private var pendingAvatarURL: URL?
+
     private var player: AVPlayer?
     private var playerLayer: AVPlayerLayer?
     private var endObserver: NSObjectProtocol?
@@ -19,59 +22,79 @@ final class VideoCell: UICollectionViewCell {
         return imageView
     }()
 
-    private let overlayView: UIView = {
-        let view = UIView()
-        view.isUserInteractionEnabled = false
-        return view
-    }()
-
-    private let bottomGradientView: UIView = {
-        let view = UIView()
-        view.isUserInteractionEnabled = false
-        return view
-    }()
-
-    private let bottomGradientLayer: CAGradientLayer = {
+    private let gradientLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
         layer.colors = [
             UIColor.clear.cgColor,
-            UIColor.black.withAlphaComponent(0.20).cgColor,
-            UIColor.black.withAlphaComponent(0.65).cgColor
+            UIColor.black.withAlphaComponent(0.1).cgColor,
+            UIColor.black.withAlphaComponent(0.8).cgColor
         ]
-        layer.locations = [0.0, 0.45, 1.0]
+        layer.locations = [0.0, 0.4, 1.0]
         return layer
+    }()
+
+    private let gradientView: UIView = {
+        let view = UIView()
+        view.isUserInteractionEnabled = false
+        return view
     }()
 
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 2
-        label.font = .systemFont(ofSize: 26, weight: .bold)
+        label.font = .systemFont(ofSize: 14, weight: .semibold)
         label.textColor = .white
-        label.shadowColor = UIColor.black.withAlphaComponent(0.55)
-        label.shadowOffset = CGSize(width: 0, height: 1)
+        return label
+    }()
+
+    private let avatarImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 10
+        imageView.backgroundColor = .systemGray5
+        return imageView
+    }()
+
+    private let nameLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 11, weight: .medium)
+        label.textColor = .white.withAlphaComponent(0.9)
+        return label
+    }()
+
+    private let starIcon: UIImageView = {
+        let iv = UIImageView(image: UIImage(systemName: "heart.fill"))
+        iv.tintColor = .white.withAlphaComponent(0.8)
+        iv.contentMode = .scaleAspectFit
+        return iv
+    }()
+
+    private let starLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 11, weight: .medium)
+        label.textColor = .white.withAlphaComponent(0.9)
         return label
     }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        contentView.backgroundColor = .black
-        contentView.layer.cornerRadius = 28
+        contentView.backgroundColor = .secondarySystemGroupedBackground
+        contentView.layer.cornerRadius = 16
         contentView.layer.masksToBounds = true
 
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOpacity = 0.10
-        layer.shadowOffset = CGSize(width: 0, height: 6)
-        layer.shadowRadius = 16
-        layer.masksToBounds = false
-
         contentView.addSubview(coverImageView)
-        coverImageView.addSubview(overlayView)
-        bottomGradientView.layer.addSublayer(bottomGradientLayer)
-        overlayView.addSubview(bottomGradientView)
-        bottomGradientView.addSubview(titleLabel)
+        contentView.addSubview(gradientView)
+        gradientView.layer.addSublayer(gradientLayer)
 
-        [coverImageView, overlayView, bottomGradientView, titleLabel].forEach {
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(avatarImageView)
+        contentView.addSubview(nameLabel)
+        contentView.addSubview(starIcon)
+        contentView.addSubview(starLabel)
+
+        [coverImageView, gradientView, titleLabel, avatarImageView, nameLabel, starIcon, starLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -81,19 +104,31 @@ final class VideoCell: UICollectionViewCell {
             coverImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             coverImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
 
-            overlayView.topAnchor.constraint(equalTo: coverImageView.topAnchor),
-            overlayView.leadingAnchor.constraint(equalTo: coverImageView.leadingAnchor),
-            overlayView.trailingAnchor.constraint(equalTo: coverImageView.trailingAnchor),
-            overlayView.bottomAnchor.constraint(equalTo: coverImageView.bottomAnchor),
+            gradientView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            gradientView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            gradientView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            gradientView.heightAnchor.constraint(equalToConstant: 100),
 
-            bottomGradientView.leadingAnchor.constraint(equalTo: overlayView.leadingAnchor),
-            bottomGradientView.trailingAnchor.constraint(equalTo: overlayView.trailingAnchor),
-            bottomGradientView.bottomAnchor.constraint(equalTo: overlayView.bottomAnchor),
-            bottomGradientView.heightAnchor.constraint(equalTo: overlayView.heightAnchor, multiplier: 0.34),
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            titleLabel.bottomAnchor.constraint(equalTo: avatarImageView.topAnchor, constant: -8),
 
-            titleLabel.leadingAnchor.constraint(equalTo: bottomGradientView.leadingAnchor, constant: 20),
-            titleLabel.trailingAnchor.constraint(equalTo: bottomGradientView.trailingAnchor, constant: -20),
-            titleLabel.bottomAnchor.constraint(equalTo: bottomGradientView.bottomAnchor, constant: -18)
+            avatarImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            avatarImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+            avatarImageView.widthAnchor.constraint(equalToConstant: 20),
+            avatarImageView.heightAnchor.constraint(equalToConstant: 20),
+
+            nameLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 6),
+            nameLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
+            nameLabel.trailingAnchor.constraint(lessThanOrEqualTo: starIcon.leadingAnchor, constant: -4),
+
+            starLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            starLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
+
+            starIcon.trailingAnchor.constraint(equalTo: starLabel.leadingAnchor, constant: -2),
+            starIcon.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
+            starIcon.widthAnchor.constraint(equalToConstant: 12),
+            starIcon.heightAnchor.constraint(equalToConstant: 12)
         ])
     }
 
@@ -103,26 +138,32 @@ final class VideoCell: UICollectionViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+        gradientLayer.frame = gradientView.bounds
         playerLayer?.frame = coverImageView.bounds
-        bottomGradientLayer.frame = bottomGradientView.bounds
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
         stopPlayback()
         coverTask?.cancel()
+        avatarTask?.cancel()
         coverTask = nil
+        avatarTask = nil
         videoURL = nil
         pendingCoverURL = nil
+        pendingAvatarURL = nil
         coverImageView.image = nil
+        avatarImageView.image = nil
         titleLabel.text = nil
+        nameLabel.text = nil
+        starLabel.text = nil
         transform = .identity
     }
 
     override var isHighlighted: Bool {
         didSet {
-            UIView.animate(withDuration: 0.18) {
-                self.transform = self.isHighlighted ? CGAffineTransform(scaleX: 0.98, y: 0.98) : .identity
+            UIView.animate(withDuration: 0.1) {
+                self.transform = self.isHighlighted ? CGAffineTransform(scaleX: 0.96, y: 0.96) : .identity
             }
         }
     }
@@ -130,13 +171,23 @@ final class VideoCell: UICollectionViewCell {
     func configure(with video: VideoData) {
         videoURL = video.videoURL
         pendingCoverURL = video.coverURL
-        titleLabel.text = video.displayTitle
-        titleLabel.textAlignment = .center
-        titleLabel.shadowColor = UIColor.black.withAlphaComponent(0.70)
-        titleLabel.shadowOffset = CGSize(width: 0, height: 2)
-        titleLabel.layer.shadowOpacity = 0
-        coverImageView.image = Self.makeLoadingPlaceholderImage()
+        pendingAvatarURL = video.userAvatarURL
+
+        titleLabel.text = video.title.isEmpty ? video.introduction : video.title
+        nameLabel.text = video.userName
+        starLabel.text = formatCount(video.starCount)
+
         loadCoverImage(from: video.coverURL)
+        loadAvatarImage(from: video.userAvatarURL)
+    }
+
+    private func formatCount(_ count: Int) -> String {
+        if count >= 10000 {
+            return String(format: "%.1fw", Double(count) / 10000.0)
+        } else if count >= 1000 {
+            return String(format: "%.1fk", Double(count) / 1000.0)
+        }
+        return "\(count)"
     }
 
     func startPlayback() {
@@ -173,7 +224,7 @@ final class VideoCell: UICollectionViewCell {
             let layer = AVPlayerLayer(player: newPlayer)
             layer.videoGravity = .resizeAspectFill
             layer.frame = coverImageView.bounds
-            coverImageView.layer.insertSublayer(layer, below: overlayView.layer)
+            coverImageView.layer.insertSublayer(layer, at: 0)
             playerLayer = layer
 
             endObserver = NotificationCenter.default.addObserver(
@@ -188,11 +239,7 @@ final class VideoCell: UICollectionViewCell {
     }
 
     private func loadCoverImage(from url: URL?) {
-        guard let url else {
-            coverImageView.image = Self.makeLoadingPlaceholderImage()
-            return
-        }
-
+        guard let url else { return }
         coverTask = URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
             guard let data, let image = UIImage(data: data) else { return }
             DispatchQueue.main.async {
@@ -203,15 +250,15 @@ final class VideoCell: UICollectionViewCell {
         coverTask?.resume()
     }
 
-    private static func makeLoadingPlaceholderImage() -> UIImage {
-        if let image = UIImage(named: "LoadingPlaceholder") {
-            return image
+    private func loadAvatarImage(from url: URL?) {
+        guard let url else { return }
+        avatarTask = URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
+            guard let data, let image = UIImage(data: data) else { return }
+            DispatchQueue.main.async {
+                guard let self, self.pendingAvatarURL == url else { return }
+                self.avatarImageView.image = image
+            }
         }
-
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 48, height: 48))
-        return renderer.image { context in
-            UIColor.systemGray5.setFill()
-            context.fill(CGRect(x: 0, y: 0, width: 48, height: 48))
-        }
+        avatarTask?.resume()
     }
 }
