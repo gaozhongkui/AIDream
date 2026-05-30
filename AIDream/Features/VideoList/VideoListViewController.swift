@@ -149,17 +149,21 @@ extension VideoListViewController: UICollectionViewDataSource, UICollectionViewD
 extension VideoListViewController: WaterfallLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, heightForItemAt indexPath: IndexPath, with width: CGFloat) -> CGFloat {
         let video = allVideos[indexPath.item]
-        // 根据比例计算高度，添加一个基础高度用于显示底部信息
         let aspectRatio = CGFloat(video.height) / CGFloat(video.width)
-        return width * aspectRatio
+
+        // 核心优化：强制设置一个最小比例（0.75，即 3:4）
+        // 这样横屏视频（如 16:9 的 0.56）也会被拉高到 0.75，聚焦中心内容，视觉上更清晰饱满
+        // 同时限制最高比例为 1.6，防止极长图破坏平衡
+        let finalRatio = max(0.75, min(aspectRatio, 1.6))
+        return width * finalRatio
     }
 
     func collectionView(_ collectionView: UICollectionView, columnSpanForItemAt indexPath: IndexPath) -> Int {
-        // 如果是某些特定的宽屏视频，可以占用两列
+        // 强制回归单列显示，确保布局严丝合缝，消除杂乱的空白死角
         return 1
     }
 
     func collectionView(_ collectionView: UICollectionView, heightForFullWidthItemAt indexPath: IndexPath, with width: CGFloat) -> CGFloat {
-        return 220
+        return 0
     }
 }

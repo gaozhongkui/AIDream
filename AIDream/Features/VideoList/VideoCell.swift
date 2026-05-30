@@ -51,9 +51,17 @@ final class VideoCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 10
-        imageView.backgroundColor = .systemGray5
+        imageView.layer.cornerRadius = 12 // 24/2 = 12 确保是圆
+        imageView.backgroundColor = .systemGray4
         return imageView
+    }()
+
+    private let avatarInitialLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 12, weight: .bold) // 稍微大一点更清晰
+        label.textColor = .white
+        label.textAlignment = .center
+        return label
     }()
 
     private let nameLabel: UILabel = {
@@ -90,11 +98,12 @@ final class VideoCell: UICollectionViewCell {
 
         contentView.addSubview(titleLabel)
         contentView.addSubview(avatarImageView)
+        avatarImageView.addSubview(avatarInitialLabel)
         contentView.addSubview(nameLabel)
         contentView.addSubview(starIcon)
         contentView.addSubview(starLabel)
 
-        [coverImageView, gradientView, titleLabel, avatarImageView, nameLabel, starIcon, starLabel].forEach {
+        [coverImageView, gradientView, titleLabel, avatarImageView, avatarInitialLabel, nameLabel, starIcon, starLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -115,10 +124,13 @@ final class VideoCell: UICollectionViewCell {
 
             avatarImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             avatarImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
-            avatarImageView.widthAnchor.constraint(equalToConstant: 20),
-            avatarImageView.heightAnchor.constraint(equalToConstant: 20),
+            avatarImageView.widthAnchor.constraint(equalToConstant: 24),
+            avatarImageView.heightAnchor.constraint(equalToConstant: 24),
 
-            nameLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 6),
+            avatarInitialLabel.centerXAnchor.constraint(equalTo: avatarImageView.centerXAnchor),
+            avatarInitialLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
+
+            nameLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 8),
             nameLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
             nameLabel.trailingAnchor.constraint(lessThanOrEqualTo: starIcon.leadingAnchor, constant: -4),
 
@@ -173,12 +185,32 @@ final class VideoCell: UICollectionViewCell {
         pendingCoverURL = video.coverURL
         pendingAvatarURL = video.userAvatarURL
 
-        titleLabel.text = video.title.isEmpty ? video.introduction : video.title
+        // 标题降噪：过滤 "Untitled"，优先使用 introduction
+        let displayTitle = video.title.lowercased() == "untitled" ? "" : video.title
+        titleLabel.text = displayTitle.isEmpty ? video.introduction : displayTitle
+        titleLabel.font = .systemFont(ofSize: 14, weight: .semibold)
+
         nameLabel.text = video.userName
         starLabel.text = formatCount(video.starCount)
 
+        // 设置首字母及其彩色背景
+        if let firstChar = video.userName.first {
+            avatarInitialLabel.text = String(firstChar).uppercased()
+            avatarInitialLabel.isHidden = false
+            avatarImageView.backgroundColor = colorForString(video.userName)
+        } else {
+            avatarInitialLabel.text = nil
+            avatarImageView.backgroundColor = .systemGray4
+        }
+
         loadCoverImage(from: video.coverURL)
         loadAvatarImage(from: video.userAvatarURL)
+    }
+
+    private func colorForString(_ str: String) -> UIColor {
+        let colors: [UIColor] = [.systemBlue, .systemIndigo, .systemPurple, .systemPink, .systemOrange, .systemTeal, .systemGreen]
+        let hash = abs(str.hashValue)
+        return colors[hash % colors.count].withAlphaComponent(0.9)
     }
 
     private func formatCount(_ count: Int) -> String {
@@ -257,6 +289,7 @@ final class VideoCell: UICollectionViewCell {
             DispatchQueue.main.async {
                 guard let self, self.pendingAvatarURL == url else { return }
                 self.avatarImageView.image = image
+                self.avatarInitialLabel.isHidden = true // 加载成功后隐藏文字
             }
         }
         avatarTask?.resume()
