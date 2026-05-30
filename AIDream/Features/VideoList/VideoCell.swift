@@ -147,8 +147,12 @@ final class VideoCell: UICollectionViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+        // 禁用隐式动画，防止阴影（gradientLayer）在 Cell 布局变化时产生滑动效果
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
         gradientLayer.frame = gradientView.bounds
         playerLayer?.frame = coverImageView.bounds
+        CATransaction.commit()
     }
 
     override func prepareForReuse() {
