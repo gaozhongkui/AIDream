@@ -101,7 +101,7 @@ final class VideoListViewController: UIViewController {
         if reset {
             currentOffset = 0
             hasMorePages = true
-            // 如果目前没数据，显示中间的 Loading
+            // 如果目前没数据（包括缓存也为空），才显示中间的大 Loading
             if allVideos.isEmpty {
                 activityIndicator.startAnimating()
             }
@@ -110,8 +110,13 @@ final class VideoListViewController: UIViewController {
         }
 
         isLoadingPage = true
-        // 刷新一下 CollectionView 以便 Footer 显示加载状态
-        collectionView.reloadData()
+
+        // 优化：加载更多时，不全量 reloadData，避免重置已有 Cell 的播放状态
+        if reset {
+            collectionView.reloadData()
+        } else {
+            updateFooterStatus()
+        }
 
         VideoService.shared.fetchVideos(offset: currentOffset, limit: pageSize) { [weak self] result in
             DispatchQueue.main.async {
@@ -122,19 +127,42 @@ final class VideoListViewController: UIViewController {
 
                 switch result {
                 case .success(let videos):
+                    let oldVideoCount = self.allVideos.count
                     if reset {
                         self.allVideos = []
-                        // 第一页请求成功后，存入缓存（只缓存第一页作为缓冲）
+                        // 第一页请求成功后，同步更新缓存
                         VideoCacheService.shared.saveVideos(videos)
                     }
+
                     self.append(videos: videos)
+                    let newVideoCount = self.allVideos.count
                     self.currentOffset += videos.count
-                    self.hasMorePages = videos.count == self.pageSize
-                    self.collectionView.reloadData()
+                    self.hasMorePages =  true //videos.count == self.pageSize
+
+                    if reset {
+                        // 刷新或首次加载，全量更新
+                        self.collectionView.reloadData()
+                    } else {
+                        // 加载更多：仅插入新行，保持列表滚动位置和现有视频的播放
+                        let indexPaths = (oldVideoCount..<newVideoCount).map { IndexPath(item: $0, section: 0) }
+                        if !indexPaths.isEmpty {
+                            self.collectionView.insertItems(at: indexPaths)
+                        } else {
+                            self.updateFooterStatus()
+                        }
+                    }
                 case .failure(let error):
                     print("Video fetch error: \(error)")
+                    self.updateFooterStatus()
                 }
             }
+        }
+    }
+
+    private func updateFooterStatus() {
+        let indexPath = IndexPath(item: 0, section: 0)
+        if let footer = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionFooter, at: indexPath) as? LoadingFooterView {
+            footer.setStatus(isLoading: isLoadingPage, hasMore: hasMorePages)
         }
     }
 
