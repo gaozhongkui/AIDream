@@ -3,12 +3,6 @@ import Foundation
 class VideoService {
     static let shared = VideoService()
 
-    func fetchVideos(completion: @escaping (Result<[VideoData], Error>) -> Void) {
-        fetchVideos(offset: 0, limit: 20, completion: completion)
-    }
-    
-    //https://datasets-server.huggingface.co/rows?dataset=nyuuzyou/klingai&config=default&split=train&offset=0&limit=2
-
     func fetchVideos(offset: Int, limit: Int, completion: @escaping (Result<[VideoData], Error>) -> Void) {
         var components = URLComponents(string: "https://datasets-server.huggingface.co/rows")
         components?.queryItems = [
@@ -26,27 +20,23 @@ class VideoService {
 
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
-                Task { @MainActor in
-                    completion(.failure(error))
-                }
+                DispatchQueue.main.async { completion(.failure(error)) }
                 return
             }
 
             guard let data = data else {
-                Task { @MainActor in
-                    completion(.failure(URLError(.badServerResponse)))
-                }
+                DispatchQueue.main.async { completion(.failure(URLError(.badServerResponse))) }
                 return
             }
 
-            Task { @MainActor in
-                do {
-                    let decodedResponse = try JSONDecoder().decode(HFResponse.self, from: data)
-                    let videos = decodedResponse.rows.map { $0.row.toVideoData() }
+            do {
+                let decodedResponse = try JSONDecoder().decode(HFResponse.self, from: data)
+                let videos = decodedResponse.rows.map { $0.row.toVideoData() }
+                DispatchQueue.main.async {
                     completion(.success(videos))
-                } catch {
-                    completion(.failure(error))
                 }
+            } catch {
+                DispatchQueue.main.async { completion(.failure(error)) }
             }
         }.resume()
     }

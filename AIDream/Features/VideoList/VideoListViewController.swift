@@ -3,6 +3,8 @@ import UIKit
 
 final class VideoListViewController: UIViewController {
     private let pageSize = 20
+    private let paginationThreshold: CGFloat = 320
+    private let paginationTriggerItemCount = 6
     private var allVideos: [VideoData] = []
     private var currentOffset = 0
     private var isLoadingPage = false
@@ -15,8 +17,10 @@ final class VideoListViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .systemBackground
         collectionView.register(VideoCell.self, forCellWithReuseIdentifier: VideoCell.identifier)
+        collectionView.register(LoadingFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: LoadingFooterView.identifier)
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.prefetchDataSource = self
         collectionView.alwaysBounceVertical = true
         collectionView.refreshControl = refreshControl
         collectionView.contentInset = UIEdgeInsets(top: 12, left: 12, bottom: 24, right: 12)
@@ -78,6 +82,8 @@ final class VideoListViewController: UIViewController {
         }
 
         isLoadingPage = true
+        // 刷新一下 CollectionView 以便 Footer 显示加载状态
+        collectionView.reloadData()
 
         VideoService.shared.fetchVideos(offset: currentOffset, limit: pageSize) { [weak self] result in
             DispatchQueue.main.async {
@@ -94,6 +100,8 @@ final class VideoListViewController: UIViewController {
                     self.currentOffset += videos.count
                     self.hasMorePages = videos.count == self.pageSize
                     self.collectionView.reloadData()
+                    self.collectionView.layoutIfNeeded()
+                    self.triggerPaginationIfNeeded()
                 case .failure(let error):
                     print("Video fetch error: \(error)")
                 }
@@ -130,19 +138,46 @@ extension VideoListViewController: UICollectionViewDataSource, UICollectionViewD
         return cell
     }
 
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionFooter {
+            let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: LoadingFooterView.identifier, for: indexPath) as! LoadingFooterView
+            footer.setStatus(isLoading: isLoadingPage, hasMore: hasMorePages)
+            return footer
+        }
+        return UICollectionReusableView()
+    }
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         presentPlayer(for: allVideos[indexPath.item])
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         (cell as? VideoCell)?.startPlayback()
-        if indexPath.item >= allVideos.count - 4 {
-            loadPage(reset: false)
-        }
+        triggerPaginationIfNeeded(triggerIndex: indexPath.item)
     }
 
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         (cell as? VideoCell)?.stopPlayback()
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        triggerPaginationIfNeeded()
+    }
+
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        guard !decelerate else { return }
+        triggerPaginationIfNeeded()
+    }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        triggerPaginationIfNeeded()
+    }
+}
+
+extension VideoListViewController: UICollectionViewDataSourcePrefetching {
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        guard let maxIndex = indexPaths.map(\.item).max() else { return }
+        triggerPaginationIfNeeded(triggerIndex: maxIndex)
     }
 }
 
@@ -165,5 +200,55 @@ extension VideoListViewController: WaterfallLayoutDelegate {
 
     func collectionView(_ collectionView: UICollectionView, heightForFullWidthItemAt indexPath: IndexPath, with width: CGFloat) -> CGFloat {
         return 0
+    }
+
+    func collectionView(_ collectionView: UICollectionView, heightForFooterIn section: Int, contentHeight: CGFloat, availableHeight: CGFloat) -> CGFloat {
+        guard !allVideos.isEmpty else { return 0 }
+
+        let loadingFooterHeight: CGFloat = 60
+        let remainingSpace = availableHeight - contentHeight
+
+        // 内容没撑满屏幕时，footer 直接补足剩余空间，把底部“顶”到屏幕边缘；
+        // 内容已经超出屏幕时，保持一个最小加载区，方便继续上拉触发加载更多。
+        return max(loadingFooterHeight, remainingSpace)
+    }
+}
+
+private extension VideoListViewController {
+    func triggerPaginationIfNeeded() {
+        triggerPaginationIfNeeded(triggerIndex: nil)
+    }
+
+    func triggerPaginationIfNeeded(triggerIndex: Int?) {
+        guard !isLoadingPage, hasMorePages, !allVideos.isEmpty else { return }
+
+        if shouldLoadMoreByVisibleItems(triggerIndex: triggerIndex) {
+            loadPage(reset: false)
+            return
+        }
+
+        if shouldLoadMoreByContentHeight() {
+            loadPage(reset: false)
+        }
+    }
+
+    func shouldLoadMoreByVisibleItems(triggerIndex: Int?) -> Bool {
+        if let triggerIndex {
+            return triggerIndex >= max(allVideos.count - paginationTriggerItemCount, 0)
+        }
+
+        guard let maxVisibleIndex = collectionView.indexPathsForVisibleItems.map(\.item).max() else {
+            return false
+        }
+
+        return maxVisibleIndex >= max(allVideos.count - paginationTriggerItemCount, 0)
+    }
+
+    func shouldLoadMoreByContentHeight() -> Bool {
+        let visibleHeight = collectionView.bounds.height - collectionView.adjustedContentInset.top - collectionView.adjustedContentInset.bottom
+        let contentHeight = collectionView.contentSize.height
+
+        // 内容还没撑满一屏时，继续自动补下一页，避免用户没有“可上拉”的空间。
+        return contentHeight <= visibleHeight + paginationThreshold
     }
 }
