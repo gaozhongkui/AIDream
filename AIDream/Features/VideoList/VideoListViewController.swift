@@ -3,8 +3,6 @@ import UIKit
 
 final class VideoListViewController: UIViewController {
     private let pageSize = 20
-    private let paginationThreshold: CGFloat = 320
-    private let paginationTriggerItemCount = 6
     private var allVideos: [VideoData] = []
     private var currentOffset = 0
     private var isLoadingPage = false
@@ -20,7 +18,6 @@ final class VideoListViewController: UIViewController {
         collectionView.register(LoadingFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: LoadingFooterView.identifier)
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.prefetchDataSource = self
         collectionView.alwaysBounceVertical = true
         collectionView.refreshControl = refreshControl
         collectionView.contentInset = UIEdgeInsets(top: 12, left: 12, bottom: 24, right: 12)
@@ -33,6 +30,13 @@ final class VideoListViewController: UIViewController {
         return rc
     }()
 
+    private let activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .systemPink
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "探索灵感"
@@ -40,7 +44,20 @@ final class VideoListViewController: UIViewController {
         setupNavigationBar()
         setupUI()
         setupRefreshControl()
+
+        // 1. 优先加载缓存数据
+        loadCachedData()
+
+        // 2. 发起网络请求
         loadPage(reset: true)
+    }
+
+    private func loadCachedData() {
+        let cachedVideos = VideoCacheService.shared.loadVideos()
+        if !cachedVideos.isEmpty {
+            self.allVideos = cachedVideos
+            self.collectionView.reloadData()
+        }
     }
 
     private func setupNavigationBar() {
@@ -54,12 +71,19 @@ final class VideoListViewController: UIViewController {
 
     private func setupUI() {
         view.addSubview(collectionView)
+        view.addSubview(activityIndicator)
+
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
 
@@ -77,63 +101,41 @@ final class VideoListViewController: UIViewController {
         if reset {
             currentOffset = 0
             hasMorePages = true
+            // 如果目前没数据，显示中间的 Loading
+            if allVideos.isEmpty {
+                activityIndicator.startAnimating()
+            }
         } else if !hasMorePages {
             return
         }
 
         isLoadingPage = true
-        updateLoadingFooter()
+        // 刷新一下 CollectionView 以便 Footer 显示加载状态
+        collectionView.reloadData()
 
         VideoService.shared.fetchVideos(offset: currentOffset, limit: pageSize) { [weak self] result in
             DispatchQueue.main.async {
                 guard let self else { return }
                 self.refreshControl.endRefreshing()
+                self.activityIndicator.stopAnimating()
                 self.isLoadingPage = false
 
                 switch result {
                 case .success(let videos):
                     if reset {
                         self.allVideos = []
-                        self.append(videos: videos)
-                        self.currentOffset += videos.count
-                        self.hasMorePages = videos.count == self.pageSize
-                        self.collectionView.reloadData()
-                        self.collectionView.layoutIfNeeded()
-                        self.triggerPaginationIfNeeded()
-                    } else {
-                        let oldCount = self.allVideos.count
-                        self.append(videos: videos)
-                        let newCount = self.allVideos.count
-                        self.currentOffset += videos.count
-                        self.hasMorePages = videos.count == self.pageSize
-
-                        let newIndexPaths = (oldCount..<newCount).map { IndexPath(item: $0, section: 0) }
-                        if newIndexPaths.isEmpty {
-                            self.updateLoadingFooter()
-                            self.triggerPaginationIfNeeded()
-                        } else {
-                            self.collectionView.performBatchUpdates({
-                                self.collectionView.insertItems(at: newIndexPaths)
-                            }, completion: { _ in
-                                self.triggerPaginationIfNeeded()
-                            })
-                        }
+                        // 第一页请求成功后，存入缓存（只缓存第一页作为缓冲）
+                        VideoCacheService.shared.saveVideos(videos)
                     }
+                    self.append(videos: videos)
+                    self.currentOffset += videos.count
+                    self.hasMorePages = videos.count == self.pageSize
+                    self.collectionView.reloadData()
                 case .failure(let error):
                     print("Video fetch error: \(error)")
-                    self.updateLoadingFooter()
                 }
             }
         }
-    }
-
-    private func updateLoadingFooter() {
-        let footerIndexPath = IndexPath(item: 0, section: 0)
-        guard let footer = collectionView.supplementaryView(
-            forElementKind: UICollectionView.elementKindSectionFooter,
-            at: footerIndexPath
-        ) as? LoadingFooterView else { return }
-        footer.setStatus(isLoading: isLoadingPage, hasMore: hasMorePages)
     }
 
     private func append(videos: [VideoData]) {
@@ -180,31 +182,13 @@ extension VideoListViewController: UICollectionViewDataSource, UICollectionViewD
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         (cell as? VideoCell)?.startPlayback()
-        triggerPaginationIfNeeded(triggerIndex: indexPath.item)
+        if indexPath.item >= allVideos.count - 4 {
+            loadPage(reset: false)
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         (cell as? VideoCell)?.stopPlayback()
-    }
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        triggerPaginationIfNeeded()
-    }
-
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        guard !decelerate else { return }
-        triggerPaginationIfNeeded()
-    }
-
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        triggerPaginationIfNeeded()
-    }
-}
-
-extension VideoListViewController: UICollectionViewDataSourcePrefetching {
-    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        guard let maxIndex = indexPaths.map(\.item).max() else { return }
-        triggerPaginationIfNeeded(triggerIndex: maxIndex)
     }
 }
 
@@ -230,52 +214,7 @@ extension VideoListViewController: WaterfallLayoutDelegate {
     }
 
     func collectionView(_ collectionView: UICollectionView, heightForFooterIn section: Int, contentHeight: CGFloat, availableHeight: CGFloat) -> CGFloat {
-        guard !allVideos.isEmpty else { return 0 }
-
-        let loadingFooterHeight: CGFloat = 60
-        let remainingSpace = availableHeight - contentHeight
-
-        // 内容没撑满屏幕时，footer 直接补足剩余空间，把底部“顶”到屏幕边缘；
-        // 内容已经超出屏幕时，保持一个最小加载区，方便继续上拉触发加载更多。
-        return max(loadingFooterHeight, remainingSpace)
-    }
-}
-
-private extension VideoListViewController {
-    func triggerPaginationIfNeeded() {
-        triggerPaginationIfNeeded(triggerIndex: nil)
-    }
-
-    func triggerPaginationIfNeeded(triggerIndex: Int?) {
-        guard !isLoadingPage, hasMorePages, !allVideos.isEmpty else { return }
-
-        if shouldLoadMoreByVisibleItems(triggerIndex: triggerIndex) {
-            loadPage(reset: false)
-            return
-        }
-
-        if shouldLoadMoreByContentHeight() {
-            loadPage(reset: false)
-        }
-    }
-
-    func shouldLoadMoreByVisibleItems(triggerIndex: Int?) -> Bool {
-        if let triggerIndex {
-            return triggerIndex >= max(allVideos.count - paginationTriggerItemCount, 0)
-        }
-
-        guard let maxVisibleIndex = collectionView.indexPathsForVisibleItems.map(\.item).max() else {
-            return false
-        }
-
-        return maxVisibleIndex >= max(allVideos.count - paginationTriggerItemCount, 0)
-    }
-
-    func shouldLoadMoreByContentHeight() -> Bool {
-        let visibleHeight = collectionView.bounds.height - collectionView.adjustedContentInset.top - collectionView.adjustedContentInset.bottom
-        let contentHeight = collectionView.contentSize.height
-
-        // 内容还没撑满一屏时，继续自动补下一页，避免用户没有“可上拉”的空间。
-        return contentHeight <= visibleHeight + paginationThreshold
+        // 只要有数据就显示 Footer（用于显示加载转圈或“到底了”提示）
+        return allVideos.isEmpty ? 0 : 60
     }
 }

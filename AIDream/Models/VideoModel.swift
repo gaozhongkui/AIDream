@@ -1,7 +1,7 @@
 import Foundation
 
 // MARK: - UI Model
-struct VideoData: Identifiable {
+struct VideoData: Identifiable, Codable {
     let id: Int
     let title: String
     let introduction: String
