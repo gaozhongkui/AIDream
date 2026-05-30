@@ -5,9 +5,6 @@ final class VideoListViewController: UIViewController {
     private let pageSize = 20
     private var allVideos: [VideoData] = []
     private var filteredVideos: [VideoData] = []
-    private var filterOptions: [VideoFilterOption] = [.all]
-    private var selectedFilterID: String = VideoFilterOption.all.id
-    private var filterButtons: [UIButton] = []
     private var currentOffset = 0
     private var isLoadingPage = false
     private var hasMorePages = true
@@ -23,30 +20,6 @@ final class VideoListViewController: UIViewController {
         collectionView.alwaysBounceVertical = true
         collectionView.refreshControl = refreshControl
         return collectionView
-    }()
-
-    private let filterContainer: UIView = {
-        let view = UIView()
-        view.backgroundColor = .secondarySystemGroupedBackground
-        view.layer.cornerRadius = 16
-        view.layer.masksToBounds = true
-        return view
-    }()
-
-    private let filterScrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.showsHorizontalScrollIndicator = false
-        scrollView.alwaysBounceHorizontal = true
-        return scrollView
-    }()
-
-    private let filterStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.alignment = .center
-        stackView.distribution = .equalSpacing
-        stackView.spacing = 8
-        return stackView
     }()
 
     private let refreshControl = UIRefreshControl()
@@ -76,34 +49,12 @@ final class VideoListViewController: UIViewController {
     }
 
     private func setupUI() {
-        view.addSubview(filterContainer)
         view.addSubview(collectionView)
-        filterContainer.addSubview(filterScrollView)
-        filterScrollView.addSubview(filterStackView)
 
-        filterContainer.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        filterScrollView.translatesAutoresizingMaskIntoConstraints = false
-        filterStackView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            filterContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            filterContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            filterContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            filterContainer.heightAnchor.constraint(equalToConstant: 52),
-
-            filterScrollView.topAnchor.constraint(equalTo: filterContainer.topAnchor, constant: 8),
-            filterScrollView.leadingAnchor.constraint(equalTo: filterContainer.leadingAnchor, constant: 12),
-            filterScrollView.trailingAnchor.constraint(equalTo: filterContainer.trailingAnchor, constant: -12),
-            filterScrollView.bottomAnchor.constraint(equalTo: filterContainer.bottomAnchor, constant: -8),
-
-            filterStackView.topAnchor.constraint(equalTo: filterScrollView.contentLayoutGuide.topAnchor),
-            filterStackView.leadingAnchor.constraint(equalTo: filterScrollView.contentLayoutGuide.leadingAnchor),
-            filterStackView.trailingAnchor.constraint(equalTo: filterScrollView.contentLayoutGuide.trailingAnchor),
-            filterStackView.bottomAnchor.constraint(equalTo: filterScrollView.contentLayoutGuide.bottomAnchor),
-            filterStackView.heightAnchor.constraint(equalTo: filterScrollView.frameLayoutGuide.heightAnchor),
-
-            collectionView.topAnchor.constraint(equalTo: filterContainer.bottomAnchor, constant: 12),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -145,8 +96,8 @@ final class VideoListViewController: UIViewController {
                     self.append(videos: videos)
                     self.currentOffset += videos.count
                     self.hasMorePages = videos.count == self.pageSize
-                    self.updateFilterOptions()
-                    self.applyCurrentFilter(loadMoreIfNeeded: true)
+                    self.filteredVideos = self.allVideos
+                    self.reloadVideos(loadMoreIfNeeded: true)
                 case .failure(let error):
                     print("Video fetch error: \(error)")
                 }
@@ -169,64 +120,7 @@ final class VideoListViewController: UIViewController {
         }
     }
 
-    private func updateFilterOptions() {
-        let newOptions = VideoFilterOption.options(from: allVideos)
-        let oldIDs = filterOptions.map(\.id)
-        let newIDs = newOptions.map(\.id)
-
-        if oldIDs != newIDs {
-            filterOptions = newOptions
-            if filterOptions.contains(where: { $0.id == selectedFilterID }) == false {
-                selectedFilterID = VideoFilterOption.all.id
-            }
-            rebuildFilterButtons()
-        }
-    }
-
-    private func rebuildFilterButtons() {
-        filterStackView.arrangedSubviews.forEach { view in
-            filterStackView.removeArrangedSubview(view)
-            view.removeFromSuperview()
-        }
-        filterButtons.removeAll()
-
-        for option in filterOptions {
-            let button = UIButton(type: .system)
-            var configuration = UIButton.Configuration.plain()
-            configuration.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 14, bottom: 8, trailing: 14)
-            configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attrs in
-                var a = attrs
-                a.font = .systemFont(ofSize: 13, weight: .semibold)
-                return a
-            }
-            configuration.title = option.title
-            button.configuration = configuration
-            button.tag = filterButtons.count
-            button.layer.cornerRadius = 16
-            button.layer.masksToBounds = true
-            button.layer.borderWidth = 1
-            button.setContentHuggingPriority(.required, for: .horizontal)
-            button.setContentCompressionResistancePriority(.required, for: .horizontal)
-            button.addTarget(self, action: #selector(handleFilterTapped(_:)), for: .touchUpInside)
-            filterStackView.addArrangedSubview(button)
-            filterButtons.append(button)
-        }
-
-        updateFilterButtonAppearance()
-    }
-
-    @objc private func handleFilterTapped(_ sender: UIButton) {
-        guard filterButtons.indices.contains(sender.tag) else { return }
-        selectedFilterID = filterOptions[sender.tag].id
-        applyCurrentFilter()
-    }
-
-    private func applyCurrentFilter(loadMoreIfNeeded: Bool = false) {
-        filteredVideos = allVideos.filter { video in
-            selectedFilterID == VideoFilterOption.all.id || video.category == selectedFilterID
-        }
-
-        updateFilterButtonAppearance()
+    private func reloadVideos(loadMoreIfNeeded: Bool = false) {
         collectionView.collectionViewLayout.invalidateLayout()
         collectionView.reloadData()
 
@@ -235,16 +129,6 @@ final class VideoListViewController: UIViewController {
             if loadMoreIfNeeded, let self, self.filteredVideos.isEmpty {
                 self.loadPage(reset: false)
             }
-        }
-    }
-
-    private func updateFilterButtonAppearance() {
-        for (index, button) in filterButtons.enumerated() {
-            let option = filterOptions[index]
-            let isSelected = option.id == selectedFilterID
-            button.backgroundColor = isSelected ? .label : .tertiarySystemBackground
-            button.setTitleColor(isSelected ? .systemBackground : .label, for: .normal)
-            button.layer.borderColor = (isSelected ? UIColor.clear : UIColor.separator).cgColor
         }
     }
 

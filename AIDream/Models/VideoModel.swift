@@ -9,27 +9,6 @@ struct HFRow: Decodable {
     let row: VideoData
 }
 
-struct VideoFilterOption: Identifiable, Equatable {
-    let id: String
-    let title: String
-    let category: String?
-
-    static let all = VideoFilterOption(id: "all", title: "全部", category: nil)
-
-    static func options(from videos: [VideoData]) -> [VideoFilterOption] {
-        var seen = Set<String>()
-        let uniqueCategories = videos.compactMap { video -> String? in
-            let category = video.category.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !category.isEmpty, seen.insert(category).inserted else { return nil }
-            return category
-        }
-
-        return [.all] + uniqueCategories.sorted().map { category in
-            VideoFilterOption(id: category, title: VideoData.displayCategory(category), category: category)
-        }
-    }
-}
-
 struct VideoData: Decodable, Identifiable {
     let workId: Int
     let workItemId: Int?
@@ -98,6 +77,10 @@ struct VideoData: Decodable, Identifiable {
         return seconds > 0 ? "\(seconds)s" : ""
     }
 
+    var playCountText: String {
+        Self.formatCount(starNum ?? 0) + " plays"
+    }
+
     var aspectRatio: CGFloat {
         let width = CGFloat(max(resource.width, 1))
         let height = CGFloat(max(resource.height, 1))
@@ -115,34 +98,6 @@ struct VideoData: Decodable, Identifiable {
 
     var isPlayable: Bool {
         !deleted && contentType.lowercased() == "video" && videoURL != nil
-    }
-
-    static func displayCategory(_ category: String) -> String {
-        let lowercased = category.lowercased()
-        if lowercased.contains("txt2video") || lowercased.contains("text2video") {
-            return "文生视频"
-        }
-        if lowercased.contains("img2video") || lowercased.contains("image2video") {
-            return "图生视频"
-        }
-
-        let normalized = category
-            .replacingOccurrences(of: "-", with: "_")
-            .split(separator: "_")
-            .map(String.init)
-            .filter { !$0.isEmpty }
-
-        guard !normalized.isEmpty else {
-            return category
-        }
-
-        return normalized.map { part in
-            if part.allSatisfy({ $0.isNumber }) {
-                return part
-            }
-            return part.prefix(1).uppercased() + part.dropFirst().lowercased()
-        }
-        .joined(separator: " ")
     }
 
     enum CodingKeys: String, CodingKey {
@@ -171,6 +126,27 @@ struct VideoData: Decodable, Identifiable {
         case submitTime
         case lipSyncStatus
         case introduction
+    }
+
+    private static func formatCount(_ count: Int) -> String {
+        switch count {
+        case 1_000_000...:
+            let value = Double(count) / 1_000_000
+            return formatDecimal(value) + "M"
+        case 1_000...:
+            let value = Double(count) / 1_000
+            return formatDecimal(value) + "k"
+        default:
+            return "\(count)"
+        }
+    }
+
+    private static func formatDecimal(_ value: Double) -> String {
+        let rounded = (value * 10).rounded() / 10
+        if rounded.rounded(.down) == rounded {
+            return String(Int(rounded))
+        }
+        return String(format: "%.1f", rounded)
     }
 }
 
