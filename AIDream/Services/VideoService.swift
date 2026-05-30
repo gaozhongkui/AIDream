@@ -6,11 +6,13 @@ class VideoService {
     func fetchVideos(completion: @escaping (Result<[VideoData], Error>) -> Void) {
         fetchVideos(offset: 0, limit: 20, completion: completion)
     }
+    
+    //https://datasets-server.huggingface.co/rows?dataset=nyuuzyou/klingai&config=default&split=train&offset=0&limit=2
 
     func fetchVideos(offset: Int, limit: Int, completion: @escaping (Result<[VideoData], Error>) -> Void) {
         var components = URLComponents(string: "https://datasets-server.huggingface.co/rows")
         components?.queryItems = [
-            URLQueryItem(name: "dataset", value: "Rapidata/awesome-text2video-prompts"),
+            URLQueryItem(name: "dataset", value: "nyuuzyou/klingai"),
             URLQueryItem(name: "config", value: "default"),
             URLQueryItem(name: "split", value: "train"),
             URLQueryItem(name: "offset", value: String(offset)),
@@ -37,21 +39,12 @@ class VideoService {
                 return
             }
 
-            if let rawString = String(data: data, encoding: .utf8) {
-                print("=== VideoService RAW RESPONSE ===")
-                print(rawString)
-                print("=================================")
-            }
-
             Task { @MainActor in
                 do {
                     let decodedResponse = try JSONDecoder().decode(HFResponse.self, from: data)
                     let videos = decodedResponse.rows.map { $0.row }
                     completion(.success(videos))
                 } catch {
-                    print("=== VideoService DECODE ERROR ===")
-                    print(error)
-                    print("=================================")
                     completion(.failure(error))
                 }
             }

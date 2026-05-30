@@ -19,49 +19,229 @@ struct VideoFilterOption: Identifiable, Equatable {
     static func options(from videos: [VideoData]) -> [VideoFilterOption] {
         var seen = Set<String>()
         let uniqueCategories = videos.compactMap { video -> String? in
-            let cat = video.category.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !cat.isEmpty, seen.insert(cat).inserted else { return nil }
-            return cat
+            let category = video.category.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !category.isEmpty, seen.insert(category).inserted else { return nil }
+            return category
         }
 
-        return [.all] + uniqueCategories.sorted().map { cat in
-            VideoFilterOption(id: cat, title: VideoData.displayCategory(cat), category: cat)
+        return [.all] + uniqueCategories.sorted().map { category in
+            VideoFilterOption(id: category, title: VideoData.displayCategory(category), category: category)
         }
     }
 }
 
 struct VideoData: Decodable, Identifiable {
-    let prompt: String
-    let video: String
-    let category: String
-    let videoName: String
+    let workId: Int
+    let workItemId: Int?
+    let taskId: Int?
+    let userId: Int?
+    let type: String
+    let status: Int
+    let contentType: String
+    let resource: MediaResource
+    let cover: MediaResource?
+    let starNum: Int?
+    let reportNum: Int?
+    let createTime: Int64
+    let taskInfo: TaskInfo
+    let selfAttitude: String?
+    let selfComment: SelfComment?
+    let favored: Bool?
+    let starred: Bool?
+    let publishStatus: String?
+    let deleted: Bool
+    let title: String?
+    let userProfile: UserProfile?
+    let publishTime: Int64?
+    let submitTime: Int64?
+    let lipSyncStatus: Int?
+    let introduction: String?
 
-    var id: String { videoName }
+    var id: Int {
+        workId
+    }
+
+    var category: String {
+        type
+    }
+
+    var prompt: String {
+        taskInfo.prompt ?? introduction ?? title ?? ""
+    }
+
+    var displayTitle: String {
+        let trimmedTitle = title?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !trimmedTitle.isEmpty {
+            return trimmedTitle
+        }
+
+        let trimmedPrompt = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmedPrompt.isEmpty ? "未命名视频" : trimmedPrompt
+    }
+
+    var secondaryText: String {
+        let intro = introduction?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !intro.isEmpty, intro != displayTitle {
+            return intro
+        }
+
+        let promptText = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !promptText.isEmpty, promptText != displayTitle {
+            return promptText
+        }
+
+        return ""
+    }
+
+    var durationText: String {
+        let seconds = max(resource.duration / 1000, 0)
+        return seconds > 0 ? "\(seconds)s" : ""
+    }
+
+    var aspectRatio: CGFloat {
+        let width = CGFloat(max(resource.width, 1))
+        let height = CGFloat(max(resource.height, 1))
+        return width / height
+    }
 
     var videoURL: URL? {
-        URL(string: video.replacingOccurrences(of: ".gif", with: ".mp4"))
+        URL(string: resource.resource)
     }
 
     var coverURL: URL? {
-        URL(string: video)
+        guard let cover else { return nil }
+        return URL(string: cover.resource)
     }
 
-    var displayTitle: String { prompt }
-
-    var secondaryText: String { "" }
-
-    var durationText: String { "" }
-
-    var aspectRatio: CGFloat { 3.0 / 4.0 }
+    var isPlayable: Bool {
+        !deleted && contentType.lowercased() == "video" && videoURL != nil
+    }
 
     static func displayCategory(_ category: String) -> String {
-        return category
+        let lowercased = category.lowercased()
+        if lowercased.contains("txt2video") || lowercased.contains("text2video") {
+            return "文生视频"
+        }
+        if lowercased.contains("img2video") || lowercased.contains("image2video") {
+            return "图生视频"
+        }
+
+        let normalized = category
+            .replacingOccurrences(of: "-", with: "_")
+            .split(separator: "_")
+            .map(String.init)
+            .filter { !$0.isEmpty }
+
+        guard !normalized.isEmpty else {
+            return category
+        }
+
+        return normalized.map { part in
+            if part.allSatisfy({ $0.isNumber }) {
+                return part
+            }
+            return part.prefix(1).uppercased() + part.dropFirst().lowercased()
+        }
+        .joined(separator: " ")
     }
 
     enum CodingKeys: String, CodingKey {
-        case prompt = "Prompt"
-        case video = "Video"
-        case category = "Category"
-        case videoName = "video_name"
+        case workId
+        case workItemId
+        case taskId
+        case userId
+        case type
+        case status
+        case contentType
+        case resource
+        case cover
+        case starNum
+        case reportNum
+        case createTime
+        case taskInfo
+        case selfAttitude
+        case selfComment
+        case favored
+        case starred
+        case publishStatus
+        case deleted
+        case title
+        case userProfile
+        case publishTime
+        case submitTime
+        case lipSyncStatus
+        case introduction
     }
+}
+
+struct MediaResource: Decodable {
+    let resource: String
+    let height: Int
+    let width: Int
+    let duration: Int
+}
+
+struct TaskInfo: Decodable {
+    let type: String?
+    let inputs: [TaskInput]
+    let arguments: [TaskArgument]
+    let extraArgs: TaskExtraArgs?
+
+    init(type: String? = nil, inputs: [TaskInput] = [], arguments: [TaskArgument] = [], extraArgs: TaskExtraArgs? = nil) {
+        self.type = type
+        self.inputs = inputs
+        self.arguments = arguments
+        self.extraArgs = extraArgs
+    }
+
+    var prompt: String? {
+        arguments.first(where: { $0.name == "prompt" })?.value
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case type
+        case inputs
+        case arguments
+        case extraArgs
+    }
+}
+
+struct TaskInput: Decodable {
+    let name: String?
+    let inputType: String?
+    let token: String?
+    let blobStorage: String?
+    let url: String?
+    let fromWorkId: Int64?
+}
+
+struct TaskArgument: Decodable {
+    let name: String
+    let value: String
+}
+
+struct TaskExtraArgs: Decodable {
+    let refererWorkId: String?
+}
+
+struct SelfComment: Decodable {
+    let tags: [String]
+    let content: String
+    let prompts: [String?]
+}
+
+struct UserProfile: Decodable {
+    let userId: Int
+    let userName: String
+    let userAvatar: [String]
+    let introduction: String
+    let features: [UserFeature]
+    let enableConsole: Bool
+    let enableInvoiceTitleCollection: Bool
+    let kol: Bool
+}
+
+struct UserFeature: Decodable {
+    let name: String
+    let allowed: Bool
 }
