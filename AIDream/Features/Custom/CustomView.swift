@@ -13,6 +13,11 @@ struct CustomView: View {
     @State private var selectedRatio: String = "1:1"
     @State private var imageCount: Int = 3
 
+    @State private var generatedImage: UIImage? = nil
+    @State private var isGenerating: Bool = false
+    @State private var errorMessage: String? = nil
+    @State private var generationProgress: Double = 0
+
     var body: some View {
         NavigationView {
             ZStack {
@@ -58,11 +63,53 @@ struct CustomView: View {
         }
     }
 
+    // MARK: - Logic
+
+    private func generateImage() {
+        guard !promptText.isEmpty else { return }
+
+        isGenerating = true
+        errorMessage = nil
+        generatedImage = nil
+
+        var options = AIImageGenerator.GenerationOptions.default
+        switch selectedRatio {
+        case "1:1": options.width = 1024; options.height = 1024
+        case "3:4": options.width = 768; options.height = 1024
+        case "4:3": options.width = 1024; options.height = 768
+        case "16:9": options.width = 1024; options.height = 576
+        default: break
+        }
+
+        AIImageGenerator.shared.generateImage(
+            prompt: promptText,
+            options: options,
+            onStateChange: { state in
+                print("Generation state: \(state)")
+            },
+            onProgress: { progress in
+                self.generationProgress = progress
+            }
+        ) { result in
+            isGenerating = false
+            switch result {
+            case .success(let res):
+                self.generatedImage = res.image
+            case .failure(let error):
+                self.errorMessage = error.localizedDescription
+            }
+        }
+    }
+
     // MARK: - Components
 
     private var customNavBar: some View {
         HStack {
-            Button(action: {}) {
+            Button(action: {
+                if selectedMode == .textToImage {
+                    generateImage()
+                }
+            }) {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.white)
@@ -79,7 +126,11 @@ struct CustomView: View {
 
             Spacer()
 
-            Button(action: {}) {
+            Button(action: {
+                if selectedMode == .textToImage {
+                    generateImage()
+                }
+            }) {
                 Image(systemName: "lightbulb")
                     .font(.system(size: 18))
                     .foregroundColor(.white)
@@ -136,7 +187,11 @@ struct CustomView: View {
                         .cornerRadius(10)
                         .padding(10)
 
-                    Button(action: {}) {
+                    Button(action: {
+                if selectedMode == .textToImage {
+                    generateImage()
+                }
+            }) {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundColor(.white.opacity(0.7))
                     }
@@ -145,7 +200,11 @@ struct CustomView: View {
                 }
 
                 // End Frame
-                Button(action: {}) {
+                Button(action: {
+                if selectedMode == .textToImage {
+                    generateImage()
+                }
+            }) {
                     VStack(spacing: 8) {
                         Image(systemName: "plus")
                             .font(.system(size: 24))
@@ -180,22 +239,60 @@ struct CustomView: View {
     private var textToImageContent: some View {
         VStack(spacing: 12) {
             ZStack(alignment: .topTrailing) {
-                Image("portrait_placeholder")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 140, height: 140)
+                if let image = generatedImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 200)
+                        .cornerRadius(24)
+                } else if isGenerating {
+                    VStack(spacing: 16) {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        Text("Generating... \(Int(generationProgress * 100))%")
+                            .font(.system(size: 14))
+                            .foregroundColor(.white)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 200)
+                    .background(Color(white: 0.15))
                     .cornerRadius(24)
-
-                Button(action: {}) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.white.opacity(0.7))
+                } else {
+                    Image("portrait_placeholder")
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 140, height: 140)
+                        .cornerRadius(24)
                 }
-                .padding(10)
+
+                if generatedImage != nil || isGenerating {
+                    Button(action: {
+                        if isGenerating {
+                            AIImageGenerator.shared.cancelGeneration()
+                            isGenerating = false
+                        }
+                        generatedImage = nil
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(.white.opacity(0.7))
+                    }
+                    .padding(10)
+                }
             }
 
-            Text("Source Image (Optional)")
+            Text(generatedImage != nil ? "Generated Result" : "Source Image (Optional)")
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(.white)
+
+            if let error = errorMessage {
+                Text(error)
+                    .font(.system(size: 12))
+                    .foregroundColor(.red)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            }
         }
         .frame(maxWidth: .infinity)
     }
@@ -358,7 +455,11 @@ struct CustomView: View {
             }
             .font(.system(size: 14))
 
-            Button(action: {}) {
+            Button(action: {
+                if selectedMode == .textToImage {
+                    generateImage()
+                }
+            }) {
                 VStack(spacing: 2) {
                     Text(selectedMode == .imageToVideo ? "Generate Video" : "Generate Image")
                         .font(.system(size: 18, weight: .bold))
