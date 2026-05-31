@@ -98,7 +98,7 @@ struct ImageToVideoView: View {
                     .frame(height: 140)
                     .padding(12)
                     .scrollContentBackground(.hidden)
-                    .background(Color(white: 0.12))
+                    .background(Color(hex: "#1a1a1a"))
                     .cornerRadius(20)
                     .overlay(
                         Text(promptText.isEmpty ? "Describe the scene, action, and style..." : "")
@@ -175,10 +175,10 @@ struct ImageToVideoView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 64)
                 .background(
-                    LinearGradient(colors: [Color.purple, Color.blue], startPoint: .leading, endPoint: .trailing)
+                    LinearGradient(colors: [Color(hex: "#c260f5"), Color(hex: "#6034e4")], startPoint: .leading, endPoint: .trailing)
                 )
                 .cornerRadius(32)
-                .shadow(color: .purple.opacity(0.3), radius: 10, y: 5)
+                .shadow(color: Color(hex: "#7032d6").opacity(0.3), radius: 10, y: 5)
             }
 
             HStack(spacing: 6) {
@@ -191,7 +191,7 @@ struct ImageToVideoView: View {
         }
         .padding(20)
         .background(
-            Color(red: 18/255, green: 18/255, blue: 18/255)
+            Color(hex: "#0c0c0c")
                 .shadow(color: .black.opacity(0.5), radius: 20, y: -10)
         )
     }
@@ -221,7 +221,7 @@ struct ImageToVideoView: View {
                 .foregroundColor(isSelected ? .white : .gray)
                 .frame(maxWidth: .infinity)
                 .frame(height: 44)
-                .background(isSelected ? Color.purple : Color(white: 0.15))
+                .background(isSelected ? Color(hex: "#7032d6") : Color(hex: "#1a1a1a"))
                 .cornerRadius(22)
         }
     }

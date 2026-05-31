@@ -13,20 +13,26 @@ struct TextToImageView: View {
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    displaySection
+                VStack(alignment: .leading, spacing: 20) {
+                    if generatedImage != nil || isGenerating {
+                        displaySection
+                    }
 
                     promptSection
 
-                    imageOptions
+                    aspectRatioSection
+
+                    imageCountSection
 
                     Spacer(minLength: 100)
                 }
-                .padding(20)
+                .padding(.horizontal, 16)
+                .padding(.top, 20)
             }
 
             bottomActionSection
         }
+        .background(Color(hex: "#0c0c0c"))
     }
 
     // MARK: - Components
@@ -51,14 +57,8 @@ struct TextToImageView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 200)
-                    .background(Color(white: 0.15))
+                    .background(Color.white.opacity(0.05))
                     .cornerRadius(24)
-                } else {
-                    Image("portrait_placeholder")
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 140, height: 140)
-                        .cornerRadius(24)
                 }
 
                 if generatedImage != nil || isGenerating {
@@ -77,10 +77,6 @@ struct TextToImageView: View {
                 }
             }
 
-            Text(generatedImage != nil ? "Generated Result" : "Source Image (Optional)")
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.white)
-
             if let error = errorMessage {
                 Text(error)
                     .font(.system(size: 12))
@@ -93,88 +89,118 @@ struct TextToImageView: View {
     }
 
     private var promptSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Prompt")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.gray)
+        VStack(alignment: .leading, spacing: 10) {
+            Text("prompt")
+                .font(.system(size: 14))
+                .foregroundColor(.white.opacity(0.4))
+                .padding(.leading, 6)
 
-            ZStack(alignment: .bottomTrailing) {
+            ZStack(alignment: .topLeading) {
                 TextEditor(text: $promptText)
                     .frame(height: 140)
                     .padding(12)
                     .scrollContentBackground(.hidden)
-                    .background(Color(white: 0.12))
+                    .background(Color.white.opacity(0.05))
                     .cornerRadius(20)
                     .overlay(
-                        Text(promptText.isEmpty ? "Describe the scene, action, and style..." : "")
-                            .foregroundColor(.gray)
-                            .padding(.leading, 16)
-                            .padding(.top, 20)
-                        , alignment: .topLeading
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color.white.opacity(0.05), lineWidth: 1)
                     )
 
-                HStack(spacing: 4) {
-                    Image(systemName: "sparkles")
-                    Text("AI Expand")
-
-                    Text("SVIP")
-                        .font(.system(size: 10, weight: .bold))
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 2)
-                        .background(Color.yellow)
-                        .foregroundColor(.black)
-                        .cornerRadius(4)
-                        .offset(y: -10)
+                if promptText.isEmpty {
+                    Text("Describe the scene, action, and style...")
+                        .font(.system(size: 15))
+                        .foregroundColor(.white.opacity(0.2))
+                        .padding(.leading, 16)
+                        .padding(.top, 20)
+                        .allowsHitTesting(false)
                 }
-                .font(.system(size: 14, weight: .bold))
-                .foregroundColor(.white)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color.white.opacity(0.1))
-                .cornerRadius(20)
-                .padding(10)
             }
         }
     }
 
-    private var imageOptions: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            optionHeader(title: "Aspect Ratio", showSVIP: false)
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ratioButton(ratio: "1:1", icon: "square")
-                    ratioButton(ratio: "3:4", icon: "rectangle.portrait")
-                    ratioButton(ratio: "4:3", icon: "rectangle")
-                    ratioButton(ratio: "16:9", icon: "rectangle.fill")
-                }
-            }
+    private var aspectRatioSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("aspect ratio")
+                .font(.system(size: 14))
+                .foregroundColor(.white.opacity(0.4))
+                .padding(.leading, 6)
 
-            optionHeader(title: "Number Of Images", showSVIP: false)
+            HStack(spacing: 8) {
+                ratioButton(ratio: "1:1", icon: "square")
+                ratioButton(ratio: "3:4", icon: "rectangle.portrait")
+                ratioButton(ratio: "4:3", icon: "rectangle")
+                ratioButton(ratio: "16:9", icon: "rectangle.fill")
+            }
+        }
+    }
+
+    private func ratioButton(ratio: String, icon: String) -> some View {
+        Button(action: { selectedRatio = ratio }) {
+            VStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.system(size: 20))
+                Text(ratio)
+                    .font(.system(size: 15, weight: selectedRatio == ratio ? .bold : .regular))
+            }
+            .foregroundColor(selectedRatio == ratio ? .white : .white.opacity(0.6))
+            .frame(maxWidth: .infinity)
+            .frame(height: 80)
+            .background(selectedRatio == ratio ? Color(hex: "#7032d6") : Color.white.opacity(0.05))
+            .cornerRadius(20)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Color.white.opacity(0.05), lineWidth: 1)
+            )
+        }
+    }
+
+    private var imageCountSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("number of images")
+                .font(.system(size: 14))
+                .foregroundColor(.white.opacity(0.4))
+                .padding(.leading, 6)
+
             HStack {
                 Button(action: { if imageCount > 1 { imageCount -= 1 } }) {
                     Image(systemName: "minus")
-                        .frame(width: 44, height: 44)
-                        .background(Color(white: 0.15))
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(width: 40, height: 40)
+                        .background(Color.white.opacity(0.1))
                         .cornerRadius(12)
                 }
 
                 Spacer()
-                Text("\(imageCount) Images")
-                    .font(.system(size: 16, weight: .bold))
+
+                HStack(spacing: 6) {
+                    Text("\(imageCount)")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(.white)
+                    Text("Images")
+                        .font(.system(size: 15))
+                        .foregroundColor(.white.opacity(0.6))
+                }
+
                 Spacer()
 
-                Button(action: { imageCount += 1 }) {
+                Button(action: { if imageCount < 10 { imageCount += 1 } }) {
                     Image(systemName: "plus")
-                        .frame(width: 44, height: 44)
-                        .background(Color(white: 0.15))
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(width: 40, height: 40)
+                        .background(Color.white.opacity(0.1))
                         .cornerRadius(12)
                 }
             }
-            .foregroundColor(.white)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(Color(white: 0.1))
-            .cornerRadius(16)
+            .padding(8)
+            .background(Color.white.opacity(0.05))
+            .cornerRadius(20)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Color.white.opacity(0.05), lineWidth: 1)
+            )
         }
     }
 
@@ -182,34 +208,44 @@ struct TextToImageView: View {
         VStack(spacing: 16) {
             HStack(spacing: 4) {
                 Text("Want faster generation?")
-                    .foregroundColor(.gray)
+                    .foregroundColor(.white.opacity(0.4))
                 Text("Get SVIP (50% OFF).")
-                    .foregroundColor(.yellow)
+                    .foregroundColor(Color(hex: "#fcff00"))
+                    .font(.system(size: 14, weight: .bold))
             }
-            .font(.system(size: 14))
+            .font(.system(size: 12))
 
             Button(action: {
                 generateImage()
             }) {
                 VStack(spacing: 2) {
-                    Text("Generate Image")
-                        .font(.system(size: 18, weight: .bold))
+                    HStack(spacing: 6) {
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 18))
+                        Text("Generate Image")
+                            .font(.system(size: 18, weight: .bold))
+                    }
 
                     HStack(spacing: 4) {
                         Image(systemName: "diamond.fill")
-                            .font(.system(size: 14))
+                            .font(.system(size: 12))
                         Text("40")
-                            .font(.system(size: 16, weight: .bold))
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(Color(hex: "#fcff00"))
                     }
                 }
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
-                .frame(height: 64)
+                .frame(height: 60)
                 .background(
-                    LinearGradient(colors: [Color.purple, Color.blue], startPoint: .leading, endPoint: .trailing)
+                    LinearGradient(colors: [Color(hex: "#c260f5"), Color(hex: "#6034e4")], startPoint: .topLeading, endPoint: .bottomTrailing)
                 )
-                .cornerRadius(32)
-                .shadow(color: .purple.opacity(0.3), radius: 10, y: 5)
+                .cornerRadius(22)
+                .shadow(color: Color(hex: "#7032d6").opacity(0.3), radius: 10, y: 5)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 22)
+                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                )
             }
 
             HStack(spacing: 6) {
@@ -217,47 +253,17 @@ struct TextToImageView: View {
                     .foregroundColor(.purple)
                 Text("Failed task? 100% Refund.")
                     .font(.system(size: 12))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.white.opacity(0.6))
             }
         }
-        .padding(20)
+        .padding(.horizontal, 20)
+        .padding(.top, 16)
+        .padding(.bottom, 20)
         .background(
-            Color(red: 18/255, green: 18/255, blue: 18/255)
+            Color(hex: "#252428").opacity(0.6)
+                .background(.ultraThinMaterial)
                 .shadow(color: .black.opacity(0.5), radius: 20, y: -10)
         )
-    }
-
-    private func optionHeader(title: String, showSVIP: Bool) -> some View {
-        HStack {
-            Text(title)
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.gray)
-            Spacer()
-            if showSVIP {
-                Text("SVIP")
-                    .font(.system(size: 10, weight: .bold))
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(Color.yellow)
-                    .foregroundColor(.black)
-                    .cornerRadius(4)
-            }
-        }
-    }
-
-    private func ratioButton(ratio: String, icon: String) -> some View {
-        Button(action: { selectedRatio = ratio }) {
-            VStack(spacing: 8) {
-                Image(systemName: icon)
-                    .font(.system(size: 20))
-                Text(ratio)
-                    .font(.system(size: 12, weight: .bold))
-            }
-            .foregroundColor(selectedRatio == ratio ? .white : .gray)
-            .frame(width: 80, height: 80)
-            .background(selectedRatio == ratio ? Color.purple : Color(white: 0.12))
-            .cornerRadius(20)
-        }
     }
 
     // MARK: - Logic

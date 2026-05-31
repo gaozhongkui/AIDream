@@ -11,7 +11,7 @@ struct CustomView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Color(red: 18/255, green: 18/255, blue: 18/255)
+                Color(hex: "#0c0c0c")
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
@@ -38,17 +38,17 @@ struct CustomView: View {
         HStack {
             Button(action: {}) {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.system(size: 16, weight: .bold))
                     .foregroundColor(.white)
                     .frame(width: 44, height: 44)
-                    .background(Color.white.opacity(0.1))
+                    .background(Color(hex: "#868095").opacity(0.2))
                     .clipShape(Circle())
             }
 
             Spacer()
 
             Text(selectedMode == .imageToVideo ? "Create Video" : "Create Image")
-                .font(.system(size: 20, weight: .bold))
+                .font(.system(size: 18, weight: .bold))
                 .foregroundColor(.white)
 
             Spacer()
@@ -58,7 +58,7 @@ struct CustomView: View {
                     .font(.system(size: 18))
                     .foregroundColor(.white)
                     .frame(width: 44, height: 44)
-                    .background(Color.white.opacity(0.1))
+                    .background(Color(hex: "#868095").opacity(0.2))
                     .clipShape(Circle())
             }
         }
@@ -77,7 +77,7 @@ struct CustomView: View {
 
                         if selectedMode == mode {
                             RoundedRectangle(cornerRadius: 2)
-                                .fill(Color.purple)
+                                .fill(Color(hex: "#7032d6"))
                                 .frame(width: 40, height: 3)
                         } else {
                             Color.clear.frame(height: 3)
