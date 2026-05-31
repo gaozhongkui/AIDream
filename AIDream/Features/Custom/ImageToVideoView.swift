@@ -15,199 +15,183 @@ struct ImageToVideoView: View {
 
                     videoOptions
 
-                    Spacer(minLength: 100)
+                    Spacer(minLength: 120)
                 }
-                .padding(20)
+                .padding(.horizontal, 16)
+                .padding(.top, 20)
             }
 
             bottomActionSection
         }
+        .background(Color(hex: "#0c0c0c"))
     }
 
     // MARK: - Components
 
     private var imageToVideoContent: some View {
-        VStack(spacing: 12) {
-            HStack(spacing: 16) {
+        VStack(spacing: 16) {
+            HStack(spacing: 12) {
                 // Start Frame
-                ZStack(alignment: .topLeading) {
-                    Image("portrait_placeholder") // Replace with your resources
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 140, height: 180)
-                        .cornerRadius(24)
-                        .overlay(RoundedRectangle(cornerRadius: 24).stroke(Color.white.opacity(0.1), lineWidth: 1))
-
-                    Text("Start")
-                        .font(.system(size: 12, weight: .bold))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(Color.black.opacity(0.4))
-                        .cornerRadius(10)
-                        .padding(10)
-
-                    Button(action: {}) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.white.opacity(0.7))
-                    }
-                    .padding(10)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                frameContainer(title: "Start", image: "portrait_placeholder") {
+                    // Action to remove/change image
                 }
 
                 // End Frame
-                Button(action: {}) {
-                    VStack(spacing: 8) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 24))
-                        Text("Add End Frame")
-                            .font(.system(size: 12))
-                    }
-                    .foregroundColor(.gray)
-                    .frame(width: 140, height: 180)
-                    .background(
-                        RoundedRectangle(cornerRadius: 24)
-                            .stroke(style: StrokeStyle(lineWidth: 1, dash: [5]))
-                            .foregroundColor(.gray.opacity(0.5))
-                    )
+                frameContainer(title: "End", image: nil) {
+                    // Action to add image
                 }
-
-                Text("End")
-                    .font(.system(size: 12, weight: .bold))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(Color.black.opacity(0.4))
-                    .cornerRadius(10)
-                    .offset(x: -148, y: -70)
             }
             .frame(maxWidth: .infinity)
 
             Text("Source Image (Optional)")
-                .font(.system(size: 14, weight: .medium))
+                .font(.system(size: 14))
+                .foregroundColor(.white.opacity(0.4))
+        }
+    }
+
+    private func frameContainer(title: String, image: String?, action: @escaping () -> Void) -> some View {
+        ZStack(alignment: .topLeading) {
+            if let imageName = image {
+                Image(imageName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 180)
+                    .cornerRadius(20)
+                    .clipped()
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color.white.opacity(0.05), lineWidth: 1)
+                    )
+
+                Button(action: action) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.white.opacity(0.7))
+                }
+                .padding(8)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+            } else {
+                Button(action: action) {
+                    VStack(spacing: 8) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 24))
+                        Text("Add \(title) Frame")
+                            .font(.system(size: 12))
+                    }
+                    .foregroundColor(.white.opacity(0.4))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 180)
+                    .background(Color.white.opacity(0.05))
+                    .cornerRadius(20)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(style: StrokeStyle(lineWidth: 1, dash: [5]))
+                            .foregroundColor(.white.opacity(0.2))
+                    )
+                }
+            }
+
+            Text(title)
+                .font(.system(size: 11, weight: .bold))
                 .foregroundColor(.white)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color.black.opacity(0.5))
+                .cornerRadius(8)
+                .padding(8)
         }
     }
 
     private var promptSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Prompt")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.gray)
+        VStack(alignment: .leading, spacing: 10) {
+            Text("prompt")
+                .font(.system(size: 14))
+                .foregroundColor(.white.opacity(0.4))
+                .padding(.leading, 6)
 
             ZStack(alignment: .bottomTrailing) {
-                TextEditor(text: $promptText)
-                    .frame(height: 140)
-                    .padding(12)
-                    .scrollContentBackground(.hidden)
-                    .background(Color(hex: "#1a1a1a"))
-                    .cornerRadius(20)
-                    .overlay(
-                        Text(promptText.isEmpty ? "Describe the scene, action, and style..." : "")
-                            .foregroundColor(.gray)
+                ZStack(alignment: .topLeading) {
+                    TextEditor(text: $promptText)
+                        .frame(height: 140)
+                        .padding(12)
+                        .scrollContentBackground(.hidden)
+                        .background(Color.white.opacity(0.05))
+                        .cornerRadius(20)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color.white.opacity(0.05), lineWidth: 1)
+                        )
+
+                    if promptText.isEmpty {
+                        Text("Describe the scene, action, and style...")
+                            .font(.system(size: 15))
+                            .foregroundColor(.white.opacity(0.2))
                             .padding(.leading, 16)
                             .padding(.top, 20)
-                        , alignment: .topLeading
-                    )
+                            .allowsHitTesting(false)
+                    }
+                }
 
                 HStack(spacing: 4) {
                     Image(systemName: "sparkles")
+                        .font(.system(size: 12))
                     Text("AI Expand")
+                        .font(.system(size: 12, weight: .bold))
 
                     Text("SVIP")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.system(size: 8, weight: .black))
                         .padding(.horizontal, 4)
-                        .padding(.vertical, 2)
-                        .background(Color.yellow)
+                        .padding(.vertical, 1)
+                        .background(Color(hex: "#fcff00"))
                         .foregroundColor(.black)
                         .cornerRadius(4)
-                        .offset(y: -10)
+                        .offset(y: -8)
                 }
-                .font(.system(size: 14, weight: .bold))
                 .foregroundColor(.white)
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .background(Color.white.opacity(0.1))
-                .cornerRadius(20)
-                .padding(10)
+                .cornerRadius(16)
+                .padding(8)
             }
         }
     }
 
     private var videoOptions: some View {
         VStack(alignment: .leading, spacing: 20) {
-            optionHeader(title: "Duration", showSVIP: true)
-            HStack(spacing: 12) {
-                selectorButton(title: "5s", isSelected: selectedDuration == "5s") { selectedDuration = "5s" }
-                selectorButton(title: "10s", isSelected: selectedDuration == "10s") { selectedDuration = "10s" }
-            }
-
-            optionHeader(title: "Quality", showSVIP: true)
-            HStack(spacing: 12) {
-                selectorButton(title: "Standard", isSelected: selectedQuality == "Standard") { selectedQuality = "Standard" }
-                selectorButton(title: "High", isSelected: selectedQuality == "High") { selectedQuality = "High" }
-                selectorButton(title: "Ultra HD", isSelected: selectedQuality == "Ultra HD") { selectedQuality = "Ultra HD" }
-            }
-        }
-    }
-
-    private var bottomActionSection: some View {
-        VStack(spacing: 16) {
-            HStack(spacing: 4) {
-                Text("Want faster generation?")
-                    .foregroundColor(.gray)
-                Text("Get SVIP (50% OFF).")
-                    .foregroundColor(.yellow)
-            }
-            .font(.system(size: 14))
-
-            Button(action: {}) {
-                VStack(spacing: 2) {
-                    Text("Generate Video")
-                        .font(.system(size: 18, weight: .bold))
-
-                    HStack(spacing: 4) {
-                        Image(systemName: "diamond.fill")
-                            .font(.system(size: 14))
-                        Text("200")
-                            .font(.system(size: 16, weight: .bold))
-                    }
+            VStack(alignment: .leading, spacing: 10) {
+                optionHeader(title: "Duration", showSVIP: true)
+                HStack(spacing: 12) {
+                    selectorButton(title: "5s", isSelected: selectedDuration == "5s") { selectedDuration = "5s" }
+                    selectorButton(title: "10s", isSelected: selectedDuration == "10s") { selectedDuration = "10s" }
                 }
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 64)
-                .background(
-                    LinearGradient(colors: [Color(hex: "#c260f5"), Color(hex: "#6034e4")], startPoint: .leading, endPoint: .trailing)
-                )
-                .cornerRadius(32)
-                .shadow(color: Color(hex: "#7032d6").opacity(0.3), radius: 10, y: 5)
             }
 
-            HStack(spacing: 6) {
-                Image(systemName: "checkmark.shield.fill")
-                    .foregroundColor(.purple)
-                Text("Failed task? 100% Refund.")
-                    .font(.system(size: 12))
-                    .foregroundColor(.gray)
+            VStack(alignment: .leading, spacing: 10) {
+                optionHeader(title: "Quality", showSVIP: true)
+                HStack(spacing: 8) {
+                    selectorButton(title: "Standard", isSelected: selectedQuality == "Standard") { selectedQuality = "Standard" }
+                    selectorButton(title: "High", isSelected: selectedQuality == "High") { selectedQuality = "High" }
+                    selectorButton(title: "Ultra HD", isSelected: selectedQuality == "Ultra HD") { selectedQuality = "Ultra HD" }
+                }
             }
         }
-        .padding(20)
-        .background(
-            Color(hex: "#0c0c0c")
-                .shadow(color: .black.opacity(0.5), radius: 20, y: -10)
-        )
     }
 
     private func optionHeader(title: String, showSVIP: Bool) -> some View {
         HStack {
             Text(title)
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.gray)
+                .font(.system(size: 14))
+                .foregroundColor(.white.opacity(0.4))
+                .padding(.leading, 6)
             Spacer()
             if showSVIP {
                 Text("SVIP")
                     .font(.system(size: 10, weight: .bold))
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
-                    .background(Color.yellow)
+                    .background(Color(hex: "#fcff00"))
                     .foregroundColor(.black)
                     .cornerRadius(4)
             }
@@ -217,12 +201,72 @@ struct ImageToVideoView: View {
     private func selectorButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 14, weight: .bold))
-                .foregroundColor(isSelected ? .white : .gray)
+                .font(.system(size: 14, weight: isSelected ? .bold : .regular))
+                .foregroundColor(isSelected ? .white : .white.opacity(0.6))
                 .frame(maxWidth: .infinity)
                 .frame(height: 44)
-                .background(isSelected ? Color(hex: "#7032d6") : Color(hex: "#1a1a1a"))
+                .background(isSelected ? Color(hex: "#7032d6") : Color.white.opacity(0.05))
                 .cornerRadius(22)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 22)
+                        .stroke(Color.white.opacity(0.05), lineWidth: 1)
+                )
         }
+    }
+
+    private var bottomActionSection: some View {
+        VStack(spacing: 16) {
+            HStack(spacing: 4) {
+                Text("Want faster generation?")
+                    .foregroundColor(.white.opacity(0.4))
+                Text("Get SVIP (50% OFF).")
+                    .foregroundColor(Color(hex: "#fcff00"))
+                    .font(.system(size: 14, weight: .bold))
+            }
+            .font(.system(size: 12))
+
+            Button(action: {}) {
+                VStack(spacing: 2) {
+                    Text("Generate Video")
+                        .font(.system(size: 18, weight: .bold))
+
+                    HStack(spacing: 4) {
+                        Image(systemName: "diamond.fill")
+                            .font(.system(size: 12))
+                        Text("200")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(Color(hex: "#fcff00"))
+                    }
+                }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 60)
+                .background(
+                    LinearGradient(colors: [Color(hex: "#c260f5"), Color(hex: "#6034e4")], startPoint: .topLeading, endPoint: .bottomTrailing)
+                )
+                .cornerRadius(22)
+                .shadow(color: Color(hex: "#7032d6").opacity(0.3), radius: 10, y: 5)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 22)
+                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                )
+            }
+
+            HStack(spacing: 6) {
+                Image(systemName: "checkmark.shield.fill")
+                    .foregroundColor(.purple)
+                Text("Failed task? 100% Refund.")
+                    .font(.system(size: 12))
+                    .foregroundColor(.white.opacity(0.6))
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 16)
+        .padding(.bottom, 20)
+        .background(
+            Color(hex: "#252428").opacity(0.6)
+                .background(.ultraThinMaterial)
+                .shadow(color: .black.opacity(0.5), radius: 20, y: -10)
+        )
     }
 }
