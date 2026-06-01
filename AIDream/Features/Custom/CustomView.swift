@@ -2,6 +2,7 @@ import SwiftUI
 
 enum GenerationMode {
     case imageToVideo
+    case reference
     case textToImage
 }
 
@@ -10,29 +11,31 @@ struct CustomView: View {
 
     var body: some View {
         NavigationView {
-            ZStack {
-                Color(hex: "#0c0c0c")
-                    .ignoresSafeArea()
+            ZStack(alignment: .top) {
+                Color(hex: "#0c0c0c").ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    // 自定义导航栏
+                    // 统一导航栏
                     customNavBar
 
                     // 模式切换
                     modeSelector
 
-                    if selectedMode == .imageToVideo {
-                        ImageToVideoView()
-                    } else {
-                        TextToImageView()
+                    // 页面内容切换
+                    ZStack {
+                        if selectedMode == .imageToVideo {
+                            ImageToVideoView()
+                        } else if selectedMode == .reference {
+                            ReferenceVideoView()
+                        } else {
+                            TextToImageView()
+                        }
                     }
                 }
             }
             .navigationBarHidden(true)
         }
     }
-
-    // MARK: - Components
 
     private var customNavBar: some View {
         HStack {
@@ -44,15 +47,11 @@ struct CustomView: View {
                     .background(Color(hex: "#868095").opacity(0.2))
                     .clipShape(Circle())
             }
-
             Spacer()
-
-            Text(selectedMode == .imageToVideo ? "Create Video" : "Create Image")
+            Text(navTitle)
                 .font(.system(size: 18, weight: .bold))
                 .foregroundColor(.white)
-
             Spacer()
-
             Button(action: {}) {
                 Image(systemName: "lightbulb")
                     .font(.system(size: 18))
@@ -66,14 +65,22 @@ struct CustomView: View {
         .padding(.top, 10)
     }
 
+    private var navTitle: String {
+        switch selectedMode {
+        case .imageToVideo: return "Create Video"
+        case .reference: return "Reference Video"
+        case .textToImage: return "Create Image"
+        }
+    }
+
     private var modeSelector: some View {
         HStack(spacing: 0) {
-            ForEach([GenerationMode.imageToVideo, GenerationMode.textToImage], id: \.self) { mode in
+            ForEach([GenerationMode.imageToVideo, GenerationMode.reference, GenerationMode.textToImage], id: \.self) { mode in
                 Button(action: { selectedMode = mode }) {
                     VStack(spacing: 8) {
-                        Text(mode == .imageToVideo ? "Image to Video" : "Text to Image")
-                            .font(.system(size: 16, weight: selectedMode == mode ? .bold : .medium))
-                            .foregroundColor(selectedMode == mode ? .white : .gray)
+                        Text(modeTitle(for: mode))
+                            .font(.system(size: 15, weight: selectedMode == mode ? .bold : .medium))
+                            .foregroundColor(selectedMode == mode ? .white : .white.opacity(0.4))
 
                         if selectedMode == mode {
                             RoundedRectangle(cornerRadius: 2)
@@ -87,13 +94,14 @@ struct CustomView: View {
                 .frame(maxWidth: .infinity)
             }
         }
-        .padding(.vertical, 20)
+        .padding(.vertical, 15)
     }
-}
 
-struct CustomView_Previews: PreviewProvider {
-    static var previews: some View {
-        CustomView()
-            .preferredColorScheme(.dark)
+    private func modeTitle(for mode: GenerationMode) -> String {
+        switch mode {
+        case .imageToVideo: return "Image to Video"
+        case .reference: return "Reference"
+        case .textToImage: return "Text to Image"
+        }
     }
 }
