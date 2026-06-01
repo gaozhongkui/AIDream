@@ -6,7 +6,6 @@ struct ImageToVideoView: View {
     @State private var selectedQuality: String = "Standard"
     @State private var selectedRatio: String = "9:16"
 
-    // 使用单例管理生成状态
     @ObservedObject private var videoGenerator = AIVideoGenerator.shared
 
     var body: some View {
@@ -16,28 +15,29 @@ struct ImageToVideoView: View {
             VStack(spacing: 0) {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 28) {
-                        // 图片上传区
-                        imageUploadSection
-                            .padding(.top, 16)
-
-                        // Prompt 区
+                        imageUploadSection.padding(.top, 16)
                         promptSection
-
-                        // 视频参数区
                         VStack(spacing: 24) {
                             optionRow(title: "Duration", options: ["5s", "10s"], selection: $selectedDuration, proOptions: ["10s"])
                             optionRow(title: "Quality", options: ["Standard", "High", "Ultra HD"], selection: $selectedQuality, proOptions: ["High", "Ultra HD"])
                             aspectRatioSection
                         }
-
-                        Spacer(minLength: 180)
+                        Spacer(minLength: 220) // 给动画留位置
                     }
                     .padding(.horizontal, 16)
                 }
             }
 
-            // 底部操作区 (已集成进度监听)
-            bottomActionSection
+            // 底部操作区
+            VStack(spacing: 0) {
+                if isGenerating {
+                    LottieView(name: "ai_generating_a")
+                        .frame(width: 120, height: 80)
+                        .transition(.scale.combined(with: .opacity))
+                }
+
+                bottomActionSection
+            }
         }
         .overlay(
             Group {
@@ -46,6 +46,7 @@ struct ImageToVideoView: View {
                 }
             }
         )
+        .animation(.spring(), value: isGenerating)
     }
 
     // MARK: - Components
@@ -57,11 +58,10 @@ struct ImageToVideoView: View {
                 imageCard(title: "End", image: nil)
             }
             .frame(maxWidth: .infinity)
-
             Text("Source Image (Optional)")
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.white.opacity(0.9))
-                .padding(.leading, 6) // 对应设计稿 22pt 的视觉偏移
+                .padding(.leading, 6)
         }
     }
 
@@ -89,25 +89,13 @@ struct ImageToVideoView: View {
                 .cornerRadius(20)
                 .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.15), lineWidth: 1))
             }
-
-            Text(title)
-                .font(.system(size: 12))
-                .foregroundColor(.white)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 2)
-                .background(Color.black.opacity(0.5))
-                .clipShape(Capsule())
-                .padding(8)
+            Text(title).font(.system(size: 12)).foregroundColor(.white).padding(.horizontal, 8).padding(.vertical, 2).background(Color.black.opacity(0.5)).clipShape(Capsule()).padding(8)
         }
     }
 
     private var promptSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("prompt")
-                .font(.system(size: 14))
-                .foregroundColor(.white.opacity(0.4))
-                .padding(.leading, 6) // 对应设计稿 22pt
-
+            Text("prompt").font(.system(size: 14)).foregroundColor(.white.opacity(0.4)).padding(.leading, 6)
             ZStack(alignment: .topLeading) {
                 RoundedRectangle(cornerRadius: 20).fill(Color.white.opacity(0.05)).frame(height: 140)
                 TextEditor(text: $promptText).frame(height: 140).padding(12).scrollContentBackground(.hidden).font(.system(size: 15)).foregroundColor(.white)
@@ -177,7 +165,7 @@ struct ImageToVideoView: View {
             }.font(.system(size: 12))
 
             Button(action: {
-                // 修复：补全 OpenRouter 所需的所有参数
+                // 修复 1: 补全参数
                 videoGenerator.generateVideo(
                     prompt: promptText,
                     image: UIImage(named: "portrait_placeholder"),
@@ -187,7 +175,7 @@ struct ImageToVideoView: View {
                 )
             }) {
                 VStack(spacing: 4) {
-                    Text(isGenerating ? "Generating..." : "Generate Video").font(.system(size: 18, weight: .bold))
+                    Text(isGenerating ? "AI Generator Processing..." : "Generate Video").font(.system(size: 18, weight: .bold))
                     if !isGenerating {
                         HStack(spacing: 4) {
                             Image(systemName: "diamond.fill").font(.system(size: 12))
@@ -206,8 +194,7 @@ struct ImageToVideoView: View {
             } else {
                 HStack(spacing: 4) {
                     Image(systemName: "checkmark.shield.fill").foregroundColor(.white.opacity(0.8))
-                    Text("Failed task? 100% Refund.")
-                        .foregroundStyle(LinearGradient(colors: [Color(hex: "#fc98ff"), Color(hex: "#95d7ff")], startPoint: .leading, endPoint: .trailing))
+                    Text("Failed task? 100% Refund.").foregroundStyle(LinearGradient(colors: [Color(hex: "#fc98ff"), Color(hex: "#95d7ff")], startPoint: .leading, endPoint: .trailing))
                 }.font(.system(size: 12))
             }
         }
@@ -217,7 +204,8 @@ struct ImageToVideoView: View {
 
     private var isGenerating: Bool {
         switch videoGenerator.state {
-        case .uploading, .generating: return true // 修复：移除了 .taskCreated
+        // 修复 2: 移除 .taskCreated
+        case .uploading, .generating: return true
         default: return false
         }
     }

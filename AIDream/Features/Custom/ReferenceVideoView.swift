@@ -32,14 +32,22 @@ struct ReferenceVideoView: View {
                             aspectRatioSection
                         }
 
-                        Spacer(minLength: 180)
+                        Spacer(minLength: 220) // 给 Lottie 留出空间
                     }
                     .padding(.horizontal, 16)
                 }
             }
 
-            // 底部操作区
-            bottomActionSection
+            // 底部操作区 (集成 Lottie 动画)
+            VStack(spacing: 0) {
+                if isGenerating {
+                    LottieView(name: "ai_generating_a")
+                        .frame(width: 120, height: 80)
+                        .transition(.scale.combined(with: .opacity))
+                }
+
+                bottomActionSection
+            }
         }
         .overlay(
             Group {
@@ -48,6 +56,7 @@ struct ReferenceVideoView: View {
                 }
             }
         )
+        .animation(.spring(), value: isGenerating)
     }
 
     // MARK: - Reference Image Section (3 Slots)
@@ -63,6 +72,7 @@ struct ReferenceVideoView: View {
             Text("Source Image (1-3)")
                 .font(.system(size: 16, weight: .bold))
                 .foregroundColor(.white)
+                .padding(.leading, 6)
         }
     }
 
@@ -97,7 +107,7 @@ struct ReferenceVideoView: View {
 
     private var promptSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("prompt").font(.system(size: 14)).foregroundColor(.white.opacity(0.4))
+            Text("prompt").font(.system(size: 14)).foregroundColor(.white.opacity(0.4)).padding(.leading, 6)
             ZStack(alignment: .topLeading) {
                 RoundedRectangle(cornerRadius: 20).fill(Color.white.opacity(0.05)).frame(height: 140)
                 TextEditor(text: $promptText).frame(height: 140).padding(12).scrollContentBackground(.hidden).font(.system(size: 15)).foregroundColor(.white)
@@ -110,7 +120,7 @@ struct ReferenceVideoView: View {
 
     private func optionRow(title: String, options: [String], selection: Binding<String>, proOptions: [String]) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(title).font(.system(size: 14)).foregroundColor(.white.opacity(0.4))
+            Text(title).font(.system(size: 14)).foregroundColor(.white.opacity(0.4)).padding(.leading, 6)
             HStack(spacing: 8) {
                 ForEach(options, id: \.self) { opt in
                     Button(action: { selection.wrappedValue = opt }) {
@@ -136,7 +146,7 @@ struct ReferenceVideoView: View {
 
     private var aspectRatioSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("aspect ratio").font(.system(size: 14)).foregroundColor(.white.opacity(0.4))
+            Text("aspect ratio").font(.system(size: 14)).foregroundColor(.white.opacity(0.4)).padding(.leading, 6)
             HStack(spacing: 8) {
                 ratioButton(label: "9:16", icon: "iphone", isSelected: selectedRatio == "9:16") { selectedRatio = "9:16" }
                 ratioButton(label: "1:1", icon: "square", isSelected: selectedRatio == "1:1") { selectedRatio = "1:1" }
@@ -167,7 +177,6 @@ struct ReferenceVideoView: View {
             }.font(.system(size: 12))
 
             Button(action: {
-                // 修复：补全参数
                 videoGenerator.generateVideo(
                     prompt: promptText,
                     image: UIImage(named: "portrait_placeholder"),
@@ -177,7 +186,7 @@ struct ReferenceVideoView: View {
                 )
             }) {
                 VStack(spacing: 4) {
-                    Text(isGenerating ? "Generating..." : "Generate Video").font(.system(size: 18, weight: .bold))
+                    Text(isGenerating ? "AI Generator Processing..." : "Generate Video").font(.system(size: 18, weight: .bold))
                     if !isGenerating {
                         HStack(spacing: 4) {
                             Image(systemName: "diamond.fill").font(.system(size: 12))
@@ -207,7 +216,6 @@ struct ReferenceVideoView: View {
 
     private var isGenerating: Bool {
         switch videoGenerator.state {
-        // 修复：移除了 .taskCreated
         case .uploading, .generating: return true
         default: return false
         }

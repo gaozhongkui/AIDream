@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A1B2C3D4E5F60003 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D4E5F60002 /* Kingfisher */; };
+		L0TT1E0123456789 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = L0TT1E0123456788 /* Lottie */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1B2C3D4E5F60003 /* Kingfisher in Frameworks */,
+				L0TT1E0123456789 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,6 +120,7 @@
 			name = AIDream;
 			packageProductDependencies = (
 				A1B2C3D4E5F60002 /* Kingfisher */,
+				L0TT1E0123456788 /* Lottie */,
 			);
 			productName = AIDream;
 			productReference = 05E608BB2FC88CD8005B09A3 /* AIDream.app */;
@@ -203,6 +206,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				A1B2C3D4E5F60001 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				L0TT1E0123456787 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 05E608BC2FC88CD8005B09A3 /* Products */;
@@ -278,7 +282,7 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		05E608DA2FC88CDA005B09A3 /* Debug */ = {
+		05E608DA2FC88CD8005B09A3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -549,7 +553,7 @@
 		05E608B62FC88CD8005B09A3 /* Build configuration list for PBXProject "AIDream" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				05E608DA2FC88CDA005B09A3 /* Debug */,
+				05E608DA2FC88CD8005B09A3 /* Debug */,
 				05E608DB2FC88CDA005B09A3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -593,6 +597,14 @@
 				minimumVersion = 8.0.0;
 			};
 		};
+		L0TT1E0123456787 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -600,6 +612,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A1B2C3D4E5F60001 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		L0TT1E0123456788 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = L0TT1E0123456787 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
