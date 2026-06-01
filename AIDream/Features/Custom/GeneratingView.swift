@@ -6,74 +6,96 @@ struct GeneratingView: View {
 
     var body: some View {
         ZStack {
-            // 背景 - id: ECLB2
-            Color(hex: "#0c0c0c").ignoresSafeArea()
+            Color(hex: "#090909").ignoresSafeArea()
+            // Subtle radial gold glow in background
+            RadialGradient(
+                colors: [Color(hex: "#D4A82A").opacity(0.08), .clear],
+                center: .center,
+                startRadius: 20,
+                endRadius: 300
+            )
+            .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 Spacer()
 
-                // 1. 中心生成卡片 - id: okiAM / QiREB
+                // Center card
                 ZStack {
-                    // 卡片背景与毛玻璃
-                    RoundedRectangle(cornerRadius: 35)
-                        .fill(Color(hex: "#46434e").opacity(0.6))
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(35)
+                    // Card background
+                    RoundedRectangle(cornerRadius: 32)
+                        .fill(Color(hex: "#17171F"))
                         .frame(width: 240, height: 427)
-                        // 渐变边框
                         .overlay(
-                            RoundedRectangle(cornerRadius: 35)
+                            // Gold gradient border
+                            RoundedRectangle(cornerRadius: 32)
                                 .stroke(
                                     LinearGradient(
-                                        colors: [Color(hex: "#fc98ff"), Color(hex: "#95d7ff")],
+                                        colors: [
+                                            Color(hex: "#F6C842"),
+                                            Color(hex: "#8B6A14"),
+                                            Color(hex: "#F6C842").opacity(0.3)
+                                        ],
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
                                     ),
-                                    lineWidth: 2
+                                    lineWidth: 1.5
                                 )
                         )
 
-                    VStack(spacing: 30) {
-                        // 核心动画：ai_generating_a.json
+                    VStack(spacing: 28) {
                         LottieView(name: "ai_generating_a")
                             .frame(width: 150, height: 150)
 
-                        // 进度与文本
-                        VStack(spacing: 12) {
+                        VStack(spacing: 10) {
+                            // Gold progress percentage
                             Text("\(Int(progress * 100))%")
-                                .font(.system(size: 32, weight: .bold))
-                                .foregroundColor(.white)
+                                .font(.system(size: 36, weight: .bold))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [Color(hex: "#F6C842"), Color(hex: "#C9920A")],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
 
-                            Text("Generating...")
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(.white.opacity(0.7))
+                            Text("Generating…")
+                                .font(.system(size: 15, weight: .medium))
+                                .foregroundColor(Color.white.opacity(0.55))
                         }
                     }
                 }
-                .shadow(color: Color(hex: "#fc98ff").opacity(0.2), radius: 25, x: 0, y: 15)
+                .shadow(color: Color(hex: "#D4A82A").opacity(0.2), radius: 30, x: 0, y: 15)
 
                 Spacer()
 
-                // 2. 底部操作区
-                VStack(spacing: 16) {
-                    // 按钮 - id: AEw5a
+                // Bottom actions
+                VStack(spacing: 14) {
                     Button(action: onBackToHome) {
-                        Text("Back to Home")
-                            .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(.white.opacity(0.9))
-                            .frame(width: 335, height: 60)
-                            .background(Color(hex: "#868095").opacity(0.2))
-                            .cornerRadius(20)
+                        HStack(spacing: 8) {
+                            Image(systemName: "arrow.left")
+                                .font(.system(size: 14, weight: .semibold))
+                            Text("Back to Home")
+                                .font(.system(size: 16, weight: .semibold))
+                        }
+                        .foregroundColor(.white.opacity(0.85))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(Color.white.opacity(0.07))
+                        .cornerRadius(18)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18)
+                                .stroke(Color(hex: "#28282E"), lineWidth: 0.5)
+                        )
                     }
+                    .padding(.horizontal, 20)
 
-                    // 提示文字 - id: xbosi
                     Text("You can leave safely. We'll notify you when it's done.")
                         .font(.system(size: 12))
-                        .foregroundColor(.white.opacity(0.4))
+                        .foregroundColor(Color.white.opacity(0.3))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
                 }
-                .padding(.bottom, 40)
+                .padding(.bottom, 48)
             }
         }
     }

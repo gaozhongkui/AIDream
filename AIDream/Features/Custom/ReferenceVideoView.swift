@@ -6,71 +6,65 @@ struct ReferenceVideoView: View {
     @State private var selectedQuality: String = "Standard"
     @State private var selectedRatio: String = "9:16"
 
-    // 接入视频生成引擎
     @ObservedObject private var videoGenerator = AIVideoGenerator.shared
 
     var body: some View {
         ZStack {
-            // 背景层
-            Color(hex: "#0c0c0c").ignoresSafeArea()
+            AppTheme.bgPrimary.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 28) {
-                        // 三槽位参考图上传区
-                        referenceImageUploadSection
-                            .padding(.top, 32)
-
-                        // Prompt 区
+                        referenceImageUploadSection.padding(.top, 24)
                         promptSection
-
-                        // 视频参数区
-                        VStack(spacing: 24) {
-                            optionRow(title: "Duration", options: ["5s", "10s"], selection: $selectedDuration, proOptions: ["10s"])
-                            optionRow(title: "Quality", options: ["Standard", "High", "Ultra HD"], selection: $selectedQuality, proOptions: ["High", "Ultra HD"])
+                        VStack(spacing: 22) {
+                            optionRow(
+                                title: "Duration",
+                                options: ["5s", "10s"],
+                                selection: $selectedDuration,
+                                proOptions: ["10s"]
+                            )
+                            optionRow(
+                                title: "Quality",
+                                options: ["Standard", "High", "Ultra HD"],
+                                selection: $selectedQuality,
+                                proOptions: ["High", "Ultra HD"]
+                            )
                             aspectRatioSection
                         }
-
                         Spacer(minLength: 120)
                     }
                     .padding(.horizontal, 16)
                 }
             }
 
-            // 底部操作区 (未生成时显示)
             if !isGenerating {
                 bottomActionSection
             }
 
-            // 全屏“生成中”布局 - 基于 test.pen 设计
             if isGenerating {
                 GeneratingView(
                     progress: currentProgress,
-                    onBackToHome: {
-                        videoGenerator.cancelGeneration()
-                    }
+                    onBackToHome: { videoGenerator.cancelGeneration() }
                 )
                 .transition(.opacity)
                 .zIndex(10)
             }
         }
-        // 视频生成完成后的全屏覆盖层 - 基于 test.pen “完成”设计
         .fullScreenCover(isPresented: Binding(
-            get: { if case .completed = videoGenerator.state { return true } else { return false } },
+            get: {
+                if case .completed = videoGenerator.state { return true }
+                return false
+            },
             set: { _ in videoGenerator.cancelGeneration() }
         )) {
             if case .completed(let url) = videoGenerator.state {
                 VideoCompletionView(
                     videoURL: url,
-                    onClose: { videoGenerator.cancelGeneration() },
-                    onRetake: { videoGenerator.cancelGeneration() },
-                    onDownload: {
-                        // 这里可以添加保存到相册的逻辑
-                        print("Downloading video from: \(url)")
-                    },
-                    onShare: {
-                        // 这里可以添加系统分享逻辑
-                    }
+                    onClose:    { videoGenerator.cancelGeneration() },
+                    onRetake:   { videoGenerator.cancelGeneration() },
+                    onDownload: {},
+                    onShare:    {}
                 )
             }
         }
@@ -78,7 +72,6 @@ struct ReferenceVideoView: View {
     }
 
     // MARK: - Helpers
-
     private var isGenerating: Bool {
         switch videoGenerator.state {
         case .uploading, .generating: return true
@@ -87,67 +80,108 @@ struct ReferenceVideoView: View {
     }
 
     private var currentProgress: Double {
-        if case .generating(let p) = videoGenerator.state {
-            return p
-        }
+        if case .generating(let p) = videoGenerator.state { return p }
         return 0.1
     }
 
-    // MARK: - 原有组件 (保持 test.pen 风格)
-
+    // MARK: - Components
     private var referenceImageUploadSection: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 14) {
             HStack(spacing: 10) {
-                referenceImageCard(title: "Add Start Frame", isDashed: true, isProminent: true)
-                referenceImageCard(title: "Add Image", isDashed: false, isProminent: false)
-                referenceImageCard(title: "Add Image", isDashed: false, isProminent: false)
+                referenceCard(title: "Start Frame", prominent: true)
+                referenceCard(title: "Add Image",   prominent: false)
+                referenceCard(title: "Add Image",   prominent: false)
             }
-            .frame(maxWidth: .infinity)
-            Text("Source Image (1-3)").font(.system(size: 16, weight: .bold)).foregroundColor(.white).padding(.leading, 6)
+            Text("Source Images (1–3)")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundColor(AppTheme.textSecondary)
+                .padding(.leading, 4)
         }
     }
 
-    private func referenceImageCard(title: String, isDashed: Bool, isProminent: Bool) -> some View {
+    private func referenceCard(title: String, prominent: Bool) -> some View {
         Button(action: {}) {
-            VStack(spacing: 12) {
-                Image(systemName: "plus").font(.system(size: 20, weight: .bold))
-                    .foregroundStyle(isProminent ?
-                        LinearGradient(colors: [Color(hex: "#fc98ff"), Color(hex: "#95d7ff")], startPoint: .topLeading, endPoint: .bottomTrailing) :
-                        LinearGradient(colors: [Color.white.opacity(0.15), Color.white.opacity(0.15)], startPoint: .top, endPoint: .bottom)
-                    )
-                Text(title).font(.system(size: 11, weight: .medium)).foregroundColor(.white.opacity(isProminent ? 0.4 : 0.2)).multilineTextAlignment(.center)
+            VStack(spacing: 10) {
+                Image(systemName: "plus")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(prominent ? AnyShapeStyle(AppTheme.goldGrad) : AnyShapeStyle(AppTheme.textMuted))
+                Text(title)
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(prominent ? AppTheme.textSecondary : AppTheme.textMuted)
+                    .multilineTextAlignment(.center)
             }
-            .frame(maxWidth: .infinity).frame(height: 110).background(Color.white.opacity(0.05)).cornerRadius(20)
-            .overlay(RoundedRectangle(cornerRadius: 20).stroke(style: StrokeStyle(lineWidth: 1, dash: isDashed ? [4, 4] : [])).foregroundColor(.white.opacity(isDashed ? 0.3 : 0.1)))
+            .frame(maxWidth: .infinity)
+            .frame(height: 110)
+            .background(AppTheme.bgCard)
+            .cornerRadius(18)
+            .goldBorder(cornerRadius: 18, active: prominent)
         }
     }
 
     private var promptSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("prompt").font(.system(size: 14)).foregroundColor(.white.opacity(0.4)).padding(.leading, 6)
+            Text("PROMPT")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundColor(AppTheme.textMuted)
+                .tracking(1.2)
+                .padding(.leading, 4)
+
             ZStack(alignment: .topLeading) {
-                RoundedRectangle(cornerRadius: 20).fill(Color.white.opacity(0.05)).frame(height: 140)
-                TextEditor(text: $promptText).frame(height: 140).padding(12).scrollContentBackground(.hidden).font(.system(size: 15)).foregroundColor(.white)
+                RoundedRectangle(cornerRadius: 18)
+                    .fill(AppTheme.bgCard)
+                    .frame(height: 140)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 18)
+                            .stroke(AppTheme.borderSubtle, lineWidth: 0.5)
+                    )
+
+                TextEditor(text: $promptText)
+                    .frame(height: 140)
+                    .padding(12)
+                    .scrollContentBackground(.hidden)
+                    .font(.system(size: 15))
+                    .foregroundColor(.white)
+
                 if promptText.isEmpty {
-                    Text("Describe the scene, action, and style...").font(.system(size: 15)).foregroundColor(.white.opacity(0.2)).padding(.horizontal, 16).padding(.vertical, 20)
+                    Text("Describe the scene, action and style…")
+                        .font(.system(size: 14))
+                        .foregroundColor(AppTheme.textMuted)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 20)
+                        .allowsHitTesting(false)
                 }
             }
         }
     }
 
-    private func optionRow(title: String, options: [String], selection: Binding<String>, proOptions: [String]) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(title).font(.system(size: 14)).foregroundColor(.white.opacity(0.4)).padding(.leading, 6)
+    private func optionRow(
+        title: String,
+        options: [String],
+        selection: Binding<String>,
+        proOptions: [String]
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(title.uppercased())
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundColor(AppTheme.textMuted)
+                .tracking(1.2)
+                .padding(.leading, 4)
+
             HStack(spacing: 8) {
                 ForEach(options, id: \.self) { opt in
-                    Button(action: { selection.wrappedValue = opt }) {
-                        HStack(spacing: 4) {
+                    Button { selection.wrappedValue = opt } label: {
+                        HStack(spacing: 5) {
                             Text(opt)
+                                .font(.system(
+                                    size: 14,
+                                    weight: selection.wrappedValue == opt ? .bold : .regular
+                                ))
+                                .foregroundColor(.white)
                             if proOptions.contains(opt) { proTag }
                         }
-                        .font(.system(size: 15, weight: selection.wrappedValue == opt ? .bold : .regular))
-                        .foregroundColor(.white).frame(maxWidth: .infinity).frame(height: 44)
-                        .background(selection.wrappedValue == opt ? Color(hex: "#7032d6") : Color.white.opacity(0.05)).clipShape(Capsule())
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
+                        .optionStyle(selected: selection.wrappedValue == opt)
                     }
                 }
             }
@@ -155,55 +189,113 @@ struct ReferenceVideoView: View {
     }
 
     private var proTag: some View {
-        Text("PRO").font(.system(size: 10, weight: .bold)).padding(.horizontal, 6).padding(.vertical, 2).background(LinearGradient(colors: [Color(hex: "#c260f5"), Color(hex: "#6034e4")], startPoint: .topLeading, endPoint: .bottomTrailing)).clipShape(Capsule())
+        Text("PRO")
+            .font(.system(size: 9, weight: .bold))
+            .padding(.horizontal, 5)
+            .padding(.vertical, 2)
+            .foregroundColor(Color(hex: "#0A0A0A"))
+            .background(AppTheme.goldGradH)
+            .clipShape(Capsule())
     }
 
     private var aspectRatioSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("aspect ratio").font(.system(size: 14)).foregroundColor(.white.opacity(0.4)).padding(.leading, 6)
+        VStack(alignment: .leading, spacing: 10) {
+            Text("ASPECT RATIO")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundColor(AppTheme.textMuted)
+                .tracking(1.2)
+                .padding(.leading, 4)
+
             HStack(spacing: 8) {
-                ratioButton(label: "9:16", icon: "iphone", isSelected: selectedRatio == "9:16") { selectedRatio = "9:16" }
-                ratioButton(label: "1:1", icon: "square", isSelected: selectedRatio == "1:1") { selectedRatio = "1:1" }
+                ratioButton(label: "9:16", icon: "iphone",
+                            isSelected: selectedRatio == "9:16") { selectedRatio = "9:16" }
+                ratioButton(label: "1:1",  icon: "square",
+                            isSelected: selectedRatio == "1:1")  { selectedRatio = "1:1" }
             }
         }
     }
 
-    private func ratioButton(label: String, icon: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+    private func ratioButton(
+        label: String,
+        icon: String,
+        isSelected: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
         Button(action: action) {
-            VStack(spacing: 4) {
+            VStack(spacing: 6) {
                 ZStack(alignment: .topTrailing) {
                     Image(systemName: icon).font(.system(size: 20))
                     proTag.offset(x: 12, y: -8)
                 }
-                Text(label).font(.system(size: 14, weight: isSelected ? .bold : .regular))
-            }.foregroundColor(.white).frame(maxWidth: .infinity).frame(height: 64).background(isSelected ? Color(hex: "#7032d6") : Color.white.opacity(0.05)).cornerRadius(20)
+                Text(label)
+                    .font(.system(size: 13, weight: isSelected ? .bold : .regular))
+            }
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity)
+            .frame(height: 64)
+            .optionStyle(selected: isSelected, cornerRadius: 18)
         }
     }
 
+    // MARK: - Bottom Bar
     private var bottomActionSection: some View {
-        VStack(spacing: 16) {
-            HStack(spacing: 6) {
-                Text("Want faster generation?").foregroundColor(.white.opacity(0.4))
-                Text("Get SVIP (50% OFF).").font(.system(size: 14, weight: .bold)).foregroundStyle(LinearGradient(colors: [Color(hex: "#ffa8a8"), Color(hex: "#fcff00")], startPoint: .leading, endPoint: .trailing))
-            }.font(.system(size: 12))
+        VStack(spacing: 14) {
+            HStack(spacing: 5) {
+                Text("Want faster generation?")
+                    .foregroundColor(AppTheme.textMuted)
+                Text("Get SVIP (50% OFF)")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(AppTheme.goldGradH)
+            }
+            .font(.system(size: 12))
 
-            Button(action: {
-                videoGenerator.generateVideo(prompt: promptText, image: UIImage(named: "portrait_placeholder"), duration: selectedDuration, quality: selectedQuality, ratio: selectedRatio)
-            }) {
+            Button {
+                videoGenerator.generateVideo(
+                    prompt: promptText,
+                    image: UIImage(named: "portrait_placeholder"),
+                    duration: selectedDuration,
+                    quality: selectedQuality,
+                    ratio: selectedRatio
+                )
+            } label: {
                 VStack(spacing: 4) {
-                    Text("Generate Video").font(.system(size: 18, weight: .bold))
+                    Text("Generate Video")
+                        .font(.system(size: 17, weight: .bold))
                     HStack(spacing: 4) {
-                        Image(systemName: "diamond.fill").font(.system(size: 12))
-                        Text("200").font(.system(size: 14, weight: .bold))
-                    }.foregroundStyle(LinearGradient(colors: [Color(hex: "#ffa8a8"), Color(hex: "#fcff00")], startPoint: .leading, endPoint: .trailing))
-                }.foregroundColor(.white).frame(maxWidth: .infinity).frame(height: 60).background(LinearGradient(colors: [Color(hex: "#c260f5"), Color(hex: "#6034e4")], startPoint: .leading, endPoint: .trailing)).cornerRadius(22)
+                        Image(systemName: "diamond.fill").font(.system(size: 11))
+                        Text("200").font(.system(size: 13, weight: .bold))
+                    }
+                    .foregroundColor(Color(hex: "#0A0A0A"))
+                }
+                .foregroundColor(Color(hex: "#0A0A0A"))
+                .frame(maxWidth: .infinity)
+                .frame(height: 60)
+                .background(AppTheme.goldGradH)
+                .cornerRadius(22)
+                .shadow(color: AppTheme.goldGlow, radius: 12, y: 5)
             }
 
-            HStack(spacing: 4) {
-                Image(systemName: "checkmark.shield.fill").foregroundColor(.white.opacity(0.8))
-                Text("Failed task? 100% Refund.").foregroundStyle(LinearGradient(colors: [Color(hex: "#fc98ff"), Color(hex: "#95d7ff")], startPoint: .leading, endPoint: .trailing))
-            }.font(.system(size: 12))
+            HStack(spacing: 5) {
+                Image(systemName: "checkmark.shield.fill")
+                    .foregroundStyle(AppTheme.goldGradH)
+                Text("Failed task? 100% Refund.")
+                    .foregroundColor(AppTheme.textSecondary)
+            }
+            .font(.system(size: 12))
         }
-        .padding(20).padding(.bottom, 20).background(Color(hex: "#252428").opacity(0.6).background(.ultraThinMaterial))
+        .padding(20)
+        .padding(.bottom, 20)
+        .background(
+            ZStack {
+                AppTheme.bgSecondary
+                Color.white.opacity(0.015)
+            }
+            .overlay(
+                Rectangle()
+                    .fill(AppTheme.borderSubtle)
+                    .frame(height: 0.5),
+                alignment: .top
+            )
+        )
     }
 }

@@ -13,7 +13,7 @@ final class VideoListViewController: UIViewController {
         layout.delegate = self
 
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .systemBackground
+        collectionView.backgroundColor = UIColor(red: 9/255, green: 9/255, blue: 9/255, alpha: 1)
         collectionView.register(VideoCell.self, forCellWithReuseIdentifier: VideoCell.identifier)
         collectionView.register(LoadingFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: LoadingFooterView.identifier)
         collectionView.dataSource = self
@@ -26,13 +26,13 @@ final class VideoListViewController: UIViewController {
 
     private let refreshControl: UIRefreshControl = {
         let rc = UIRefreshControl()
-        rc.tintColor = .systemPink
+        rc.tintColor = UIColor(red: 212/255, green: 168/255, blue: 42/255, alpha: 1) // goldMid
         return rc
     }()
 
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
-        indicator.color = .systemPink
+        indicator.color = UIColor(red: 246/255, green: 200/255, blue: 66/255, alpha: 1) // goldBright
         indicator.hidesWhenStopped = true
         return indicator
     }()
@@ -40,7 +40,7 @@ final class VideoListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "探索灵感"
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = UIColor(red: 9/255, green: 9/255, blue: 9/255, alpha: 1)
         setupNavigationBar()
         setupUI()
         setupRefreshControl()
@@ -62,11 +62,19 @@ final class VideoListViewController: UIViewController {
 
     private func setupNavigationBar() {
         navigationController?.navigationBar.prefersLargeTitles = true
+        let darkBg = UIColor(red: 9/255, green: 9/255, blue: 9/255, alpha: 1)
+        let goldColor = UIColor(red: 212/255, green: 168/255, blue: 42/255, alpha: 1)
         let appearance = UINavigationBarAppearance()
-        appearance.configureWithDefaultBackground()
-        appearance.backgroundColor = .systemBackground
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = darkBg
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.largeTitleTextAttributes = [
+            .foregroundColor: goldColor,
+            .font: UIFont.systemFont(ofSize: 32, weight: .bold)
+        ]
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.tintColor = goldColor
     }
 
     private func setupUI() {

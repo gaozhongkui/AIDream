@@ -15,7 +15,7 @@ final class VideoCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.backgroundColor = .systemGray6
+        imageView.backgroundColor = UIColor(red: 23/255, green: 23/255, blue: 31/255, alpha: 1)
         return imageView
     }()
 
@@ -70,7 +70,7 @@ final class VideoCell: UICollectionViewCell {
 
     private let starIcon: UIImageView = {
         let iv = UIImageView(image: UIImage(systemName: "heart.fill"))
-        iv.tintColor = .white.withAlphaComponent(0.8)
+        iv.tintColor = UIColor(red: 246/255, green: 200/255, blue: 66/255, alpha: 0.9) // goldBright
         iv.contentMode = .scaleAspectFit
         return iv
     }()
@@ -85,7 +85,7 @@ final class VideoCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        contentView.backgroundColor = .secondarySystemGroupedBackground
+        contentView.backgroundColor = UIColor(red: 23/255, green: 23/255, blue: 31/255, alpha: 1)
         contentView.layer.cornerRadius = 16
         contentView.layer.masksToBounds = true
 

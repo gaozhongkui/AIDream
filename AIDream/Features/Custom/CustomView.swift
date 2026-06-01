@@ -12,16 +12,11 @@ struct CustomView: View {
     var body: some View {
         NavigationView {
             ZStack(alignment: .top) {
-                Color(hex: "#0c0c0c").ignoresSafeArea()
+                AppTheme.bgPrimary.ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    // 顶部导航栏
                     customNavBar
-
-                    // 模式切换器
                     modeSelector
-
-                    // 页面内容 (内部自带 ScrollView 和 底部按钮)
                     ZStack {
                         if selectedMode == .imageToVideo {
                             ImageToVideoView()
@@ -37,28 +32,35 @@ struct CustomView: View {
         }
     }
 
+    // MARK: - Nav Bar
     private var customNavBar: some View {
         HStack {
             Button(action: {}) {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.white)
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(AppTheme.textPrimary)
                     .frame(width: 44, height: 44)
-                    .background(Color(hex: "#868095").opacity(0.2))
+                    .background(AppTheme.bgButtonSec)
                     .clipShape(Circle())
+                    .overlay(Circle().stroke(AppTheme.borderSubtle, lineWidth: 0.5))
             }
+
             Spacer()
+
             Text(navTitle)
                 .font(.system(size: 18, weight: .bold))
-                .foregroundColor(.white)
+                .foregroundStyle(AppTheme.goldGradH)
+
             Spacer()
+
             Button(action: {}) {
                 Image(systemName: "lightbulb")
-                    .font(.system(size: 18))
-                    .foregroundColor(.white)
+                    .font(.system(size: 17))
+                    .foregroundColor(AppTheme.goldMid)
                     .frame(width: 44, height: 44)
-                    .background(Color(hex: "#868095").opacity(0.2))
+                    .background(AppTheme.bgButtonSec)
                     .clipShape(Circle())
+                    .overlay(Circle().stroke(AppTheme.borderSubtle, lineWidth: 0.5))
             }
         }
         .padding(.horizontal, 20)
@@ -68,40 +70,57 @@ struct CustomView: View {
     private var navTitle: String {
         switch selectedMode {
         case .imageToVideo: return "Create Video"
-        case .reference: return "Reference Video"
-        case .textToImage: return "Create Image"
+        case .reference:    return "Reference Video"
+        case .textToImage:  return "Create Image"
         }
     }
 
+    // MARK: - Mode Selector
     private var modeSelector: some View {
         HStack(spacing: 0) {
-            ForEach([GenerationMode.imageToVideo, GenerationMode.reference, GenerationMode.textToImage], id: \.self) { mode in
-                Button(action: { selectedMode = mode }) {
-                    VStack(spacing: 8) {
+            ForEach(
+                [GenerationMode.imageToVideo, .reference, .textToImage],
+                id: \.self
+            ) { mode in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) { selectedMode = mode }
+                } label: {
+                    VStack(spacing: 7) {
                         Text(modeTitle(for: mode))
-                            .font(.system(size: 15, weight: selectedMode == mode ? .bold : .medium))
-                            .foregroundColor(selectedMode == mode ? .white : .white.opacity(0.4))
+                            .font(.system(size: 14, weight: selectedMode == mode ? .bold : .medium))
+                            .foregroundStyle(
+                                selectedMode == mode
+                                    ? AnyShapeStyle(AppTheme.goldGradH)
+                                    : AnyShapeStyle(AppTheme.textMuted)
+                            )
 
-                        if selectedMode == mode {
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(Color(hex: "#7032d6"))
-                                .frame(width: 40, height: 3)
-                        } else {
-                            Color.clear.frame(height: 3)
+                        ZStack {
+                            Color.clear.frame(height: 2)
+                            if selectedMode == mode {
+                                RoundedRectangle(cornerRadius: 2)
+                                    .fill(AppTheme.goldGradH)
+                                    .frame(width: 36, height: 2)
+                            }
                         }
                     }
                 }
                 .frame(maxWidth: .infinity)
             }
         }
-        .padding(.vertical, 15)
+        .padding(.vertical, 14)
+        .overlay(
+            Rectangle()
+                .fill(AppTheme.borderSubtle)
+                .frame(height: 0.5),
+            alignment: .bottom
+        )
     }
 
     private func modeTitle(for mode: GenerationMode) -> String {
         switch mode {
         case .imageToVideo: return "Image to Video"
-        case .reference: return "Reference"
-        case .textToImage: return "Text to Image"
+        case .reference:    return "Reference"
+        case .textToImage:  return "Text to Image"
         }
     }
 }

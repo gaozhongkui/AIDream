@@ -10,40 +10,49 @@ struct VideoCompletionView: View {
 
     var body: some View {
         ZStack {
-            // 全屏背景 - id: ECLB2
-            Color(hex: "#0c0c0c").ignoresSafeArea()
+            Color(hex: "#090909").ignoresSafeArea()
+            RadialGradient(
+                colors: [Color(hex: "#D4A82A").opacity(0.07), .clear],
+                center: .center,
+                startRadius: 10,
+                endRadius: 350
+            )
+            .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // 1. 顶部导航栏 - id: rdfV7
+                // Nav bar
                 HStack {
-                    // 关闭按钮 - id: VOdqC
                     Button(action: onClose) {
                         Image(systemName: "xmark")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.white)
+                            .font(.system(size: 15, weight: .bold))
+                            .foregroundColor(Color.white.opacity(0.8))
                             .frame(width: 44, height: 44)
-                            .background(Color(hex: "#868095").opacity(0.2))
+                            .background(Color.white.opacity(0.07))
                             .clipShape(Circle())
+                            .overlay(Circle().stroke(Color(hex: "#28282E"), lineWidth: 0.5))
                     }
 
                     Spacer()
 
-                    // 标题 - id: zpl9E
                     Text("Trending Now")
-                        .font(.custom("Outfit-Bold", size: 18))
-                        .foregroundColor(.white)
-                        .tracking(-0.5) // letterSpacing: -0.5
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [Color(hex: "#F6C842"), Color(hex: "#C9920A")],
+                                startPoint: .leading, endPoint: .trailing
+                            )
+                        )
 
                     Spacer()
 
-                    // 分享按钮 - id: F2UVQ
                     Button(action: onShare) {
                         Image(systemName: "square.and.arrow.up")
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundColor(.white)
+                            .font(.system(size: 17, weight: .bold))
+                            .foregroundColor(Color(hex: "#D4A82A"))
                             .frame(width: 44, height: 44)
-                            .background(Color(hex: "#868095").opacity(0.2))
+                            .background(Color(hex: "#D4A82A").opacity(0.12))
                             .clipShape(Circle())
+                            .overlay(Circle().stroke(Color(hex: "#D4A82A").opacity(0.4), lineWidth: 0.5))
                     }
                 }
                 .padding(.horizontal, 16)
@@ -51,79 +60,78 @@ struct VideoCompletionView: View {
 
                 Spacer()
 
-                // 2. 核心视频展示容器 - id: okiAM / QiREB
+                // Video card
                 ZStack {
-                    // 背景容器：毛玻璃 + 填充色 (#46434e99)
-                    RoundedRectangle(cornerRadius: 35)
-                        .fill(Color(hex: "#46434e").opacity(0.6))
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(35)
+                    RoundedRectangle(cornerRadius: 32)
+                        .fill(Color(hex: "#17171F"))
                         .frame(width: 240, height: 427)
-                        // 彩色渐变描边：fc98ff to 95d7ff
                         .overlay(
-                            RoundedRectangle(cornerRadius: 35)
+                            RoundedRectangle(cornerRadius: 32)
                                 .stroke(
                                     LinearGradient(
-                                        colors: [Color(hex: "#fc98ff"), Color(hex: "#95d7ff")],
+                                        colors: [
+                                            Color(hex: "#F6C842"),
+                                            Color(hex: "#8B6A14"),
+                                            Color(hex: "#F6C842").opacity(0.3)
+                                        ],
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
                                     ),
-                                    lineWidth: 2
+                                    lineWidth: 1.5
                                 )
                         )
 
-                    // 视频预览组件
                     VideoPlayer(player: AVPlayer(url: videoURL))
                         .frame(width: 240, height: 427)
-                        .clipShape(RoundedRectangle(cornerRadius: 35))
+                        .clipShape(RoundedRectangle(cornerRadius: 32))
                 }
-                .shadow(color: Color(hex: "#fc98ff").opacity(0.15), radius: 30, x: 0, y: 15)
+                .shadow(color: Color(hex: "#D4A82A").opacity(0.25), radius: 35, x: 0, y: 15)
 
                 Spacer()
 
-                // 3. 底部操作按钮组 - id: nw7w1
+                // Action buttons
                 HStack(spacing: 12) {
-                    // Retake (重新生成) - id: u81hex
+                    // Retake
                     Button(action: onRetake) {
-                        VStack(spacing: 4) {
+                        VStack(spacing: 5) {
                             Image(systemName: "arrow.counterclockwise")
-                                .font(.system(size: 20, weight: .bold))
+                                .font(.system(size: 18, weight: .bold))
                             Text("Retake")
-                                .font(.custom("Outfit-SemiBold", size: 10)) // id: Rl18h
+                                .font(.system(size: 10, weight: .semibold))
                         }
-                        .foregroundColor(.white)
-                        .frame(width: 60, height: 60)
-                        .background(Color(hex: "#868095").opacity(0.2))
-                        .cornerRadius(20)
+                        .foregroundColor(Color.white.opacity(0.8))
+                        .frame(width: 62, height: 62)
+                        .background(Color.white.opacity(0.07))
+                        .cornerRadius(18)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18)
+                                .stroke(Color(hex: "#28282E"), lineWidth: 0.5)
+                        )
                     }
 
-                    // Download (保存视频) - id: e0CM4
+                    // Download
                     Button(action: onDownload) {
                         HStack(spacing: 8) {
                             Image(systemName: "arrow.down.to.line")
-                                .font(.system(size: 18, weight: .bold))
-                            Text("Download") // id: X96kNb
-                                .font(.custom("Outfit-Bold", size: 18))
+                                .font(.system(size: 17, weight: .bold))
+                            Text("Download")
+                                .font(.system(size: 17, weight: .bold))
                         }
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(hex: "#0A0A0A"))
                         .frame(maxWidth: .infinity)
-                        .frame(height: 60)
+                        .frame(height: 62)
                         .background(
                             LinearGradient(
-                                colors: [Color(hex: "#c260f5"), Color(hex: "#6034e4")],
-                                startPoint: .leading,
-                                endPoint: .trailing
+                                colors: [Color(hex: "#F6C842"), Color(hex: "#C9920A")],
+                                startPoint: .leading, endPoint: .trailing
                             )
                         )
                         .cornerRadius(22)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 22)
-                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                        )
+                        .shadow(color: Color(hex: "#D4A82A").opacity(0.4), radius: 12, y: 5)
                     }
                 }
                 .padding(.horizontal, 20)
-                .padding(.bottom, 40)
+                .padding(.bottom, 44)
             }
         }
     }

@@ -13,7 +13,7 @@ final class LoadingFooterView: UICollectionReusableView {
         let label = UILabel()
         label.text = "— 已经到底啦 —"
         label.font = .systemFont(ofSize: 12)
-        label.textColor = .systemGray
+        label.textColor = UIColor.white.withAlphaComponent(0.28)
         label.textAlignment = .center
         label.isHidden = true
         return label

@@ -91,16 +91,27 @@ final class VideoDetailCell: UICollectionViewCell {
 
     private let useTemplateButton: UIButton = {
         let btn = UIButton(type: .system)
-        btn.backgroundColor = .systemPurple
         btn.setTitle("Use Template", for: .normal)
-        btn.setTitleColor(.white, for: .normal)
+        btn.setTitleColor(UIColor(red: 9/255, green: 9/255, blue: 9/255, alpha: 1), for: .normal)
         btn.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
         btn.layer.cornerRadius = 25
+        btn.clipsToBounds = true
 
         let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .bold)
         btn.setImage(UIImage(systemName: "sparkles", withConfiguration: config), for: .normal)
-        btn.tintColor = .white
+        btn.tintColor = UIColor(red: 9/255, green: 9/255, blue: 9/255, alpha: 1)
         btn.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 10)
+
+        // Gold gradient background
+        let gradient = CAGradientLayer()
+        gradient.colors = [
+            UIColor(red: 246/255, green: 200/255, blue: 66/255, alpha: 1).cgColor,
+            UIColor(red: 201/255, green: 146/255, blue: 10/255, alpha: 1).cgColor
+        ]
+        gradient.startPoint = CGPoint(x: 0, y: 0.5)
+        gradient.endPoint   = CGPoint(x: 1, y: 0.5)
+        gradient.name = "goldGradient"
+        btn.layer.insertSublayer(gradient, at: 0)
         return btn
     }()
 
@@ -285,6 +296,10 @@ final class VideoDetailCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         playerLayer?.frame = bounds
+        // Keep gold gradient sized to button
+        if let grad = useTemplateButton.layer.sublayers?.first(where: { $0.name == "goldGradient" }) {
+            grad.frame = useTemplateButton.bounds
+        }
     }
 
     override func prepareForReuse() {
