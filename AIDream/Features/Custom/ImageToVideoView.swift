@@ -22,20 +22,18 @@ struct ImageToVideoView: View {
                             optionRow(title: "Quality", options: ["Standard", "High", "Ultra HD"], selection: $selectedQuality, proOptions: ["High", "Ultra HD"])
                             aspectRatioSection
                         }
-                        Spacer(minLength: 220) // 给动画留位置
+                        Spacer(minLength: 220)
                     }
                     .padding(.horizontal, 16)
                 }
             }
 
-            // 底部操作区
             VStack(spacing: 0) {
                 if isGenerating {
                     LottieView(name: "ai_generating_a")
                         .frame(width: 120, height: 80)
                         .transition(.scale.combined(with: .opacity))
                 }
-
                 bottomActionSection
             }
         }
@@ -48,8 +46,6 @@ struct ImageToVideoView: View {
         )
         .animation(.spring(), value: isGenerating)
     }
-
-    // MARK: - Components
 
     private var imageUploadSection: some View {
         VStack(spacing: 16) {
@@ -165,7 +161,6 @@ struct ImageToVideoView: View {
             }.font(.system(size: 12))
 
             Button(action: {
-                // 修复 1: 补全参数
                 videoGenerator.generateVideo(
                     prompt: promptText,
                     image: UIImage(named: "portrait_placeholder"),
@@ -204,7 +199,6 @@ struct ImageToVideoView: View {
 
     private var isGenerating: Bool {
         switch videoGenerator.state {
-        // 修复 2: 移除 .taskCreated
         case .uploading, .generating: return true
         default: return false
         }

@@ -32,25 +32,21 @@ class AIVideoGenerator: ObservableObject {
 
     // MARK: - 核心生成方法
 
-    /// 调用 OpenRouter 生成视频
     func generateVideo(prompt: String, image: UIImage?, duration: String, quality: String, ratio: String) {
         Task {
             state = .uploading
 
             do {
-                // 1. 构建符合 OpenRouter 视频模型规范的请求
                 let request = try buildRequest(prompt: prompt, image: image, duration: duration, quality: quality, ratio: ratio)
-
                 state = .generating(0.15)
 
                 let (data, response) = try await URLSession.shared.data(for: request)
 
                 guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
                     let code = (response as? HTTPURLResponse)?.statusCode ?? 0
-                    throw VideoError.serverError("HTTP \(code)")
+                    throw VideoError.serverError("OpenRouter Error (HTTP \(code))")
                 }
 
-                // 2. 解析返回的 JSON 数据
                 try await parseResponse(data: data)
 
             } catch {
@@ -78,22 +74,17 @@ class AIVideoGenerator: ObservableObject {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("AIDream", forHTTPHeaderField: "X-Title")
 
-        // 构建多模态消息内容 (OpenRouter 标准)
-        var messageContent: [[String: Any]] = [["type": "text", "text": prompt]]
-
+        var content: [[String: Any]] = [["type": "text", "text": prompt]]
         if let image = image, let base64 = image.jpegData(compressionQuality: 0.8)?.base64EncodedString() {
-            messageContent.append([
-                "type": "image_url",
-                "image_url": ["url": "data:image/jpeg;base64,\(base64)"]
-            ])
+            content.append(["type": "image_url", "image_url": ["url": "data:image/jpeg;base64,\(base64)"]])
         }
 
         let body: [String: Any] = [
             "model": AIConfig.shared.openRouterVideoModel,
-            "messages": [["role": "user", "content": messageContent]],
+            "messages": [["role": "user", "content": content]],
             "extra_body": [
-                "duration": duration.replacingOccurrences(of: "s", with: ""), // 提取数字
-                "quality": quality.lowercased(),
+                "duration": duration.replacingOccurrences(of: "s", with: ""),
+                "video_quality": quality.lowercased(),
                 "aspect_ratio": ratio
             ]
         ]
@@ -110,11 +101,9 @@ class AIVideoGenerator: ObservableObject {
             throw VideoError.invalidResponse
         }
 
-        // 从响应文本中自动搜索视频链接
         if let url = extractVideoURL(from: content) {
             state = .completed(url)
         } else {
-            // 如果内容本身就是一个 URL，直接尝试转换
             let cleaned = content.trimmingCharacters(in: .whitespacesAndNewlines)
             if let directURL = URL(string: cleaned), directURL.scheme?.hasPrefix("http") == true {
                 state = .completed(directURL)
@@ -130,7 +119,6 @@ class AIVideoGenerator: ObservableObject {
               let match = regex.firstMatch(in: content, options: [], range: NSRange(content.startIndex..., in: content)) else {
             return nil
         }
-
         if let range = Range(match.range, in: content) {
             return URL(string: String(content[range]))
         }
@@ -138,19 +126,14 @@ class AIVideoGenerator: ObservableObject {
     }
 
     enum VideoError: LocalizedError {
-        case missingApiKey
-        case invalidURL
-        case serverError(String)
-        case invalidResponse
-        case urlNotFound
-
+        case missingApiKey, invalidURL, serverError(String), invalidResponse, urlNotFound
         var errorDescription: String? {
             switch self {
-            case .missingApiKey: return "Please set OpenRouter API Key in Config."
-            case .invalidURL: return "API endpoint is invalid."
-            case .serverError(let s): return "OpenRouter Server Error: \(s)"
-            case .invalidResponse: return "Failed to parse AI response."
-            case .urlNotFound: return "AI process completed but no video URL was returned."
+            case .missingApiKey: return "API Key missing"
+            case .invalidURL: return "Invalid endpoint"
+            case .serverError(let s): return s
+            case .invalidResponse: return "Invalid AI response"
+            case .urlNotFound: return "No video URL found"
             }
         }
     }
