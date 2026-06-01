@@ -50,17 +50,30 @@ struct ReferenceVideoView: View {
                         videoGenerator.cancelGeneration()
                     }
                 )
-                .transition(.opacity.combined(with: .move(edge: .bottom)))
+                .transition(.opacity)
                 .zIndex(10)
             }
         }
-        .overlay(
-            Group {
-                if case .completed(let url) = videoGenerator.state {
-                    videoCompletionOverlay(url: url)
-                }
+        // 视频生成完成后的全屏覆盖层 - 基于 test.pen “完成”设计
+        .fullScreenCover(isPresented: Binding(
+            get: { if case .completed = videoGenerator.state { return true } else { return false } },
+            set: { _ in videoGenerator.cancelGeneration() }
+        )) {
+            if case .completed(let url) = videoGenerator.state {
+                VideoCompletionView(
+                    videoURL: url,
+                    onClose: { videoGenerator.cancelGeneration() },
+                    onRetake: { videoGenerator.cancelGeneration() },
+                    onDownload: {
+                        // 这里可以添加保存到相册的逻辑
+                        print("Downloading video from: \(url)")
+                    },
+                    onShare: {
+                        // 这里可以添加系统分享逻辑
+                    }
+                )
             }
-        )
+        }
         .animation(.easeInOut, value: isGenerating)
     }
 
@@ -80,7 +93,7 @@ struct ReferenceVideoView: View {
         return 0.1
     }
 
-    // MARK: - 原有组件
+    // MARK: - 原有组件 (保持 test.pen 风格)
 
     private var referenceImageUploadSection: some View {
         VStack(spacing: 16) {
@@ -192,15 +205,5 @@ struct ReferenceVideoView: View {
             }.font(.system(size: 12))
         }
         .padding(20).padding(.bottom, 20).background(Color(hex: "#252428").opacity(0.6).background(.ultraThinMaterial))
-    }
-
-    private func videoCompletionOverlay(url: URL) -> some View {
-        ZStack {
-            Color.black.opacity(0.8).ignoresSafeArea()
-            VStack(spacing: 20) {
-                Text("Video Ready!").font(.title2).bold()
-                Button("Close") { videoGenerator.cancelGeneration() }.padding().background(Color.purple).cornerRadius(10)
-            }.foregroundColor(.white).padding()
-        }
     }
 }

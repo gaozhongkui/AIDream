@@ -10,7 +10,6 @@ struct ImageToVideoView: View {
 
     var body: some View {
         ZStack {
-            // 背景
             Color(hex: "#0c0c0c").ignoresSafeArea()
 
             VStack(spacing: 0) {
@@ -29,35 +28,38 @@ struct ImageToVideoView: View {
                 }
             }
 
-            // 底部操作区 (始终可见，除非在生成中显示全屏)
             if !isGenerating {
                 bottomActionSection
             }
 
-            // 全屏生成中覆盖层 (基于 test.pen 设计)
+            // 全屏生成中覆盖层
             if isGenerating {
                 GeneratingView(
                     progress: currentProgress,
-                    onBackToHome: {
-                        videoGenerator.cancelGeneration()
-                    }
+                    onBackToHome: { videoGenerator.cancelGeneration() }
                 )
-                .transition(.opacity.combined(with: .move(edge: .bottom)))
+                .transition(.opacity)
                 .zIndex(10)
             }
         }
-        .overlay(
-            Group {
-                if case .completed(let url) = videoGenerator.state {
-                    videoCompletionOverlay(url: url)
-                }
+        .fullScreenCover(isPresented: Binding(
+            get: { if case .completed = videoGenerator.state { return true } else { return false } },
+            set: { _ in videoGenerator.cancelGeneration() }
+        )) {
+            if case .completed(let url) = videoGenerator.state {
+                VideoCompletionView(
+                    videoURL: url,
+                    onClose: { videoGenerator.cancelGeneration() },
+                    onRetake: { videoGenerator.cancelGeneration() },
+                    onDownload: { /* 处理下载逻辑 */ },
+                    onShare: { /* 处理分享逻辑 */ }
+                )
             }
-        )
+        }
         .animation(.easeInOut, value: isGenerating)
     }
 
     // MARK: - Helpers
-
     private var isGenerating: Bool {
         switch videoGenerator.state {
         case .uploading, .generating: return true
@@ -66,14 +68,11 @@ struct ImageToVideoView: View {
     }
 
     private var currentProgress: Double {
-        if case .generating(let p) = videoGenerator.state {
-            return p
-        }
-        return 0.1 // 默认初始进度
+        if case .generating(let p) = videoGenerator.state { return p }
+        return 0.1
     }
 
-    // MARK: - 原有组件
-
+    // MARK: - Components
     private var imageUploadSection: some View {
         VStack(spacing: 16) {
             HStack(spacing: 12) {
@@ -81,10 +80,7 @@ struct ImageToVideoView: View {
                 imageCard(title: "End", image: nil)
             }
             .frame(maxWidth: .infinity)
-            Text("Source Image (Optional)")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.white.opacity(0.9))
-                .padding(.leading, 6)
+            Text("Source Image (Optional)").font(.system(size: 16, weight: .medium)).foregroundColor(.white.opacity(0.9)).padding(.leading, 6)
         }
     }
 
@@ -185,15 +181,5 @@ struct ImageToVideoView: View {
             }.font(.system(size: 12))
         }
         .padding(20).padding(.bottom, 20).background(Color(hex: "#252428").opacity(0.6).background(.ultraThinMaterial))
-    }
-
-    private func videoCompletionOverlay(url: URL) -> some View {
-        ZStack {
-            Color.black.opacity(0.8).ignoresSafeArea()
-            VStack(spacing: 20) {
-                Text("Video Ready!").font(.title2).bold()
-                Button("Close") { videoGenerator.cancelGeneration() }.padding().background(Color.purple).cornerRadius(10)
-            }.foregroundColor(.white).padding()
-        }
     }
 }
