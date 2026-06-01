@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ReferenceVideoView: View {
     @State private var promptText: String = ""
-    @State private var selectedDuration: String = "5s"
+    @State private var selectedDuration: String = "6s"
     @State private var selectedQuality: String = "Standard"
     @State private var selectedRatio: String = "9:16"
 
@@ -20,7 +20,7 @@ struct ReferenceVideoView: View {
                         VStack(spacing: 22) {
                             optionRow(
                                 title: "Duration",
-                                options: ["5s", "10s"],
+                                options: ["6s", "10s"],
                                 selection: $selectedDuration,
                                 proOptions: ["10s"]
                             )

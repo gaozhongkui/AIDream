@@ -13,8 +13,8 @@ struct AIConfig {
     let openRouterApiKey = "" // 请在此处填写您的 API Key
     let openRouterImageModel = "google/gemini-2.5-flash-image"
 
-    // 新增视频生成默认模型
-    let openRouterVideoModel = "minimax/video-01"
+    // 视频生成模型（OpenRouter 上 MiniMax 的正确 ID）
+    let openRouterVideoModel = "minimax/hailuo-2.3"
 
     private init() {}
 }

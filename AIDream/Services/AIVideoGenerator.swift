@@ -1,54 +1,69 @@
 import SwiftUI
 import UIKit
-import Combine
 
+// MARK: - 视频生成状态
 @MainActor
 class AIVideoGenerator: ObservableObject {
 
-    // MARK: - 状态定义
     enum VideoGenerationState: Equatable {
         case idle
-        case uploading
-        case generating(Double)
-        case completed(URL)
+        case uploading                   // 准备请求
+        case generating(Double)          // 生成中（轮询进度 0~1）
+        case completed(URL)              // 完成，返回视频 URL
         case failed(String)
 
         var description: String {
             switch self {
-            case .idle: return "Ready"
-            case .uploading: return "Processing image..."
-            case .generating(let p): return "AI Generating... \(Int(p * 100))%"
-            case .completed: return "Video Ready"
-            case .failed(let e): return "Error: \(e)"
+            case .idle:               return "Ready"
+            case .uploading:          return "Submitting job…"
+            case .generating(let p):  return "Generating… \(Int(p * 100))%"
+            case .completed:          return "Video Ready"
+            case .failed(let e):      return "Error: \(e)"
             }
         }
     }
 
-    // MARK: - 属性
+    // MARK: - Properties
     @Published var state: VideoGenerationState = .idle
 
     static let shared = AIVideoGenerator()
     private init() {}
 
-    // MARK: - 核心生成方法
+    private var pollingTask: Task<Void, Never>?
 
-    func generateVideo(prompt: String, image: UIImage?, duration: String, quality: String, ratio: String) {
-        Task {
+    // MARK: - Public API
+
+    /// 生成视频（Image to Video 或 Text to Video）
+    /// - Parameters:
+    ///   - prompt:    描述文字
+    ///   - image:     起始帧图片（可选，传 nil 则走 Text-to-Video）
+    ///   - duration:  "6s" 或 "10s"（Hailuo 2.3 仅支持这两个值）
+    ///   - quality:   "Standard" / "High" / "Ultra HD"（映射到分辨率）
+    ///   - ratio:     "9:16" / "1:1"
+    func generateVideo(
+        prompt: String,
+        image: UIImage?,
+        duration: String,
+        quality: String,
+        ratio: String
+    ) {
+        pollingTask?.cancel()
+        pollingTask = Task {
             state = .uploading
 
             do {
-                let request = try buildRequest(prompt: prompt, image: image, duration: duration, quality: quality, ratio: ratio)
-                state = .generating(0.15)
-
-                let (data, response) = try await URLSession.shared.data(for: request)
-
-                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                    let code = (response as? HTTPURLResponse)?.statusCode ?? 0
-                    throw VideoError.serverError("OpenRouter Error (HTTP \(code))")
-                }
-
-                try await parseResponse(data: data)
-
+                let jobID = try await submitJob(
+                    prompt: prompt,
+                    image: image,
+                    duration: duration,
+                    quality: quality,
+                    ratio: ratio
+                )
+                state = .generating(0.1)
+                let videoURL = try await pollUntilDone(jobID: jobID)
+                state = .completed(videoURL)
+            } catch is CancellationError {
+                // 用户主动取消，不报错
             } catch {
                 state = .failed(error.localizedDescription)
             }
@@ -56,84 +71,163 @@ class AIVideoGenerator: ObservableObject {
     }
 
     func cancelGeneration() {
+        pollingTask?.cancel()
+        pollingTask = nil
         state = .idle
     }
 
-    // MARK: - 私有助手
+    // MARK: - Step 1: 提交任务 → 返回 job id
 
-    private func buildRequest(prompt: String, image: UIImage?, duration: String, quality: String, ratio: String) throws -> URLRequest {
+    private func submitJob(
+        prompt: String,
+        image: UIImage?,
+        duration: String,
+        quality: String,
+        ratio: String
+    ) async throws -> String {
+
         let apiKey = AIConfig.shared.openRouterApiKey
         guard !apiKey.isEmpty else { throw VideoError.missingApiKey }
 
-        let endpoint = "\(AIConfig.shared.openRouterBaseURL)/chat/completions"
-        guard let url = URL(string: endpoint) else { throw VideoError.invalidURL }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("AIDream", forHTTPHeaderField: "X-Title")
-
-        var content: [[String: Any]] = [["type": "text", "text": prompt]]
-        if let image = image, let base64 = image.jpegData(compressionQuality: 0.8)?.base64EncodedString() {
-            content.append(["type": "image_url", "image_url": ["url": "data:image/jpeg;base64,\(base64)"]])
+        guard let url = URL(string: "\(AIConfig.shared.openRouterBaseURL)/videos") else {
+            throw VideoError.invalidURL
         }
 
-        let body: [String: Any] = [
-            "model": AIConfig.shared.openRouterVideoModel,
-            "messages": [["role": "user", "content": content]],
-            "extra_body": [
-                "duration": duration.replacingOccurrences(of: "s", with: ""),
-                "video_quality": quality.lowercased(),
-                "aspect_ratio": ratio
-            ]
+        var request = URLRequest(url: url, timeoutInterval: 60)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)",   forHTTPHeaderField: "Authorization")
+        request.setValue("application/json",    forHTTPHeaderField: "Content-Type")
+        request.setValue("AIDream",             forHTTPHeaderField: "X-Title")
+
+        // 构建请求体
+        var body: [String: Any] = [
+            "model":        AIConfig.shared.openRouterVideoModel,
+            "prompt":       prompt,
+            "duration":     durationSeconds(from: duration),   // Int: 6 或 10
+            "aspect_ratio": ratio,                             // "9:16" / "1:1"
+            "resolution":   resolution(from: quality)         // "720p" / "1080p"
         ]
 
-        request.httpBody = try JSONSerialization.data(withJSONObject: body)
-        return request
-    }
+        // 图片 → 起始帧（Image to Video）
+        if let image = image,
+           let jpegData = image.jpegData(compressionQuality: 0.85) {
+            let base64 = jpegData.base64EncodedString()
+            body["frame_images"] = [
+                ["type": "first_frame",
+                 "image_url": ["url": "data:image/jpeg;base64,\(base64)"]]
+            ]
+        }
 
-    private func parseResponse(data: Data) async throws {
-        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let choices = json["choices"] as? [[String: Any]],
-              let message = choices.first?["message"] as? [String: Any],
-              let content = message["content"] as? String else {
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let http = response as? HTTPURLResponse else {
             throw VideoError.invalidResponse
         }
 
-        if let url = extractVideoURL(from: content) {
-            state = .completed(url)
-        } else {
-            let cleaned = content.trimmingCharacters(in: .whitespacesAndNewlines)
-            if let directURL = URL(string: cleaned), directURL.scheme?.hasPrefix("http") == true {
-                state = .completed(directURL)
-            } else {
+        // OpenRouter 视频 API 提交成功返回 202 Accepted
+        guard http.statusCode == 202 || http.statusCode == 200 else {
+            let msg = String(data: data, encoding: .utf8) ?? "Unknown"
+            throw VideoError.serverError("HTTP \(http.statusCode): \(msg)")
+        }
+
+        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let jobID = json["id"] as? String else {
+            throw VideoError.invalidResponse
+        }
+
+        return jobID
+    }
+
+    // MARK: - Step 2: 轮询直到完成
+
+    private func pollUntilDone(jobID: String) async throws -> URL {
+        let apiKey = AIConfig.shared.openRouterApiKey
+        let pollURL = "\(AIConfig.shared.openRouterBaseURL)/videos/\(jobID)"
+
+        guard let url = URL(string: pollURL) else { throw VideoError.invalidURL }
+
+        var request = URLRequest(url: url, timeoutInterval: 30)
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+
+        // 最多轮询 60 次 × 5 秒间隔 = 5 分钟
+        for attempt in 1...60 {
+            try Task.checkCancellation()
+
+            // 每次等 5 秒再查询（首次也稍等）
+            try await Task.sleep(nanoseconds: 5_000_000_000)
+            try Task.checkCancellation()
+
+            let (data, _) = try await URLSession.shared.data(for: request)
+
+            guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                throw VideoError.invalidResponse
+            }
+
+            let status = json["status"] as? String ?? "pending"
+
+            // 更新进度（模拟 0.1 → 0.95）
+            let progress = min(0.1 + Double(attempt) * 0.015, 0.95)
+            state = .generating(progress)
+
+            switch status {
+            case "completed":
+                if let urls = json["unsigned_urls"] as? [String],
+                   let first = urls.first,
+                   let videoURL = URL(string: first) {
+                    return videoURL
+                }
                 throw VideoError.urlNotFound
+
+            case "failed", "cancelled", "expired":
+                let msg = json["error"] as? String ?? status
+                throw VideoError.serverError(msg)
+
+            default:
+                // pending / in_progress → 继续等待
+                continue
             }
         }
+
+        throw VideoError.timeout
     }
 
-    private func extractVideoURL(from content: String) -> URL? {
-        let pattern = "https?://[\\w\\d./?=&%-_]+(.mp4|.mov|.m4v)"
-        guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive),
-              let match = regex.firstMatch(in: content, options: [], range: NSRange(content.startIndex..., in: content)) else {
-            return nil
-        }
-        if let range = Range(match.range, in: content) {
-            return URL(string: String(content[range]))
-        }
-        return nil
+    // MARK: - 参数映射
+
+    /// Hailuo 2.3 支持 6 或 10 秒；"5s" 向上取整为 6
+    private func durationSeconds(from duration: String) -> Int {
+        let s = Int(duration.replacingOccurrences(of: "s", with: "")) ?? 6
+        return s <= 6 ? 6 : 10
     }
+
+    /// 质量 → 分辨率
+    private func resolution(from quality: String) -> String {
+        switch quality {
+        case "High":     return "1080p"
+        case "Ultra HD": return "1080p"   // Hailuo 2.3 最高支持 1080p
+        default:         return "720p"
+        }
+    }
+
+    // MARK: - 错误类型
 
     enum VideoError: LocalizedError {
-        case missingApiKey, invalidURL, serverError(String), invalidResponse, urlNotFound
+        case missingApiKey
+        case invalidURL
+        case serverError(String)
+        case invalidResponse
+        case urlNotFound
+        case timeout
+
         var errorDescription: String? {
             switch self {
-            case .missingApiKey: return "API Key missing"
-            case .invalidURL: return "Invalid endpoint"
-            case .serverError(let s): return s
-            case .invalidResponse: return "Invalid AI response"
-            case .urlNotFound: return "No video URL found"
+            case .missingApiKey:       return "OpenRouter API Key 未配置"
+            case .invalidURL:          return "无效的接口地址"
+            case .serverError(let s):  return "服务器错误：\(s)"
+            case .invalidResponse:     return "响应格式异常"
+            case .urlNotFound:         return "未获取到视频 URL"
+            case .timeout:             return "生成超时（>5 分钟），请重试"
             }
         }
     }
