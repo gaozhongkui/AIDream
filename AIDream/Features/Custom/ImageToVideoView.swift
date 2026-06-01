@@ -9,7 +9,8 @@ struct ImageToVideoView: View {
     @ObservedObject private var videoGenerator = AIVideoGenerator.shared
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
+            // 背景
             Color(hex: "#0c0c0c").ignoresSafeArea()
 
             VStack(spacing: 0) {
@@ -22,19 +23,27 @@ struct ImageToVideoView: View {
                             optionRow(title: "Quality", options: ["Standard", "High", "Ultra HD"], selection: $selectedQuality, proOptions: ["High", "Ultra HD"])
                             aspectRatioSection
                         }
-                        Spacer(minLength: 220)
+                        Spacer(minLength: 120)
                     }
                     .padding(.horizontal, 16)
                 }
             }
 
-            VStack(spacing: 0) {
-                if isGenerating {
-                    LottieView(name: "ai_generating_a")
-                        .frame(width: 120, height: 80)
-                        .transition(.scale.combined(with: .opacity))
-                }
+            // 底部操作区 (始终可见，除非在生成中显示全屏)
+            if !isGenerating {
                 bottomActionSection
+            }
+
+            // 全屏生成中覆盖层 (基于 test.pen 设计)
+            if isGenerating {
+                GeneratingView(
+                    progress: currentProgress,
+                    onBackToHome: {
+                        videoGenerator.cancelGeneration()
+                    }
+                )
+                .transition(.opacity.combined(with: .move(edge: .bottom)))
+                .zIndex(10)
             }
         }
         .overlay(
@@ -44,8 +53,26 @@ struct ImageToVideoView: View {
                 }
             }
         )
-        .animation(.spring(), value: isGenerating)
+        .animation(.easeInOut, value: isGenerating)
     }
+
+    // MARK: - Helpers
+
+    private var isGenerating: Bool {
+        switch videoGenerator.state {
+        case .uploading, .generating: return true
+        default: return false
+        }
+    }
+
+    private var currentProgress: Double {
+        if case .generating(let p) = videoGenerator.state {
+            return p
+        }
+        return 0.1 // 默认初始进度
+    }
+
+    // MARK: - 原有组件
 
     private var imageUploadSection: some View {
         VStack(spacing: 16) {
@@ -64,26 +91,12 @@ struct ImageToVideoView: View {
     private func imageCard(title: String, image: String?) -> some View {
         ZStack(alignment: .topLeading) {
             if let imageName = image {
-                Image(imageName)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 106, height: 136)
-                    .cornerRadius(20)
-                    .clipped()
-                    .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.4), lineWidth: 1))
+                Image(imageName).resizable().aspectRatio(contentMode: .fill).frame(width: 106, height: 136).cornerRadius(20).clipped().overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.4), lineWidth: 1))
             } else {
                 VStack(spacing: 8) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundStyle(LinearGradient(colors: [Color(hex: "#fc98ff"), Color(hex: "#95d7ff")], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    Text(title == "Start" ? "Add Image" : "Add End Frame")
-                        .font(.system(size: 12))
-                        .foregroundColor(.white.opacity(0.4))
-                }
-                .frame(width: 106, height: 136)
-                .background(Color.white.opacity(0.05))
-                .cornerRadius(20)
-                .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.15), lineWidth: 1))
+                    Image(systemName: "plus").font(.system(size: 20, weight: .bold)).foregroundStyle(LinearGradient(colors: [Color(hex: "#fc98ff"), Color(hex: "#95d7ff")], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    Text(title == "Start" ? "Add Image" : "Add End Frame").font(.system(size: 12)).foregroundColor(.white.opacity(0.4))
+                }.frame(width: 106, height: 136).background(Color.white.opacity(0.05)).cornerRadius(20).overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.15), lineWidth: 1))
             }
             Text(title).font(.system(size: 12)).foregroundColor(.white).padding(.horizontal, 8).padding(.vertical, 2).background(Color.black.opacity(0.5)).clipShape(Capsule()).padding(8)
         }
@@ -113,10 +126,8 @@ struct ImageToVideoView: View {
                             if proOptions.contains(opt) { proTag }
                         }
                         .font(.system(size: 15, weight: selection.wrappedValue == opt ? .bold : .regular))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity).frame(height: 44)
-                        .background(selection.wrappedValue == opt ? Color(hex: "#7032d6") : Color.white.opacity(0.05))
-                        .clipShape(Capsule())
+                        .foregroundColor(.white).frame(maxWidth: .infinity).frame(height: 44)
+                        .background(selection.wrappedValue == opt ? Color(hex: "#7032d6") : Color.white.opacity(0.05)).clipShape(Capsule())
                     }
                 }
             }
@@ -124,8 +135,7 @@ struct ImageToVideoView: View {
     }
 
     private var proTag: some View {
-        Text("PRO").font(.system(size: 10, weight: .bold)).padding(.horizontal, 6).padding(.vertical, 2)
-            .background(LinearGradient(colors: [Color(hex: "#c260f5"), Color(hex: "#6034e4")], startPoint: .topLeading, endPoint: .bottomTrailing)).clipShape(Capsule())
+        Text("PRO").font(.system(size: 10, weight: .bold)).padding(.horizontal, 6).padding(.vertical, 2).background(LinearGradient(colors: [Color(hex: "#c260f5"), Color(hex: "#6034e4")], startPoint: .topLeading, endPoint: .bottomTrailing)).clipShape(Capsule())
     }
 
     private var aspectRatioSection: some View {
@@ -146,9 +156,7 @@ struct ImageToVideoView: View {
                     proTag.offset(x: 12, y: -8)
                 }
                 Text(label).font(.system(size: 14, weight: isSelected ? .bold : .regular))
-            }
-            .foregroundColor(.white).frame(maxWidth: .infinity).frame(height: 64)
-            .background(isSelected ? Color(hex: "#7032d6") : Color.white.opacity(0.05)).cornerRadius(20)
+            }.foregroundColor(.white).frame(maxWidth: .infinity).frame(height: 64).background(isSelected ? Color(hex: "#7032d6") : Color.white.opacity(0.05)).cornerRadius(20)
         }
     }
 
@@ -156,52 +164,27 @@ struct ImageToVideoView: View {
         VStack(spacing: 16) {
             HStack(spacing: 6) {
                 Text("Want faster generation?").foregroundColor(.white.opacity(0.4))
-                Text("Get SVIP (50% OFF).").font(.system(size: 14, weight: .bold))
-                    .foregroundStyle(LinearGradient(colors: [Color(hex: "#ffa8a8"), Color(hex: "#fcff00")], startPoint: .leading, endPoint: .trailing))
+                Text("Get SVIP (50% OFF).").font(.system(size: 14, weight: .bold)).foregroundStyle(LinearGradient(colors: [Color(hex: "#ffa8a8"), Color(hex: "#fcff00")], startPoint: .leading, endPoint: .trailing))
             }.font(.system(size: 12))
 
             Button(action: {
-                videoGenerator.generateVideo(
-                    prompt: promptText,
-                    image: UIImage(named: "portrait_placeholder"),
-                    duration: selectedDuration,
-                    quality: selectedQuality,
-                    ratio: selectedRatio
-                )
+                videoGenerator.generateVideo(prompt: promptText, image: UIImage(named: "portrait_placeholder"), duration: selectedDuration, quality: selectedQuality, ratio: selectedRatio)
             }) {
                 VStack(spacing: 4) {
-                    Text(isGenerating ? "AI Generator Processing..." : "Generate Video").font(.system(size: 18, weight: .bold))
-                    if !isGenerating {
-                        HStack(spacing: 4) {
-                            Image(systemName: "diamond.fill").font(.system(size: 12))
-                            Text("200").font(.system(size: 14, weight: .bold))
-                        }.foregroundStyle(LinearGradient(colors: [Color(hex: "#ffa8a8"), Color(hex: "#fcff00")], startPoint: .leading, endPoint: .trailing))
-                    }
-                }
-                .foregroundColor(.white).frame(maxWidth: .infinity).frame(height: 60)
-                .background(isGenerating ? AnyShapeStyle(Color.gray.opacity(0.3)) : AnyShapeStyle(LinearGradient(colors: [Color(hex: "#c260f5"), Color(hex: "#6034e4")], startPoint: .leading, endPoint: .trailing)))
-                .cornerRadius(22)
+                    Text("Generate Video").font(.system(size: 18, weight: .bold))
+                    HStack(spacing: 4) {
+                        Image(systemName: "diamond.fill").font(.system(size: 12))
+                        Text("200").font(.system(size: 14, weight: .bold))
+                    }.foregroundStyle(LinearGradient(colors: [Color(hex: "#ffa8a8"), Color(hex: "#fcff00")], startPoint: .leading, endPoint: .trailing))
+                }.foregroundColor(.white).frame(maxWidth: .infinity).frame(height: 60).background(LinearGradient(colors: [Color(hex: "#c260f5"), Color(hex: "#6034e4")], startPoint: .leading, endPoint: .trailing)).cornerRadius(22)
             }
-            .disabled(isGenerating)
 
-            if case .failed(let error) = videoGenerator.state {
-                Text(error).font(.system(size: 12)).foregroundColor(.red)
-            } else {
-                HStack(spacing: 4) {
-                    Image(systemName: "checkmark.shield.fill").foregroundColor(.white.opacity(0.8))
-                    Text("Failed task? 100% Refund.").foregroundStyle(LinearGradient(colors: [Color(hex: "#fc98ff"), Color(hex: "#95d7ff")], startPoint: .leading, endPoint: .trailing))
-                }.font(.system(size: 12))
-            }
+            HStack(spacing: 4) {
+                Image(systemName: "checkmark.shield.fill").foregroundColor(.white.opacity(0.8))
+                Text("Failed task? 100% Refund.").foregroundStyle(LinearGradient(colors: [Color(hex: "#fc98ff"), Color(hex: "#95d7ff")], startPoint: .leading, endPoint: .trailing))
+            }.font(.system(size: 12))
         }
-        .padding(20).padding(.bottom, 20)
-        .background(Color(hex: "#252428").opacity(0.6).background(.ultraThinMaterial))
-    }
-
-    private var isGenerating: Bool {
-        switch videoGenerator.state {
-        case .uploading, .generating: return true
-        default: return false
-        }
+        .padding(20).padding(.bottom, 20).background(Color(hex: "#252428").opacity(0.6).background(.ultraThinMaterial))
     }
 
     private func videoCompletionOverlay(url: URL) -> some View {
