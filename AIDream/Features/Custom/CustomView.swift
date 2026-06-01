@@ -15,13 +15,13 @@ struct CustomView: View {
                 Color(hex: "#0c0c0c").ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    // 统一导航栏
+                    // 顶部导航栏
                     customNavBar
 
-                    // 模式切换
+                    // 模式切换器
                     modeSelector
 
-                    // 页面内容切换
+                    // 页面内容 (内部自带 ScrollView 和 底部按钮)
                     ZStack {
                         if selectedMode == .imageToVideo {
                             ImageToVideoView()

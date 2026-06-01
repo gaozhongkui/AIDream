@@ -9,9 +9,12 @@ struct AIConfig {
     let huggingFaceBaseURL = "https://api-inference.huggingface.co/models"
     let huggingFaceToken = ""
 
-    let openRouterBaseURL = "https://openrouter.ai/api/v1/chat/completions"
-    let openRouterApiKey = ""
+    let openRouterBaseURL = "https://openrouter.ai/api/v1"
+    let openRouterApiKey = "" // 请在此处填写您的 API Key
     let openRouterImageModel = "google/gemini-2.5-flash-image"
+
+    // 新增视频生成默认模型
+    let openRouterVideoModel = "minimax/video-01"
 
     private init() {}
 }
