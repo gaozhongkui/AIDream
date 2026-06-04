@@ -1,10 +1,16 @@
 import SwiftUI
+import UIKit
 
 struct ReferenceVideoView: View {
     @State private var promptText: String = ""
     @State private var selectedDuration: String = "6s"
     @State private var selectedQuality: String = "Standard"
     @State private var selectedRatio: String = "9:16"
+    @State private var referenceImages: [UIImage?] = Array(repeating: nil, count: 3)
+    @State private var activeReferenceIndex: Int?
+    @State private var isShowingImagePicker = false
+    @State private var isShowingCamera = false
+    @State private var imageSelectionError: String?
 
     @ObservedObject private var videoGenerator = AIVideoGenerator.shared
 
@@ -62,6 +68,25 @@ struct ReferenceVideoView: View {
                 )
             }
         }
+        .sheet(isPresented: $isShowingImagePicker) {
+            ImageSourcePickerView(
+                onClose: { isShowingImagePicker = false },
+                onPickCamera: { openCamera() },
+                onImageSelected: { image in
+                    applySelectedImage(image)
+                    isShowingImagePicker = false
+                }
+            )
+            .presentationDetents([.height(260)])
+            .presentationDragIndicator(.hidden)
+            .presentationCornerRadius(26)
+        }
+        .sheet(isPresented: $isShowingCamera) {
+            CameraPicker { image in
+                applySelectedImage(image)
+            }
+            .ignoresSafeArea()
+        }
         .animation(.easeInOut(duration: 0.3), value: isGenerating)
     }
 
@@ -103,35 +128,104 @@ struct ReferenceVideoView: View {
     private var referenceImageUploadSection: some View {
         VStack(spacing: 14) {
             HStack(spacing: 10) {
-                referenceCard(title: "Start Frame", prominent: true)
-                referenceCard(title: "Add Image",   prominent: false)
-                referenceCard(title: "Add Image",   prominent: false)
+                referenceCard(title: "Start Frame", image: referenceImages[0], prominent: true) {
+                    openImagePicker(for: 0)
+                }
+                referenceCard(title: "Add Image", image: referenceImages[1], prominent: false) {
+                    openImagePicker(for: 1)
+                }
+                referenceCard(title: "Add Image", image: referenceImages[2], prominent: false) {
+                    openImagePicker(for: 2)
+                }
             }
             Text("Source Images (1–3)")
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(AppTheme.textSecondary)
                 .padding(.leading, 4)
+            if let imageSelectionError {
+                Text(imageSelectionError)
+                    .font(.system(size: 12))
+                    .foregroundColor(.red.opacity(0.85))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 4)
+            }
         }
     }
 
-    private func referenceCard(title: String, prominent: Bool) -> some View {
-        Button(action: {}) {
-            VStack(spacing: 10) {
-                Image(systemName: "plus")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(prominent
-                        ? AnyShapeStyle(AppTheme.goldGrad)
-                        : AnyShapeStyle(AppTheme.textMuted))
+    private func referenceCard(
+        title: String,
+        image: UIImage?,
+        prominent: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            ZStack(alignment: .topLeading) {
+                if let image {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 110)
+                        .clipped()
+                } else {
+                    VStack(spacing: 10) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundStyle(prominent
+                                ? AnyShapeStyle(AppTheme.goldGrad)
+                                : AnyShapeStyle(AppTheme.textMuted))
+                        Text(title)
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(prominent ? AppTheme.textSecondary : AppTheme.textMuted)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 110)
+                    .background(AppTheme.bgCard)
+                }
+
                 Text(title)
-                    .font(.system(size: 10, weight: .medium))
-                    .foregroundColor(prominent ? AppTheme.textSecondary : AppTheme.textMuted)
-                    .multilineTextAlignment(.center)
+                    .font(.system(size: 9, weight: .semibold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 3)
+                    .background(Color.black.opacity(0.55))
+                    .clipShape(Capsule())
+                    .padding(7)
             }
-            .frame(maxWidth: .infinity).frame(height: 110)
-            .background(AppTheme.bgCard)
             .cornerRadius(18)
-            .goldBorder(cornerRadius: 18, active: prominent)
+            .goldBorder(cornerRadius: 18, active: prominent || image != nil)
         }
+        .buttonStyle(.plain)
+    }
+
+    private func openImagePicker(for index: Int) {
+        activeReferenceIndex = index
+        imageSelectionError = nil
+        isShowingImagePicker = true
+    }
+
+    private func openCamera() {
+        guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
+            imageSelectionError = "Camera is unavailable on this device."
+            isShowingImagePicker = false
+            return
+        }
+
+        isShowingImagePicker = false
+        isShowingCamera = true
+    }
+
+    private func applySelectedImage(_ image: UIImage) {
+        let index = activeReferenceIndex ?? 0
+        guard referenceImages.indices.contains(index) else { return }
+
+        referenceImages[index] = image
+        imageSelectionError = nil
+    }
+
+    private var selectedReferenceImages: [UIImage] {
+        referenceImages.compactMap { $0 }
     }
 
     // MARK: - Prompt
@@ -256,7 +350,8 @@ struct ReferenceVideoView: View {
             Button {
                 videoGenerator.generateVideo(
                     prompt: promptText,
-                    image: UIImage(named: "portrait_placeholder"),
+                    image: selectedReferenceImages.first,
+                    endImage: selectedReferenceImages.dropFirst().last,
                     duration: selectedDuration,
                     quality: selectedQuality,
                     ratio: selectedRatio

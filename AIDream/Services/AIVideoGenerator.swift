@@ -44,6 +44,7 @@ class AIVideoGenerator: ObservableObject {
     func generateVideo(
         prompt: String,
         image: UIImage?,
+        endImage: UIImage? = nil,
         duration: String,
         quality: String,
         ratio: String
@@ -53,15 +54,16 @@ class AIVideoGenerator: ObservableObject {
             state = .uploading
 
             do {
-                let jobID = try await submitJob(
+                let pollingURL = try await submitJob(
                     prompt: prompt,
                     image: image,
+                    endImage: endImage,
                     duration: duration,
                     quality: quality,
                     ratio: ratio
                 )
                 state = .generating(0.1)
-                let videoURL = try await pollUntilDone(jobID: jobID)
+                let videoURL = try await pollUntilDone(pollingURL: pollingURL)
                 state = .completed(videoURL)
             } catch is CancellationError {
                 // 用户主动取消，不报错
@@ -82,15 +84,17 @@ class AIVideoGenerator: ObservableObject {
     private func submitJob(
         prompt: String,
         image: UIImage?,
+        endImage: UIImage?,
         duration: String,
         quality: String,
         ratio: String
-    ) async throws -> String {
+    ) async throws -> URL {
 
         let apiKey = AIConfig.shared.openRouterApiKey
         guard !apiKey.isEmpty else { throw VideoError.missingApiKey }
 
-        guard let url = URL(string: "\(AIConfig.shared.openRouterBaseURL)/videos") else {
+        guard let baseURL = URL(string: AIConfig.shared.openRouterBaseURL),
+              let url = URL(string: "videos", relativeTo: baseURL) else {
             throw VideoError.invalidURL
         }
 
@@ -109,14 +113,16 @@ class AIVideoGenerator: ObservableObject {
             "resolution":   resolution(from: quality)         // "720p" / "1080p"
         ]
 
-        // 图片 → 起始帧（Image to Video）
-        if let image = image,
-           let jpegData = image.jpegData(compressionQuality: 0.85) {
-            let base64 = jpegData.base64EncodedString()
-            body["frame_images"] = [
-                ["type": "first_frame",
-                 "image_url": ["url": "data:image/jpeg;base64,\(base64)"]]
-            ]
+        // 图片 → 首帧 / 尾帧（Image to Video）
+        var frameImages: [[String: Any]] = []
+        if let firstFrame = frameImagePayload(image: image, frameType: "first_frame") {
+            frameImages.append(firstFrame)
+        }
+        if let lastFrame = frameImagePayload(image: endImage, frameType: "last_frame") {
+            frameImages.append(lastFrame)
+        }
+        if !frameImages.isEmpty {
+            body["frame_images"] = frameImages
         }
 
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
@@ -133,21 +139,27 @@ class AIVideoGenerator: ObservableObject {
             throw VideoError.serverError("HTTP \(http.statusCode): \(msg)")
         }
 
-        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let jobID = json["id"] as? String else {
+        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             throw VideoError.invalidResponse
         }
 
-        return jobID
+        if let pollingURLString = json["polling_url"] as? String,
+           let pollingURL = URL(string: pollingURLString, relativeTo: baseURL)?.absoluteURL {
+            return pollingURL
+        }
+
+        if let jobID = json["id"] as? String,
+           let fallbackURL = URL(string: "videos/\(jobID)", relativeTo: baseURL)?.absoluteURL {
+            return fallbackURL
+        }
+
+        throw VideoError.invalidResponse
     }
 
     // MARK: - Step 2: 轮询直到完成
 
-    private func pollUntilDone(jobID: String) async throws -> URL {
+    private func pollUntilDone(pollingURL url: URL) async throws -> URL {
         let apiKey = AIConfig.shared.openRouterApiKey
-        let pollURL = "\(AIConfig.shared.openRouterBaseURL)/videos/\(jobID)"
-
-        guard let url = URL(string: pollURL) else { throw VideoError.invalidURL }
 
         var request = URLRequest(url: url, timeoutInterval: 30)
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
@@ -209,6 +221,21 @@ class AIVideoGenerator: ObservableObject {
         case "Ultra HD": return "1080p"   // Hailuo 2.3 最高支持 1080p
         default:         return "720p"
         }
+    }
+
+    private func frameImagePayload(image: UIImage?, frameType: String) -> [String: Any]? {
+        guard let image,
+              let jpegData = image.jpegData(compressionQuality: 0.85) else {
+            return nil
+        }
+
+        return [
+            "type": "image_url",
+            "frame_type": frameType,
+            "image_url": [
+                "url": "data:image/jpeg;base64,\(jpegData.base64EncodedString())"
+            ]
+        ]
     }
 
     // MARK: - 错误类型

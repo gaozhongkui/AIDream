@@ -1,10 +1,18 @@
 import SwiftUI
+import PhotosUI
+import UIKit
 
 struct ImageToVideoView: View {
     @State private var promptText: String = ""
     @State private var selectedDuration: String = "6s"
     @State private var selectedQuality: String = "Standard"
     @State private var selectedRatio: String = "9:16"
+    @State private var activeImageTarget: ImageFrameTarget?
+    @State private var isShowingImagePicker = false
+    @State private var isShowingCamera = false
+    @State private var startImage: UIImage?
+    @State private var endImage: UIImage?
+    @State private var imageSelectionError: String?
 
     @ObservedObject private var videoGenerator = AIVideoGenerator.shared
 
@@ -63,6 +71,25 @@ struct ImageToVideoView: View {
                 )
             }
         }
+        .sheet(isPresented: $isShowingImagePicker) {
+            ImageSourcePickerView(
+                onClose: { isShowingImagePicker = false },
+                onPickCamera: { openCamera() },
+                onImageSelected: { image in
+                    applySelectedImage(image)
+                    isShowingImagePicker = false
+                }
+            )
+            .presentationDetents([.height(260)])
+            .presentationDragIndicator(.hidden)
+            .presentationCornerRadius(26)
+        }
+        .sheet(isPresented: $isShowingCamera) {
+            CameraPicker { image in
+                applySelectedImage(image)
+            }
+            .ignoresSafeArea()
+        }
         .animation(.easeInOut(duration: 0.3), value: isGenerating)
     }
 
@@ -105,50 +132,107 @@ struct ImageToVideoView: View {
     private var imageUploadSection: some View {
         VStack(spacing: 14) {
             HStack(spacing: 12) {
-                imageCard(title: "Start", image: "portrait_placeholder")
-                imageCard(title: "End",   image: nil)
+                imageCard(
+                    title: "Start",
+                    selectedImage: startImage,
+                    placeholderText: "Add Start Frame"
+                ) {
+                    openImagePicker(for: .start)
+                }
+                imageCard(
+                    title: "End",
+                    selectedImage: endImage,
+                    placeholderText: "Add End Frame"
+                ) {
+                    openImagePicker(for: .end)
+                }
             }
             Text("Source Image (Optional)")
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(AppTheme.textSecondary)
                 .padding(.leading, 4)
+            if let imageSelectionError {
+                Text(imageSelectionError)
+                    .font(.system(size: 12))
+                    .foregroundColor(.red.opacity(0.85))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 4)
+            }
         }
     }
 
-    private func imageCard(title: String, image: String?) -> some View {
-        ZStack(alignment: .topLeading) {
-            if let name = image {
-                Image(name)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
+    private func imageCard(
+        title: String,
+        selectedImage: UIImage?,
+        placeholderText: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            ZStack(alignment: .topLeading) {
+                if let selectedImage {
+                    Image(uiImage: selectedImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 106, height: 136)
+                        .cornerRadius(18)
+                        .clipped()
+                        .goldBorder(cornerRadius: 18, active: true)
+                } else {
+                    VStack(spacing: 10) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundStyle(AppTheme.goldGrad)
+                        Text(placeholderText)
+                            .font(.system(size: 11))
+                            .foregroundColor(AppTheme.textMuted)
+                            .multilineTextAlignment(.center)
+                    }
                     .frame(width: 106, height: 136)
+                    .background(AppTheme.bgCard)
                     .cornerRadius(18)
-                    .clipped()
-                    .goldBorder(cornerRadius: 18, active: true)
-            } else {
-                VStack(spacing: 10) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundStyle(AppTheme.goldGrad)
-                    Text("Add End Frame")
-                        .font(.system(size: 11))
-                        .foregroundColor(AppTheme.textMuted)
+                    .goldBorder(cornerRadius: 18, active: false)
                 }
-                .frame(width: 106, height: 136)
-                .background(AppTheme.bgCard)
-                .cornerRadius(18)
-                .goldBorder(cornerRadius: 18, active: false)
-            }
 
-            Text(title)
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(.white)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 3)
-                .background(Color.black.opacity(0.55))
-                .clipShape(Capsule())
-                .padding(8)
+                Text(title)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color.black.opacity(0.55))
+                    .clipShape(Capsule())
+                    .padding(8)
+            }
         }
+        .buttonStyle(.plain)
+    }
+
+    private func openImagePicker(for target: ImageFrameTarget) {
+        activeImageTarget = target
+        imageSelectionError = nil
+        isShowingImagePicker = true
+    }
+
+    private func openCamera() {
+        guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
+            imageSelectionError = "Camera is unavailable on this device."
+            isShowingImagePicker = false
+            return
+        }
+
+        isShowingImagePicker = false
+        isShowingCamera = true
+    }
+
+    private func applySelectedImage(_ image: UIImage) {
+        switch activeImageTarget {
+        case .start:
+            startImage = image
+        case .end:
+            endImage = image
+        case .none:
+            startImage = image
+        }
+        imageSelectionError = nil
     }
 
     // MARK: - Prompt
@@ -278,7 +362,8 @@ struct ImageToVideoView: View {
             Button {
                 videoGenerator.generateVideo(
                     prompt: promptText,
-                    image: UIImage(named: "portrait_placeholder"),
+                    image: startImage,
+                    endImage: endImage,
                     duration: selectedDuration,
                     quality: selectedQuality,
                     ratio: selectedRatio
@@ -314,5 +399,175 @@ struct ImageToVideoView: View {
             }
             .overlay(Rectangle().fill(AppTheme.borderSubtle).frame(height: 0.5), alignment: .top)
         )
+    }
+
+}
+
+private enum ImageFrameTarget {
+    case start
+    case end
+}
+
+struct ImageSourcePickerView: View {
+    var onClose: () -> Void
+    var onPickCamera: () -> Void
+    var onImageSelected: (UIImage) -> Void
+
+    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var photoLoadError: String?
+
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                colors: [
+                    Color(hex: "#141416"),
+                    Color(hex: "#1C181B"),
+                    Color(hex: "#171421")
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+
+            VStack(spacing: 16) {
+                Capsule()
+                    .fill(Color.white.opacity(0.24))
+                    .frame(width: 58, height: 6)
+                    .padding(.top, 12)
+
+                HStack {
+                    Text("Choose Image")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(.white)
+
+                    Spacer()
+
+                    Button(action: onClose) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(width: 42, height: 42)
+                            .background(
+                                Circle()
+                                    .fill(Color.white.opacity(0.10))
+                                    .overlay(Circle().stroke(Color.white.opacity(0.18), lineWidth: 1))
+                            )
+                    }
+                }
+
+                HStack(spacing: 12) {
+                    Button(action: onPickCamera) {
+                        sourceActionTile(icon: "camera.fill", title: "Camera")
+                    }
+                    .buttonStyle(.plain)
+
+                    PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+                        sourceActionTile(icon: "photo.on.rectangle.angled", title: "Photos")
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                if let photoLoadError {
+                    Text(photoLoadError)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(.red.opacity(0.9))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 18)
+        }
+        .onChange(of: selectedPhotoItem) { item in
+            loadPhoto(from: item)
+        }
+    }
+
+    private func sourceActionTile(icon: String, title: String) -> some View {
+        VStack(spacing: 10) {
+            Image(systemName: icon)
+                .font(.system(size: 34, weight: .regular))
+                .symbolRenderingMode(.palette)
+                .foregroundStyle(Color(hex: "#F0CF7B"), Color.white.opacity(0.75))
+            Text(title)
+                .font(.system(size: 17, weight: .bold))
+                .foregroundColor(.white.opacity(0.90))
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 112)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white.opacity(0.07))
+        )
+    }
+
+    private func loadPhoto(from item: PhotosPickerItem?) {
+        guard let item else { return }
+        photoLoadError = nil
+
+        Task {
+            do {
+                guard let data = try await item.loadTransferable(type: Data.self),
+                      let image = UIImage(data: data) else {
+                    throw ImageSelectionError.invalidImage
+                }
+                await MainActor.run {
+                    onImageSelected(image)
+                }
+            } catch {
+                await MainActor.run {
+                    photoLoadError = "Failed to load selected photo."
+                }
+            }
+        }
+    }
+
+    private enum ImageSelectionError: Error {
+        case invalidImage
+    }
+}
+
+struct CameraPicker: UIViewControllerRepresentable {
+    var onImageSelected: (UIImage) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let controller = UIImagePickerController()
+        controller.sourceType = .camera
+        controller.delegate = context.coordinator
+        controller.allowsEditing = false
+        return controller
+    }
+
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onImageSelected: onImageSelected, dismiss: dismiss)
+    }
+
+    final class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+        private let onImageSelected: (UIImage) -> Void
+        private let dismiss: DismissAction
+
+        init(onImageSelected: @escaping (UIImage) -> Void, dismiss: DismissAction) {
+            self.onImageSelected = onImageSelected
+            self.dismiss = dismiss
+        }
+
+        func imagePickerController(
+            _ picker: UIImagePickerController,
+            didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+        ) {
+            if let image = info[.originalImage] as? UIImage {
+                onImageSelected(image)
+            }
+            dismiss()
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            dismiss()
+        }
     }
 }
