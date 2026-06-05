@@ -26,7 +26,7 @@ struct TextToImageView: View {
                     aspectRatioSection
                     imageCountSection
 
-                    Spacer(minLength: 180)
+                    Spacer(minLength: 220) // 增加滚动占位，避开悬浮按钮
                 }
                 .padding(.horizontal, 20)
             }
@@ -234,11 +234,12 @@ struct TextToImageView: View {
                     .foregroundColor(AppTheme.textMuted)
             }
         }
-        .padding(.horizontal, 20).padding(.top, 20).padding(.bottom, 30)
+        .padding(.horizontal, 20).padding(.top, 20)
+        .padding(.bottom, 110) // 抬高底部内边距，避开悬浮 TabBar
         .background(LinearGradient(colors: [AppTheme.bgPrimary.opacity(0), AppTheme.bgPrimary], startPoint: .top, endPoint: .bottom))
     }
 
-    // MARK: - Logic (Same as before but wrapped in new UI)
+    // MARK: - Logic
 
     private func generateImage() {
         let trimmed = promptText.trimmingCharacters(in: .whitespaces)

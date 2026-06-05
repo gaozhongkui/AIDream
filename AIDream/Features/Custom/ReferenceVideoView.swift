@@ -39,11 +39,12 @@ struct ReferenceVideoView: View {
                         aspectRatioSection
                     }
 
-                    Spacer(minLength: 180)
+                    Spacer(minLength: 220) // 增加滚动占位，确保内容不被抬高的按钮遮挡
                 }
                 .padding(.horizontal, 20)
             }
 
+            // ── 悬浮底部生成栏 ──
             VStack {
                 Spacer()
                 if !isGenerating {
@@ -276,9 +277,8 @@ struct ReferenceVideoView: View {
                 .font(.system(size: 12, weight: .medium))
                 .foregroundColor(AppTheme.textMuted)
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 20)
-        .padding(.bottom, 30)
+        .padding(.horizontal, 20).padding(.top, 20)
+        .padding(.bottom, 140) // 抬高底部内边距，确保悬浮在 TabBar 之上
         .background(
             LinearGradient(colors: [AppTheme.bgPrimary.opacity(0), AppTheme.bgPrimary], startPoint: .top, endPoint: .bottom)
         )

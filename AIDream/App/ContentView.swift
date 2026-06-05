@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var selectedTab: Int = 0
+    @State private var selectedTab: Int = 1 // 默认选中 Create
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -16,8 +16,6 @@ struct ContentView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .ignoresSafeArea(edges: .bottom)
-            .safeAreaInset(edge: .bottom) { Color.clear.frame(height: 90) }
 
             customTabBar
         }
@@ -35,18 +33,15 @@ struct ContentView: View {
         .padding(.horizontal, 24)
         .background(
             ZStack {
-                // Frosted glass effect
                 BlurView(style: .systemUltraThinMaterialDark)
                     .clipShape(Capsule())
-
-                // Subtle border
                 Capsule()
                     .stroke(AppTheme.borderSubtle, lineWidth: 1)
             }
             .shadow(color: Color.black.opacity(0.4), radius: 15, y: 10)
         )
         .padding(.horizontal, 20)
-        .padding(.bottom, 28) // Floating look
+        .padding(.bottom, 24) // 悬浮距离底部的间距
     }
 
     private func tabItem(icon: String, label: String, index: Int) -> some View {
