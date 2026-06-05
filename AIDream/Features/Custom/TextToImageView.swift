@@ -26,7 +26,8 @@ struct TextToImageView: View {
                     aspectRatioSection
                     imageCountSection
 
-                    Spacer(minLength: 220) // 增加滚动占位，避开悬浮按钮
+                    // 大幅增加底部占位，确保内容不被悬浮的操作栏遮挡
+                    Spacer(minLength: 280)
                 }
                 .padding(.horizontal, 20)
             }
@@ -235,8 +236,14 @@ struct TextToImageView: View {
             }
         }
         .padding(.horizontal, 20).padding(.top, 20)
-        .padding(.bottom, 110) // 抬高底部内边距，避开悬浮 TabBar
-        .background(LinearGradient(colors: [AppTheme.bgPrimary.opacity(0), AppTheme.bgPrimary], startPoint: .top, endPoint: .bottom))
+        .padding(.bottom, 140) // 抬高底部内边距，确保悬浮在 TabBar 之上并适配 Home Indicator
+        .background(
+            LinearGradient(
+                colors: [AppTheme.bgPrimary.opacity(0), AppTheme.bgPrimary],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
     }
 
     // MARK: - Logic
