@@ -17,65 +17,66 @@ struct CustomView: View {
                 VStack(spacing: 0) {
                     customNavBar
                     modeSelector
+
                     ZStack {
-                        if selectedMode == .imageToVideo {
+                        switch selectedMode {
+                        case .imageToVideo:
                             ImageToVideoView()
-                        } else if selectedMode == .reference {
+                        case .reference:
                             ReferenceVideoView()
-                        } else {
+                        case .textToImage:
                             TextToImageView()
                         }
                     }
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
                 }
             }
             .navigationBarHidden(true)
         }
     }
 
-    // MARK: - Nav Bar
+    // MARK: - Modern Nav Bar
     private var customNavBar: some View {
         HStack {
             Button(action: {}) {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(AppTheme.textPrimary)
-                    .frame(width: 44, height: 44)
-                    .background(AppTheme.bgButtonSec)
-                    .clipShape(Circle())
-                    .overlay(Circle().stroke(AppTheme.borderSubtle, lineWidth: 0.5))
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(.white)
+                    .frame(width: 40, height: 40)
+                    .background(Circle().fill(Color.white.opacity(0.08)))
+                    .overlay(Circle().stroke(Color.white.opacity(0.1), lineWidth: 0.5))
             }
 
             Spacer()
 
             Text(navTitle)
-                .font(.system(size: 18, weight: .bold))
-                .foregroundStyle(AppTheme.goldGradH)
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(AppTheme.accentGradH)
 
             Spacer()
 
             Button(action: {}) {
-                Image(systemName: "lightbulb")
-                    .font(.system(size: 17))
-                    .foregroundColor(AppTheme.goldMid)
-                    .frame(width: 44, height: 44)
-                    .background(AppTheme.bgButtonSec)
-                    .clipShape(Circle())
-                    .overlay(Circle().stroke(AppTheme.borderSubtle, lineWidth: 0.5))
+                Image(systemName: "sparkles")
+                    .font(.system(size: 16))
+                    .foregroundColor(AppTheme.accentSecondary)
+                    .frame(width: 40, height: 40)
+                    .background(Circle().fill(Color.white.opacity(0.08)))
+                    .overlay(Circle().stroke(Color.white.opacity(0.1), lineWidth: 0.5))
             }
         }
         .padding(.horizontal, 20)
-        .padding(.top, 10)
+        .padding(.top, 12)
     }
 
     private var navTitle: String {
         switch selectedMode {
-        case .imageToVideo: return "Create Video"
-        case .reference:    return "Reference Video"
-        case .textToImage:  return "Create Image"
+        case .imageToVideo: return "Vision Lab"
+        case .reference:    return "Style Sync"
+        case .textToImage:  return "Dream Canvas"
         }
     }
 
-    // MARK: - Mode Selector
+    // MARK: - Modern Mode Selector (Segmented)
     private var modeSelector: some View {
         HStack(spacing: 0) {
             ForEach(
@@ -83,44 +84,39 @@ struct CustomView: View {
                 id: \.self
             ) { mode in
                 Button {
-                    withAnimation(.easeInOut(duration: 0.2)) { selectedMode = mode }
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) { selectedMode = mode }
                 } label: {
-                    VStack(spacing: 7) {
+                    VStack(spacing: 8) {
                         Text(modeTitle(for: mode))
-                            .font(.system(size: 14, weight: selectedMode == mode ? .bold : .medium))
-                            .foregroundStyle(
-                                selectedMode == mode
-                                    ? AnyShapeStyle(AppTheme.goldGradH)
-                                    : AnyShapeStyle(AppTheme.textMuted)
-                            )
+                            .font(.system(size: 15, weight: selectedMode == mode ? .bold : .medium))
+                            .foregroundColor(selectedMode == mode ? .white : AppTheme.textMuted)
 
-                        ZStack {
-                            Color.clear.frame(height: 2)
-                            if selectedMode == mode {
-                                RoundedRectangle(cornerRadius: 2)
-                                    .fill(AppTheme.goldGradH)
-                                    .frame(width: 36, height: 2)
-                            }
+                        if selectedMode == mode {
+                            Capsule()
+                                .fill(AppTheme.accentGradH)
+                                .frame(width: 24, height: 3)
+                                .matchedGeometryEffect(id: "tab", in: tabNamespace)
+                        } else {
+                            Capsule()
+                                .fill(Color.clear)
+                                .frame(width: 24, height: 3)
                         }
                     }
                 }
                 .frame(maxWidth: .infinity)
             }
         }
-        .padding(.vertical, 14)
-        .overlay(
-            Rectangle()
-                .fill(AppTheme.borderSubtle)
-                .frame(height: 0.5),
-            alignment: .bottom
-        )
+        .padding(.vertical, 16)
+        .background(AppTheme.bgPrimary)
     }
+
+    @Namespace private var tabNamespace
 
     private func modeTitle(for mode: GenerationMode) -> String {
         switch mode {
-        case .imageToVideo: return "Image to Video"
+        case .imageToVideo: return "Video"
         case .reference:    return "Reference"
-        case .textToImage:  return "Text to Image"
+        case .textToImage:  return "Image"
         }
     }
 }

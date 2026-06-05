@@ -13,42 +13,40 @@ final class VideoListViewController: UIViewController {
         layout.delegate = self
 
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = UIColor(red: 9/255, green: 9/255, blue: 9/255, alpha: 1)
+        collectionView.backgroundColor = .clear // 使用容器背景
         collectionView.register(VideoCell.self, forCellWithReuseIdentifier: VideoCell.identifier)
         collectionView.register(LoadingFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: LoadingFooterView.identifier)
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.alwaysBounceVertical = true
         collectionView.refreshControl = refreshControl
-        collectionView.contentInset = UIEdgeInsets(top: 12, left: 12, bottom: 24, right: 12)
+        // 增加顶部间距，适应大标题
+        collectionView.contentInset = UIEdgeInsets(top: 10, left: 16, bottom: 30, right: 16)
         return collectionView
     }()
 
     private let refreshControl: UIRefreshControl = {
         let rc = UIRefreshControl()
-        rc.tintColor = UIColor(red: 212/255, green: 168/255, blue: 42/255, alpha: 1) // goldMid
+        rc.tintColor = UIColor(red: 0.3, green: 0.62, blue: 1.0, alpha: 1) // 匹配 accentPrimary
         return rc
     }()
 
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
-        indicator.color = UIColor(red: 246/255, green: 200/255, blue: 66/255, alpha: 1) // goldBright
+        indicator.color = UIColor(red: 0/255, green: 242/255, blue: 255/255, alpha: 1) // 匹配 accentSecondary
         indicator.hidesWhenStopped = true
         return indicator
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "探索灵感"
-        view.backgroundColor = UIColor(red: 9/255, green: 9/255, blue: 9/255, alpha: 1)
+        title = "Inspiration"
+        view.backgroundColor = UIColor(red: 5/255, green: 5/255, blue: 5/255, alpha: 1) // AppTheme.bgPrimary
         setupNavigationBar()
         setupUI()
         setupRefreshControl()
 
-        // 1. 优先加载缓存数据
         loadCachedData()
-
-        // 2. 发起网络请求
         loadPage(reset: true)
     }
 
@@ -62,22 +60,29 @@ final class VideoListViewController: UIViewController {
 
     private func setupNavigationBar() {
         navigationController?.navigationBar.prefersLargeTitles = true
-        let darkBg = UIColor(red: 9/255, green: 9/255, blue: 9/255, alpha: 1)
-        let goldColor = UIColor(red: 212/255, green: 168/255, blue: 42/255, alpha: 1)
         let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = darkBg
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .clear
+
+        let accentColor = UIColor(red: 0.3, green: 0.62, blue: 1.0, alpha: 1) // accentPrimary
+
         appearance.largeTitleTextAttributes = [
-            .foregroundColor: goldColor,
-            .font: UIFont.systemFont(ofSize: 32, weight: .bold)
+            .foregroundColor: UIColor.white,
+            .font: UIFont.systemFont(ofSize: 34, weight: .black),
+            .kern: 0.5
         ]
+        appearance.titleTextAttributes = [
+            .foregroundColor: UIColor.white,
+            .font: UIFont.systemFont(ofSize: 18, weight: .bold)
+        ]
+
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
-        navigationController?.navigationBar.tintColor = goldColor
+        navigationController?.navigationBar.tintColor = accentColor
     }
 
     private func setupUI() {
+        // 添加一个微弱的顶部光晕背景装饰（可选，增强科幻感）
         view.addSubview(collectionView)
         view.addSubview(activityIndicator)
 
@@ -109,7 +114,6 @@ final class VideoListViewController: UIViewController {
         if reset {
             currentOffset = 0
             hasMorePages = true
-            // 如果目前没数据（包括缓存也为空），才显示中间的大 Loading
             if allVideos.isEmpty {
                 activityIndicator.startAnimating()
             }
@@ -118,8 +122,6 @@ final class VideoListViewController: UIViewController {
         }
 
         isLoadingPage = true
-
-        // 优化：加载更多时，不全量 reloadData，避免重置已有 Cell 的播放状态
         if reset {
             collectionView.reloadData()
         } else {
@@ -138,20 +140,17 @@ final class VideoListViewController: UIViewController {
                     let oldVideoCount = self.allVideos.count
                     if reset {
                         self.allVideos = []
-                        // 第一页请求成功后，同步更新缓存
                         VideoCacheService.shared.saveVideos(videos)
                     }
 
                     self.append(videos: videos)
                     let newVideoCount = self.allVideos.count
                     self.currentOffset += self.pageSize
-                    self.hasMorePages =  true //videos.count == self.pageSize
+                    self.hasMorePages = true
 
                     if reset {
-                        // 刷新或首次加载，全量更新
                         self.collectionView.reloadData()
                     } else {
-                        // 加载更多：仅插入新行，保持列表滚动位置和现有视频的播放
                         let indexPaths = (oldVideoCount..<newVideoCount).map { IndexPath(item: $0, section: 0) }
                         if !indexPaths.isEmpty {
                             self.collectionView.insertItems(at: indexPaths)
@@ -227,16 +226,11 @@ extension VideoListViewController: WaterfallLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, heightForItemAt indexPath: IndexPath, with width: CGFloat) -> CGFloat {
         let video = allVideos[indexPath.item]
         let aspectRatio = CGFloat(video.height) / CGFloat(video.width)
-
-        // 核心优化：强制设置一个最小比例（0.75，即 3:4）
-        // 这样横屏视频（如 16:9 的 0.56）也会被拉高到 0.75，聚焦中心内容，视觉上更清晰饱满
-        // 同时限制最高比例为 1.6，防止极长图破坏平衡
-        let finalRatio = max(0.75, min(aspectRatio, 1.6))
+        let finalRatio = max(0.8, min(aspectRatio, 1.5))
         return width * finalRatio
     }
 
     func collectionView(_ collectionView: UICollectionView, columnSpanForItemAt indexPath: IndexPath) -> Int {
-        // 强制回归单列显示，确保布局严丝合缝，消除杂乱的空白死角
         return 1
     }
 
@@ -245,7 +239,6 @@ extension VideoListViewController: WaterfallLayoutDelegate {
     }
 
     func collectionView(_ collectionView: UICollectionView, heightForFooterIn section: Int, contentHeight: CGFloat, availableHeight: CGFloat) -> CGFloat {
-        // 只要有数据就显示 Footer（用于显示加载转圈或“到底了”提示）
-        return allVideos.isEmpty ? 0 : 60
+        return allVideos.isEmpty ? 0 : 80
     }
 }

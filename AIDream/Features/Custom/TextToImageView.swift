@@ -16,32 +16,30 @@ struct TextToImageView: View {
         ZStack {
             AppTheme.bgPrimary.ignoresSafeArea()
 
-            // ── 滚动内容区 ──
             ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 22) {
-                    // 报错提示（生成失败时显示）
+                VStack(alignment: .leading, spacing: 32) {
                     if let error = errorMessage {
                         errorBanner(error)
                     }
 
-                    promptSection
+                    promptSection.padding(.top, 20)
                     aspectRatioSection
                     imageCountSection
-                    Spacer(minLength: 140)
+
+                    Spacer(minLength: 180)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 20)
+                .padding(.horizontal, 20)
             }
 
-            // ── 底部操作栏（固定底部）──
+            // ── 悬浮底部生成栏 ──
             VStack {
                 Spacer()
                 if !isGenerating {
                     bottomActionSection
                 }
             }
+            .ignoresSafeArea(.keyboard)
 
-            // ── 生成中全屏遮罩 ──
             if isGenerating {
                 GeneratingView(
                     progress: generationProgress,
@@ -55,7 +53,6 @@ struct TextToImageView: View {
                 .zIndex(10)
             }
         }
-        // ── 生成完成全屏展示 ──
         .fullScreenCover(isPresented: $showCompletion) {
             if let image = completedImage {
                 VideoCompletionView(
@@ -81,75 +78,63 @@ struct TextToImageView: View {
                 )
             }
         }
-        .animation(.easeInOut(duration: 0.3), value: isGenerating)
     }
 
-    // MARK: - Error Banner
+    // MARK: - Modern Components
 
     private func errorBanner(_ message: String) -> some View {
-        HStack(spacing: 10) {
-            Image(systemName: "exclamationmark.triangle.fill")
+        HStack(spacing: 12) {
+            Image(systemName: "exclamationmark.circle.fill")
                 .foregroundColor(AppTheme.error)
             Text(message)
-                .font(.system(size: 13))
+                .font(.system(size: 13, weight: .medium))
                 .foregroundColor(AppTheme.error)
-                .lineLimit(2)
             Spacer()
             Button { errorMessage = nil } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(AppTheme.textMuted)
+                Image(systemName: "xmark").font(.system(size: 12, weight: .bold))
             }
         }
-        .padding(12)
+        .padding(16)
         .background(AppTheme.error.opacity(0.1))
-        .cornerRadius(14)
-        .overlay(RoundedRectangle(cornerRadius: 14)
-            .stroke(AppTheme.error.opacity(0.3), lineWidth: 0.5))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(AppTheme.error.opacity(0.2), lineWidth: 1))
     }
 
-    // MARK: - Prompt
-
     private var promptSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("PROMPT")
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(AppTheme.textMuted)
-                .tracking(1.2).padding(.leading, 4)
+        VStack(alignment: .leading, spacing: 12) {
+            Label("Imagination Prompt", systemImage: "sparkles")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(AppTheme.accentSecondary)
 
             ZStack(alignment: .topLeading) {
                 TextEditor(text: $promptText)
                     .frame(height: 140)
-                    .padding(12)
+                    .padding(16)
                     .scrollContentBackground(.hidden)
-                    .background(AppTheme.bgCard)
-                    .cornerRadius(18)
-                    .overlay(RoundedRectangle(cornerRadius: 18)
-                        .stroke(AppTheme.borderSubtle, lineWidth: 0.5))
+                    .glassStyle(cornerRadius: 22)
                     .font(.system(size: 15))
                     .foregroundColor(.white)
 
                 if promptText.isEmpty {
-                    Text("Describe the scene, style and mood…")
+                    Text("Paint a picture with words... Describe textures, lighting, and emotions.")
                         .font(.system(size: 14))
                         .foregroundColor(AppTheme.textMuted)
-                        .padding(.leading, 16).padding(.top, 20)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 22)
                         .allowsHitTesting(false)
                 }
             }
         }
     }
 
-    // MARK: - Aspect Ratio
-
     private var aspectRatioSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("ASPECT RATIO")
-                .font(.system(size: 11, weight: .semibold))
+        VStack(alignment: .leading, spacing: 12) {
+            Text("CANVAS RATIO")
+                .font(.system(size: 11, weight: .bold))
+                .tracking(1.5)
                 .foregroundColor(AppTheme.textMuted)
-                .tracking(1.2).padding(.leading, 4)
 
-            HStack(spacing: 8) {
+            HStack(spacing: 10) {
                 ratioButton(ratio: "1:1",  icon: "square")
                 ratioButton(ratio: "3:4",  icon: "rectangle.portrait")
                 ratioButton(ratio: "4:3",  icon: "rectangle")
@@ -161,119 +146,99 @@ struct TextToImageView: View {
     private func ratioButton(ratio: String, icon: String) -> some View {
         let selected = selectedRatio == ratio
         return Button { selectedRatio = ratio } label: {
-            VStack(spacing: 6) {
-                Image(systemName: icon).font(.system(size: 20))
-                Text(ratio).font(.system(size: 13, weight: selected ? .bold : .regular))
+            VStack(spacing: 8) {
+                Image(systemName: icon).font(.system(size: 18))
+                Text(ratio).font(.system(size: 12, weight: selected ? .bold : .medium))
             }
-            .foregroundColor(selected ? AppTheme.goldBright : AppTheme.textSecondary)
-            .frame(maxWidth: .infinity).frame(height: 76)
-            .optionStyle(selected: selected, cornerRadius: 18)
+            .frame(maxWidth: .infinity).frame(height: 70)
+            .background(selected ? AppTheme.accentPrimary.opacity(0.15) : Color.white.opacity(0.05))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(selected ? AppTheme.accentPrimary : Color.clear, lineWidth: 1.5))
+            .foregroundColor(selected ? .white : AppTheme.textSecondary)
         }
     }
 
-    // MARK: - Image Count
-
     private var imageCountSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("NUMBER OF IMAGES")
-                .font(.system(size: 11, weight: .semibold))
+        VStack(alignment: .leading, spacing: 12) {
+            Text("ITERATIONS")
+                .font(.system(size: 11, weight: .bold))
+                .tracking(1.5)
                 .foregroundColor(AppTheme.textMuted)
-                .tracking(1.2).padding(.leading, 4)
 
             HStack {
-                Button { if imageCount > 1 { imageCount -= 1 } } label: {
-                    Image(systemName: "minus")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(AppTheme.goldMid)
-                        .frame(width: 40, height: 40)
-                        .background(AppTheme.goldBright.opacity(0.1))
-                        .cornerRadius(12)
-                        .overlay(RoundedRectangle(cornerRadius: 12)
-                            .stroke(AppTheme.borderGold, lineWidth: 1))
-                }
+                stepperButton(icon: "minus") { if imageCount > 1 { imageCount -= 1 } }
 
                 Spacer()
 
-                HStack(spacing: 6) {
+                VStack(spacing: 2) {
                     Text("\(imageCount)")
-                        .font(.system(size: 22, weight: .bold))
-                        .foregroundStyle(AppTheme.goldGradH)
-                    Text("Images")
-                        .font(.system(size: 14))
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundStyle(AppTheme.accentGrad)
+                    Text("Variants")
+                        .font(.system(size: 11, weight: .medium))
                         .foregroundColor(AppTheme.textSecondary)
                 }
 
                 Spacer()
 
-                Button { if imageCount < 10 { imageCount += 1 } } label: {
-                    Image(systemName: "plus")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(AppTheme.goldMid)
-                        .frame(width: 40, height: 40)
-                        .background(AppTheme.goldBright.opacity(0.1))
-                        .cornerRadius(12)
-                        .overlay(RoundedRectangle(cornerRadius: 12)
-                            .stroke(AppTheme.borderGold, lineWidth: 1))
-                }
+                stepperButton(icon: "plus") { if imageCount < 10 { imageCount += 1 } }
             }
-            .padding(12)
-            .background(AppTheme.bgCard)
-            .cornerRadius(18)
-            .overlay(RoundedRectangle(cornerRadius: 18)
-                .stroke(AppTheme.borderSubtle, lineWidth: 0.5))
+            .padding(16)
+            .glassStyle(cornerRadius: 22)
         }
     }
 
-    // MARK: - 底部操作栏
+    private func stepperButton(icon: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: icon)
+                .font(.system(size: 16, weight: .bold))
+                .foregroundColor(.white)
+                .frame(width: 44, height: 44)
+                .background(Circle().fill(Color.white.opacity(0.1)))
+        }
+    }
 
     private var bottomActionSection: some View {
-        VStack(spacing: 14) {
-            HStack(spacing: 5) {
-                Text("Want faster generation?").foregroundColor(AppTheme.textMuted)
-                Text("Get SVIP (50% OFF)")
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(AppTheme.goldGradH)
-            }
-            .font(.system(size: 12))
-
+        VStack(spacing: 16) {
             Button { generateImage() } label: {
-                VStack(spacing: 4) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "sparkles").font(.system(size: 17))
-                        Text("Generate Image").font(.system(size: 17, weight: .bold))
-                    }
+                HStack(spacing: 12) {
+                    Image(systemName: "paintpalette.fill")
+                        .font(.system(size: 20, weight: .bold))
+                    Text("Render Masterpiece")
+                        .font(.system(size: 17, weight: .bold))
+
+                    Spacer()
+
                     HStack(spacing: 4) {
-                        Image(systemName: "diamond.fill").font(.system(size: 11))
-                        Text("40").font(.system(size: 13, weight: .semibold))
+                        Image(systemName: "bolt.fill")
+                        Text("40")
                     }
-                    .foregroundColor(Color(hex: "#0A0A0A"))
+                    .font(.system(size: 14, weight: .bold))
+                    .padding(.horizontal, 10).padding(.vertical, 4)
+                    .background(Color.black.opacity(0.2)).clipShape(Capsule())
                 }
-                .foregroundColor(Color(hex: "#0A0A0A"))
-                .frame(maxWidth: .infinity).frame(height: 60)
-                .background(AppTheme.goldGradH)
-                .cornerRadius(22)
-                .shadow(color: AppTheme.goldGlow, radius: 12, y: 5)
+                .padding(.horizontal, 24)
+                .frame(maxWidth: .infinity).frame(height: 64)
+                .background(AppTheme.accentGradH)
+                .foregroundColor(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 22))
+                .shadow(color: AppTheme.accentGlow, radius: 15, y: 8)
             }
             .disabled(promptText.trimmingCharacters(in: .whitespaces).isEmpty)
             .opacity(promptText.trimmingCharacters(in: .whitespaces).isEmpty ? 0.5 : 1.0)
 
-            HStack(spacing: 5) {
-                Image(systemName: "checkmark.shield.fill").foregroundStyle(AppTheme.goldGradH)
-                Text("Failed task? 100% Refund.").foregroundColor(AppTheme.textSecondary)
+            HStack(spacing: 6) {
+                Image(systemName: "sparkles").foregroundColor(AppTheme.accentSecondary)
+                Text("AI Artist is ready for your command")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(AppTheme.textMuted)
             }
-            .font(.system(size: 12))
         }
-        .padding(.horizontal, 20).padding(.top, 16).padding(.bottom, 20)
-        .background(
-            ZStack {
-                AppTheme.bgSecondary
-                Color.white.opacity(0.015)
-            }
-            .overlay(Rectangle().fill(AppTheme.borderSubtle).frame(height: 0.5), alignment: .top)
-        )
+        .padding(.horizontal, 20).padding(.top, 20).padding(.bottom, 30)
+        .background(LinearGradient(colors: [AppTheme.bgPrimary.opacity(0), AppTheme.bgPrimary], startPoint: .top, endPoint: .bottom))
     }
 
-    // MARK: - 生成逻辑
+    // MARK: - Logic (Same as before but wrapped in new UI)
 
     private func generateImage() {
         let trimmed = promptText.trimmingCharacters(in: .whitespaces)
@@ -296,7 +261,6 @@ struct TextToImageView: View {
             prompt: trimmed,
             options: options,
             onStateChange: { [self] state in
-                // 将 AIImageGenerator 的状态映射为进度值
                 switch state {
                 case .preparing:           generationProgress = 0.08
                 case .requesting:          generationProgress = 0.25
@@ -306,7 +270,6 @@ struct TextToImageView: View {
                 }
             },
             onProgress: { [self] p in
-                // downloading 进度补充更新
                 generationProgress = max(generationProgress, 0.25 + p * 0.65)
             }
         ) { [self] result in
@@ -315,10 +278,7 @@ struct TextToImageView: View {
             case .success(let res):
                 completedImage = res.image
                 generationProgress = 1.0
-                // 短暂延迟让进度动画走完
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    showCompletion = true
-                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { showCompletion = true }
             case .failure(let err):
                 errorMessage = err.localizedDescription
                 generationProgress = 0
@@ -326,17 +286,9 @@ struct TextToImageView: View {
         }
     }
 
-    // MARK: - 保存 / 分享
-
-    private func saveImage(_ image: UIImage) {
-        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-    }
-
+    private func saveImage(_ image: UIImage) { UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil) }
     private func shareImage(_ image: UIImage) {
         let vc = UIActivityViewController(activityItems: [image], applicationActivities: nil)
-        UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .first?.windows.first?.rootViewController?
-            .present(vc, animated: true)
+        UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first?.windows.first?.rootViewController?.present(vc, animated: true)
     }
 }

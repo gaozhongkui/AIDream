@@ -1,80 +1,71 @@
 import SwiftUI
 
-// MARK: - 黑金科技风主题系统
+// MARK: - 新版：深邃宇宙与极光设计系统
 struct AppTheme {
 
-    // MARK: Backgrounds
-    static let bgPrimary    = Color(hex: "#090909")
-    static let bgSecondary  = Color(hex: "#10101A")
-    static let bgCard       = Color(hex: "#17171F")
-    static let bgSurface    = Color(hex: "#1C1C28")
-    static let bgInput      = Color.white.opacity(0.05)
-    static let bgButtonSec  = Color.white.opacity(0.07)
+    // MARK: 背景色系 (Backgrounds)
+    static let bgPrimary    = Color(hex: "#050505") // 纯黑背景
+    static let bgSecondary  = Color(hex: "#0E1016") // 深蓝黑
+    static let bgCard       = Color(hex: "#1A1D26") // 卡片背景
+    static let bgSurface    = Color(hex: "#242835") // 浮层
+    static let bgInput      = Color.white.opacity(0.04)
+    static let bgButtonSec  = Color.white.opacity(0.08)
 
-    // MARK: Gold Accent
-    static let goldBright   = Color(hex: "#F6C842")
-    static let goldMid      = Color(hex: "#D4A82A")
-    static let goldDim      = Color(hex: "#8B6A14")
+    // MARK: 核心强调色 (Accents - 极光蓝青色)
+    static let accentPrimary = Color(hex: "#4D9FFF") // 极光蓝
+    static let accentSecondary = Color(hex: "#00F2FF") // 极光青
+    static let accentGlow    = Color(hex: "#4D9FFF").opacity(0.4)
 
-    static var goldGrad: LinearGradient {
+    // 渐变色
+    static var accentGrad: LinearGradient {
         LinearGradient(
-            colors: [Color(hex: "#F6C842"), Color(hex: "#C9920A")],
+            colors: [Color(hex: "#4D9FFF"), Color(hex: "#00F2FF")],
             startPoint: .topLeading, endPoint: .bottomTrailing
         )
     }
-    static var goldGradH: LinearGradient {
+
+    static var accentGradH: LinearGradient {
         LinearGradient(
-            colors: [Color(hex: "#F6C842"), Color(hex: "#C9920A")],
+            colors: [Color(hex: "#4D9FFF"), Color(hex: "#00F2FF")],
             startPoint: .leading, endPoint: .trailing
         )
     }
-    static var goldGradV: LinearGradient {
-        LinearGradient(
-            colors: [Color(hex: "#F6C842"), Color(hex: "#C9920A")],
-            startPoint: .top, endPoint: .bottom
-        )
-    }
 
-    // MARK: Text
+    // MARK: 文本色系 (Text)
     static let textPrimary   = Color.white
-    static let textSecondary = Color.white.opacity(0.55)
-    static let textMuted     = Color.white.opacity(0.28)
+    static let textSecondary = Color.white.opacity(0.65)
+    static let textMuted     = Color.white.opacity(0.35)
 
-    // MARK: Borders
-    static let borderSubtle  = Color(hex: "#28282E")
-    static let borderGold    = Color(hex: "#D4A82A").opacity(0.55)
+    // MARK: 边框 (Borders)
+    static let borderSubtle  = Color.white.opacity(0.12)
+    static let borderAccent  = Color(hex: "#4D9FFF").opacity(0.5)
 
-    // MARK: Semantic
-    static let error         = Color(hex: "#FF5A5A")
-    static let goldGlow      = Color(hex: "#D4A82A").opacity(0.35)
+    // MARK: 语义色 (Semantic)
+    static let error         = Color(hex: "#FF4D4D")
+    static let success       = Color(hex: "#00E676")
 }
 
-// MARK: - View Modifiers
+// MARK: - 通用视图修饰符
 extension View {
-    func goldBorder(cornerRadius: CGFloat = 16, active: Bool = true) -> some View {
+    func primaryBorder(cornerRadius: CGFloat = 16, active: Bool = true) -> some View {
         self.overlay(
             RoundedRectangle(cornerRadius: cornerRadius)
                 .stroke(
-                    active
-                        ? LinearGradient(
-                            colors: [Color(hex: "#F6C842"), Color(hex: "#C9920A")],
-                            startPoint: .topLeading, endPoint: .bottomTrailing)
-                        : LinearGradient(
-                            colors: [AppTheme.borderSubtle, AppTheme.borderSubtle],
-                            startPoint: .topLeading, endPoint: .bottomTrailing),
-                    lineWidth: active ? 1.5 : 0.5
+                    active ? AppTheme.accentGrad : LinearGradient(colors: [AppTheme.borderSubtle], startPoint: .top, endPoint: .bottom),
+                    lineWidth: active ? 1.5 : 0.8
                 )
         )
     }
 
-    func optionStyle(selected: Bool, cornerRadius: CGFloat = 22) -> some View {
-        self
-            .background(
-                selected
-                    ? Color(hex: "#F6C842").opacity(0.1)
-                    : AppTheme.bgButtonSec
-            )
-            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-            .goldBorder(cornerRadius: cornerRadius, active: selected)
+    func glassStyle(cornerRadius: CGFloat = 20) -> some View {
+        self.background(
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .fill(Color.white.opacity(0.05))
+                .blur(radius: 0.5)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
+        )
     }
 }

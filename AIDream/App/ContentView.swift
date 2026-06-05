@@ -17,62 +17,74 @@ struct ContentView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .ignoresSafeArea(edges: .bottom)
-            .safeAreaInset(edge: .bottom) { Color.clear.frame(height: 82) }
+            .safeAreaInset(edge: .bottom) { Color.clear.frame(height: 90) }
 
             customTabBar
         }
         .preferredColorScheme(.dark)
     }
 
-    // MARK: - Custom Tab Bar
+    // MARK: - Modern Custom Tab Bar
     private var customTabBar: some View {
         HStack(spacing: 0) {
-            tabItem(icon: "play.rectangle.fill", label: "Explore", index: 0)
-            tabItem(icon: "sparkles",            label: "Create",  index: 1)
-            tabItem(icon: "person.fill",         label: "Profile", index: 2)
+            tabItem(icon: "square.grid.2x2.fill", label: "Explore", index: 0)
+            tabItem(icon: "wand.and.stars",       label: "Create",  index: 1)
+            tabItem(icon: "person.crop.circle",   label: "Profile", index: 2)
         }
-        .frame(height: 82)
+        .frame(height: 72)
+        .padding(.horizontal, 24)
         .background(
-            ZStack(alignment: .top) {
-                Color(hex: "#090909")
-                    .overlay(Color.white.opacity(0.025))
-                // Top gold separator line
-                Rectangle()
-                    .fill(AppTheme.goldGradH)
-                    .frame(height: 0.5)
-                    .opacity(0.55)
+            ZStack {
+                // Frosted glass effect
+                BlurView(style: .systemUltraThinMaterialDark)
+                    .clipShape(Capsule())
+
+                // Subtle border
+                Capsule()
+                    .stroke(AppTheme.borderSubtle, lineWidth: 1)
             }
-            .ignoresSafeArea(edges: .bottom)
+            .shadow(color: Color.black.opacity(0.4), radius: 15, y: 10)
         )
+        .padding(.horizontal, 20)
+        .padding(.bottom, 28) // Floating look
     }
 
     private func tabItem(icon: String, label: String, index: Int) -> some View {
         let active = selectedTab == index
         return Button {
-            withAnimation(.easeInOut(duration: 0.18)) { selectedTab = index }
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { selectedTab = index }
         } label: {
-            VStack(spacing: 5) {
-                ZStack {
-                    if active {
-                        Circle()
-                            .fill(AppTheme.goldBright.opacity(0.12))
-                            .frame(width: 40, height: 40)
-                    }
-                    Image(systemName: icon)
-                        .font(.system(size: 20, weight: active ? .semibold : .light))
-                        .foregroundStyle(active
-                            ? AnyShapeStyle(AppTheme.goldGradV)
-                            : AnyShapeStyle(AppTheme.textMuted))
-                        .scaleEffect(active ? 1.08 : 1.0)
-                }
-                Text(label)
-                    .font(.system(size: 10, weight: active ? .semibold : .regular))
+            VStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.system(size: 22, weight: active ? .bold : .medium))
                     .foregroundStyle(active
-                        ? AnyShapeStyle(AppTheme.goldMid)
+                        ? AnyShapeStyle(AppTheme.accentGradV)
                         : AnyShapeStyle(AppTheme.textMuted))
+                    .scaleEffect(active ? 1.15 : 1.0)
+
+                Text(label)
+                    .font(.system(size: 11, weight: active ? .bold : .medium))
+                    .foregroundColor(active ? .white : AppTheme.textMuted)
             }
             .frame(maxWidth: .infinity)
-            .padding(.top, 10)
         }
+    }
+}
+
+// MARK: - Blur View Helper
+struct BlurView: UIViewRepresentable {
+    var style: UIBlurEffect.Style
+    func makeUIView(context: Context) -> UIVisualEffectView {
+        UIVisualEffectView(effect: UIBlurEffect(style: style))
+    }
+    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {}
+}
+
+extension AppTheme {
+    static var accentGradV: LinearGradient {
+        LinearGradient(
+            colors: [Color(hex: "#4D9FFF"), Color(hex: "#00F2FF")],
+            startPoint: .top, endPoint: .bottom
+        )
     }
 }

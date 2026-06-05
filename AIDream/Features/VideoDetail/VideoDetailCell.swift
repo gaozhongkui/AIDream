@@ -8,7 +8,6 @@ final class VideoDetailCell: UICollectionViewCell {
     private var player: AVPlayer?
     private var playerLayer: AVPlayerLayer?
     private var videoURL: URL?
-    private var playerItemObserver: NSKeyValueObservation?
     private var playerLayerObserver: NSKeyValueObservation?
 
     private var isLiked: Bool = false
@@ -31,11 +30,13 @@ final class VideoDetailCell: UICollectionViewCell {
 
     private let backButton: UIButton = {
         let btn = UIButton(type: .system)
-        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
+        let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .bold)
         btn.setImage(UIImage(systemName: "chevron.left", withConfiguration: config), for: .normal)
         btn.tintColor = .white
-        btn.backgroundColor = .black.withAlphaComponent(0.3)
+        btn.backgroundColor = UIColor.white.withAlphaComponent(0.12)
         btn.layer.cornerRadius = 20
+        btn.layer.borderWidth = 0.5
+        btn.layer.borderColor = UIColor.white.withAlphaComponent(0.15).cgColor
         return btn
     }()
 
@@ -50,68 +51,74 @@ final class VideoDetailCell: UICollectionViewCell {
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 15, weight: .bold)
-        label.textColor = .white
-        label.layer.shadowColor = UIColor.black.cgColor
-        label.layer.shadowOffset = CGSize(width: 1, height: 1)
-        label.layer.shadowOpacity = 0.5
+        label.textColor = UIColor(red: 0, green: 242/255, blue: 255/255, alpha: 1) // accentSecondary
         return label
     }()
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 20, weight: .black)
+        label.font = .systemFont(ofSize: 22, weight: .black)
         label.textColor = .white
         label.layer.shadowColor = UIColor.black.cgColor
-        label.layer.shadowOffset = CGSize(width: 1, height: 1)
-        label.layer.shadowOpacity = 0.5
+        label.layer.shadowOffset = CGSize(width: 0, height: 2)
+        label.layer.shadowOpacity = 0.8
         return label
     }()
 
     private let introLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .medium)
-        label.textColor = .white.withAlphaComponent(0.9)
-        label.numberOfLines = 0
-        label.layer.shadowColor = UIColor.black.cgColor
-        label.layer.shadowOffset = CGSize(width: 1, height: 1)
-        label.layer.shadowOpacity = 0.5
+        label.textColor = .white.withAlphaComponent(0.8)
+        label.numberOfLines = 2
         return label
     }()
 
     private let likeButton: UIButton = {
         var config = UIButton.Configuration.filled()
-        config.image = UIImage(systemName: "heart.fill")
+        config.image = UIImage(systemName: "bolt.heart.fill")
         config.imagePlacement = .top
-        config.imagePadding = 4
-        config.baseBackgroundColor = .black.withAlphaComponent(0.3)
+        config.imagePadding = 6
+        config.baseBackgroundColor = UIColor.white.withAlphaComponent(0.08)
         config.baseForegroundColor = .white
-        config.cornerStyle = .medium
-        return UIButton(configuration: config)
+        config.cornerStyle = .large
+        let btn = UIButton(configuration: config)
+        // Add subtle glass border
+        btn.layer.borderWidth = 0.5
+        btn.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
+        btn.layer.cornerRadius = 18
+        btn.clipsToBounds = true
+        return btn
     }()
 
     private let useTemplateButton: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setTitle("Use Template", for: .normal)
-        btn.setTitleColor(UIColor(red: 9/255, green: 9/255, blue: 9/255, alpha: 1), for: .normal)
-        btn.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
-        btn.layer.cornerRadius = 25
+        btn.setTitle("Remix Concept", for: .normal)
+        btn.setTitleColor(.white, for: .normal)
+        btn.titleLabel?.font = .systemFont(ofSize: 17, weight: .black)
+        btn.layer.cornerRadius = 22
         btn.clipsToBounds = true
 
-        let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .bold)
-        btn.setImage(UIImage(systemName: "sparkles", withConfiguration: config), for: .normal)
-        btn.tintColor = UIColor(red: 9/255, green: 9/255, blue: 9/255, alpha: 1)
-        btn.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 10)
+        let config = UIImage.SymbolConfiguration(pointSize: 16, weight: .bold)
+        btn.setImage(UIImage(systemName: "wand.and.stars.inverse", withConfiguration: config), for: .normal)
+        btn.tintColor = .white
+        btn.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
 
-        // Gold gradient background
+        // Aurora gradient background
         let gradient = CAGradientLayer()
         gradient.colors = [
-            UIColor(red: 246/255, green: 200/255, blue: 66/255, alpha: 1).cgColor,
-            UIColor(red: 201/255, green: 146/255, blue: 10/255, alpha: 1).cgColor
+            UIColor(red: 0.3, green: 0.62, blue: 1.0, alpha: 1).cgColor, // accentPrimary
+            UIColor(red: 0, green: 0.95, blue: 1.0, alpha: 1).cgColor  // accentSecondary
         ]
         gradient.startPoint = CGPoint(x: 0, y: 0.5)
         gradient.endPoint   = CGPoint(x: 1, y: 0.5)
-        gradient.name = "goldGradient"
+        gradient.name = "accentGradient"
         btn.layer.insertSublayer(gradient, at: 0)
+
+        // Add outer glow
+        btn.layer.shadowColor = UIColor(red: 0.3, green: 0.62, blue: 1.0, alpha: 0.4).cgColor
+        btn.layer.shadowOffset = CGSize(width: 0, height: 4)
+        btn.layer.shadowOpacity = 1
+        btn.layer.shadowRadius = 12
         return btn
     }()
 
@@ -122,9 +129,7 @@ final class VideoDetailCell: UICollectionViewCell {
         setupUI()
     }
 
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    required init?(coder: NSCoder) { fatalError() }
 
     private func setupUI() {
         contentView.addSubview(playerContainer)
@@ -134,12 +139,9 @@ final class VideoDetailCell: UICollectionViewCell {
         contentView.addSubview(likeButton)
         contentView.addSubview(useTemplateButton)
 
-        playerContainer.translatesAutoresizingMaskIntoConstraints = false
-        coverImageView.translatesAutoresizingMaskIntoConstraints = false
-        backButton.translatesAutoresizingMaskIntoConstraints = false
-        infoStackView.translatesAutoresizingMaskIntoConstraints = false
-        likeButton.translatesAutoresizingMaskIntoConstraints = false
-        useTemplateButton.translatesAutoresizingMaskIntoConstraints = false
+        [playerContainer, coverImageView, backButton, infoStackView, likeButton, useTemplateButton].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         infoStackView.addArrangedSubview(nameLabel)
         infoStackView.addArrangedSubview(titleLabel)
@@ -161,10 +163,10 @@ final class VideoDetailCell: UICollectionViewCell {
             backButton.widthAnchor.constraint(equalToConstant: 40),
             backButton.heightAnchor.constraint(equalToConstant: 40),
 
-            useTemplateButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            useTemplateButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            useTemplateButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
+            useTemplateButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
             useTemplateButton.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-            useTemplateButton.heightAnchor.constraint(equalToConstant: 54),
+            useTemplateButton.heightAnchor.constraint(equalToConstant: 58),
 
             infoStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             infoStackView.bottomAnchor.constraint(equalTo: useTemplateButton.topAnchor, constant: -30),
@@ -173,27 +175,18 @@ final class VideoDetailCell: UICollectionViewCell {
             likeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             likeButton.bottomAnchor.constraint(equalTo: useTemplateButton.topAnchor, constant: -40),
             likeButton.widthAnchor.constraint(equalToConstant: 64),
-            likeButton.heightAnchor.constraint(equalToConstant: 64)
+            likeButton.heightAnchor.constraint(equalToConstant: 68)
         ])
 
         backButton.addTarget(self, action: #selector(backTapped), for: .touchUpInside)
         likeButton.addTarget(self, action: #selector(likeTapped), for: .touchUpInside)
     }
 
-    @objc private func backTapped() {
-        onBackTapped?()
-    }
+    @objc private func backTapped() { onBackTapped?() }
 
     @objc private func likeTapped() {
         isLiked.toggle()
-
-        // 更新点赞数（简单逻辑：点赞+1，取消-1）
-        if isLiked {
-            currentStarCount += 1
-        } else {
-            currentStarCount = max(0, currentStarCount - 1)
-        }
-
+        if isLiked { currentStarCount += 1 } else { currentStarCount = max(0, currentStarCount - 1) }
         updateLikeButtonStyle(animated: true)
     }
 
@@ -207,16 +200,11 @@ final class VideoDetailCell: UICollectionViewCell {
         likeButton.setTitle(starText, for: .normal)
 
         if animated {
-            // 抖音风格的缩放动画
             let animation = CAKeyframeAnimation(keyPath: "transform.scale")
-            animation.values = [1.0, 1.3, 0.9, 1.0]
-            animation.keyTimes = [0, 0.3, 0.6, 1.0]
+            animation.values = [1.0, 1.4, 0.9, 1.0]
             animation.duration = 0.3
             likeButton.layer.add(animation, forKey: "bounce")
-
-            // 触感反馈
-            let generator = UIImpactFeedbackGenerator(style: .medium)
-            generator.impactOccurred()
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         }
     }
 
@@ -227,17 +215,11 @@ final class VideoDetailCell: UICollectionViewCell {
         introLabel.text = video.introduction
 
         self.currentStarCount = video.starCount
-        self.isLiked = false // 默认未点赞，实际应从持久化或后端获取
         updateLikeButtonStyle(animated: false)
 
-        // 核心优化：配置时确保封面完全显示，重置透明度
         coverImageView.isHidden = false
         coverImageView.alpha = 1
-        if let coverURL = video.coverURL {
-            coverImageView.kf.setImage(with: coverURL, options: [.transition(.none)])
-        } else {
-            coverImageView.image = nil
-        }
+        coverImageView.kf.setImage(with: video.coverURL)
 
         setupPlayer()
     }
@@ -246,38 +228,21 @@ final class VideoDetailCell: UICollectionViewCell {
         guard let url = videoURL else { return }
         stopPlayback()
 
-        let playerItem = AVPlayerItem(url: url)
-        let player = AVPlayer(playerItem: playerItem)
-        let playerLayer = AVPlayerLayer(player: player)
-        playerLayer.videoGravity = .resizeAspectFill
-        playerLayer.frame = contentView.bounds
-        // 设置背景色为透明，防止切换瞬时露出黑色背景
-        playerLayer.backgroundColor = UIColor.clear.cgColor
+        let item = AVPlayerItem(url: url)
+        player = AVPlayer(playerItem: item)
+        let layer = AVPlayerLayer(player: player)
+        layer.videoGravity = .resizeAspectFill
+        layer.frame = contentView.bounds
+        playerContainer.layer.addSublayer(layer)
+        self.playerLayer = layer
 
-        playerContainer.layer.addSublayer(playerLayer)
-
-        self.player = player
-        self.playerLayer = playerLayer
-
-        // 核心优化：监听 playerLayer.isReadyForDisplay
-        playerLayerObserver = playerLayer.observe(\.isReadyForDisplay, options: [.new]) { [weak self] layer, change in
+        playerLayerObserver = layer.observe(\.isReadyForDisplay, options: [.new]) { [weak self] layer, _ in
             if layer.isReadyForDisplay {
                 DispatchQueue.main.async {
-                    UIView.animate(withDuration: 0.2) {
-                        self?.coverImageView.alpha = 0
-                    } completion: { _ in
-                        self?.coverImageView.isHidden = true
-                    }
+                    UIView.animate(withDuration: 0.3) { self?.coverImageView.alpha = 0 }
                 }
             }
         }
-
-        NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
-        player.play()
-    }
-
-    @objc private func playerItemDidReachEnd(notification: Notification) {
-        player?.seek(to: .zero)
         player?.play()
     }
 
@@ -286,18 +251,14 @@ final class VideoDetailCell: UICollectionViewCell {
         playerLayer?.removeFromSuperlayer()
         player = nil
         playerLayer = nil
-        playerItemObserver?.invalidate()
-        playerItemObserver = nil
         playerLayerObserver?.invalidate()
         playerLayerObserver = nil
-        NotificationCenter.default.removeObserver(self)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
         playerLayer?.frame = bounds
-        // Keep gold gradient sized to button
-        if let grad = useTemplateButton.layer.sublayers?.first(where: { $0.name == "goldGradient" }) {
+        if let grad = useTemplateButton.layer.sublayers?.first(where: { $0.name == "accentGradient" }) {
             grad.frame = useTemplateButton.bounds
         }
     }
@@ -305,13 +266,7 @@ final class VideoDetailCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         stopPlayback()
-        coverImageView.kf.cancelDownloadTask()
         coverImageView.image = nil
-        coverImageView.isHidden = false
         coverImageView.alpha = 1
-        nameLabel.text = nil
-        titleLabel.text = nil
-        introLabel.text = nil
-        isLiked = false
     }
 }

@@ -6,96 +6,85 @@ struct GeneratingView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "#090909").ignoresSafeArea()
-            // Subtle radial gold glow in background
+            AppTheme.bgPrimary.ignoresSafeArea()
+
+            // Core energy glow in background
             RadialGradient(
-                colors: [Color(hex: "#D4A82A").opacity(0.08), .clear],
+                colors: [AppTheme.accentPrimary.opacity(0.12), .clear],
                 center: .center,
-                startRadius: 20,
-                endRadius: 300
+                startRadius: 50,
+                endRadius: 400
             )
             .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 Spacer()
 
-                // Center card
-                ZStack {
-                    // Card background
-                    RoundedRectangle(cornerRadius: 32)
-                        .fill(Color(hex: "#17171F"))
-                        .frame(width: 240, height: 427)
-                        .overlay(
-                            // Gold gradient border
-                            RoundedRectangle(cornerRadius: 32)
-                                .stroke(
-                                    LinearGradient(
-                                        colors: [
-                                            Color(hex: "#F6C842"),
-                                            Color(hex: "#8B6A14"),
-                                            Color(hex: "#F6C842").opacity(0.3)
-                                        ],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ),
-                                    lineWidth: 1.5
-                                )
-                        )
+                // Center futuristic container
+                VStack(spacing: 32) {
+                    ZStack {
+                        // Progress Ring (Visual backdrop)
+                        Circle()
+                            .stroke(Color.white.opacity(0.05), lineWidth: 8)
+                            .frame(width: 200, height: 200)
 
-                    VStack(spacing: 28) {
+                        // Animated Lottie/Icon
                         LottieView(name: "ai_generating_a")
-                            .frame(width: 150, height: 150)
+                            .frame(width: 140, height: 140)
 
-                        VStack(spacing: 10) {
-                            // Gold progress percentage
-                            Text("\(Int(progress * 100))%")
-                                .font(.system(size: 36, weight: .bold))
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        colors: [Color(hex: "#F6C842"), Color(hex: "#C9920A")],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
+                        // Active Progress Arc
+                        Circle()
+                            .trim(from: 0, to: CGFloat(progress))
+                            .stroke(
+                                AppTheme.accentGrad,
+                                style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                            )
+                            .frame(width: 200, height: 200)
+                            .rotationEffect(.degrees(-90))
+                            .animation(.linear, value: progress)
+                    }
+                    .shadow(color: AppTheme.accentGlow, radius: 20)
 
-                            Text("Generating…")
-                                .font(.system(size: 15, weight: .medium))
-                                .foregroundColor(Color.white.opacity(0.55))
-                        }
+                    VStack(spacing: 12) {
+                        Text("\(Int(progress * 100))%")
+                            .font(.system(size: 48, weight: .black, design: .rounded))
+                            .foregroundStyle(AppTheme.accentGrad)
+
+                        Text("Synthesizing your vision...")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(AppTheme.textSecondary)
                     }
                 }
-                .shadow(color: Color(hex: "#D4A82A").opacity(0.2), radius: 30, x: 0, y: 15)
+                .padding(40)
+                .glassStyle(cornerRadius: 40)
+                .padding(.horizontal, 30)
 
                 Spacer()
 
                 // Bottom actions
-                VStack(spacing: 14) {
+                VStack(spacing: 20) {
                     Button(action: onBackToHome) {
-                        HStack(spacing: 8) {
-                            Image(systemName: "arrow.left")
-                                .font(.system(size: 14, weight: .semibold))
-                            Text("Back to Home")
-                                .font(.system(size: 16, weight: .semibold))
+                        HStack(spacing: 10) {
+                            Image(systemName: "house.fill")
+                            Text("Minimize to Background")
+                                .font(.system(size: 16, weight: .bold))
                         }
-                        .foregroundColor(.white.opacity(0.85))
+                        .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .frame(height: 56)
-                        .background(Color.white.opacity(0.07))
-                        .cornerRadius(18)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 18)
-                                .stroke(Color(hex: "#28282E"), lineWidth: 0.5)
-                        )
+                        .background(Color.white.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 18))
+                        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.1), lineWidth: 1))
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 24)
 
-                    Text("You can leave safely. We'll notify you when it's done.")
+                    Text("We'll push a notification when the masterpiece is ready.")
                         .font(.system(size: 12))
-                        .foregroundColor(Color.white.opacity(0.3))
+                        .foregroundColor(AppTheme.textMuted)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
                 }
-                .padding(.bottom, 48)
+                .padding(.bottom, 50)
             }
         }
     }

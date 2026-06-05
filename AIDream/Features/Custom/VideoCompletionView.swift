@@ -16,28 +16,28 @@ struct VideoCompletionView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "#090909").ignoresSafeArea()
+            AppTheme.bgPrimary.ignoresSafeArea()
 
-            // 背景金色光晕
+            // Aurora Background Glow
             RadialGradient(
-                colors: [Color(hex: "#D4A82A").opacity(0.07), .clear],
-                center: .center, startRadius: 10, endRadius: 350
+                colors: [AppTheme.accentPrimary.opacity(0.1), .clear],
+                center: .top, startRadius: 0, endRadius: 500
             )
             .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // ── 顶部导航 ──
+                // ── Modern Nav Bar ──
                 navBar
 
                 Spacer()
 
-                // ── 媒体卡片 ──
+                // ── Futuristic Media Card ──
                 mediaCard
-                    .shadow(color: Color(hex: "#D4A82A").opacity(0.25), radius: 35, x: 0, y: 15)
+                    .shadow(color: AppTheme.accentGlow.opacity(0.2), radius: 30, y: 15)
 
                 Spacer()
 
-                // ── 底部操作 ──
+                // ── Glass Action Bar ──
                 actionBar
             }
         }
@@ -48,145 +48,117 @@ struct VideoCompletionView: View {
         HStack {
             Button(action: onClose) {
                 Image(systemName: "xmark")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(.white.opacity(0.8))
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(.white)
                     .frame(width: 44, height: 44)
-                    .background(Color.white.opacity(0.07))
-                    .clipShape(Circle())
-                    .overlay(Circle().stroke(Color(hex: "#28282E"), lineWidth: 0.5))
+                    .background(Circle().fill(Color.white.opacity(0.1)))
             }
 
             Spacer()
 
             Text(navTitle)
-                .font(.system(size: 18, weight: .bold))
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [Color(hex: "#F6C842"), Color(hex: "#C9920A")],
-                        startPoint: .leading, endPoint: .trailing
-                    )
-                )
+                .font(.system(size: 18, weight: .black))
+                .foregroundStyle(AppTheme.accentGradH)
 
             Spacer()
 
             Button(action: onShare) {
                 Image(systemName: "square.and.arrow.up")
-                    .font(.system(size: 17, weight: .bold))
-                    .foregroundColor(Color(hex: "#D4A82A"))
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(.white)
                     .frame(width: 44, height: 44)
-                    .background(Color(hex: "#D4A82A").opacity(0.12))
-                    .clipShape(Circle())
-                    .overlay(Circle().stroke(Color(hex: "#D4A82A").opacity(0.4), lineWidth: 0.5))
+                    .background(Circle().fill(AppTheme.accentPrimary.opacity(0.2)))
+                    .overlay(Circle().stroke(AppTheme.accentPrimary.opacity(0.4), lineWidth: 1))
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.top, 10)
+        .padding(.horizontal, 20)
+        .padding(.top, 12)
     }
 
     private var navTitle: String {
         switch media {
-        case .video: return "Video Created"
-        case .image: return "Image Created"
+        case .video: return "SYNTHESIS READY"
+        case .image: return "VISUAL RENDERED"
         }
     }
 
     // MARK: - Media Card
     private var mediaCard: some View {
         ZStack {
-            // 卡片背景 + 金色渐变边框
-            RoundedRectangle(cornerRadius: 32)
-                .fill(Color(hex: "#17171F"))
-                .frame(width: 240, height: 427)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 32)
-                        .stroke(
-                            LinearGradient(
-                                colors: [
-                                    Color(hex: "#F6C842"),
-                                    Color(hex: "#8B6A14"),
-                                    Color(hex: "#F6C842").opacity(0.3)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                )
-
-            // 媒体内容
-            switch media {
-            case .video(let url):
-                VideoPlayer(player: AVPlayer(url: url))
-                    .frame(width: 240, height: 427)
-                    .clipShape(RoundedRectangle(cornerRadius: 32))
-
-            case .image(let img):
-                Image(uiImage: img)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 240, height: 427)
-                    .clipShape(RoundedRectangle(cornerRadius: 32))
+            // Content
+            Group {
+                switch media {
+                case .video(let url):
+                    VideoPlayer(player: AVPlayer(url: url))
+                        .onAppear {
+                            // Optional: loop behavior can be added via observer
+                        }
+                case .image(let img):
+                    Image(uiImage: img)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                }
             }
+            .frame(width: 260, height: 460)
+            .clipShape(RoundedRectangle(cornerRadius: 32))
+            .primaryBorder(cornerRadius: 32, active: true)
+
+            // Subtle Scanline Effect (Optional Sci-fi touch)
+            Rectangle()
+                .fill(LinearGradient(colors: [.clear, Color.white.opacity(0.03), .clear], startPoint: .top, endPoint: .bottom))
+                .frame(height: 100)
+                .offset(y: -150) // Static for now, could animate
+                .allowsHitTesting(false)
         }
     }
 
     // MARK: - Action Bar
     private var actionBar: some View {
-        HStack(spacing: 12) {
-            // Retake
+        HStack(spacing: 16) {
+            // Retake Button (Glass Style)
             Button(action: onRetake) {
-                VStack(spacing: 5) {
-                    Image(systemName: "arrow.counterclockwise")
-                        .font(.system(size: 18, weight: .bold))
-                    Text("Retake")
-                        .font(.system(size: 10, weight: .semibold))
+                VStack(spacing: 6) {
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                        .font(.system(size: 20, weight: .bold))
+                    Text("REMIX")
+                        .font(.system(size: 10, weight: .black))
                 }
-                .foregroundColor(.white.opacity(0.8))
-                .frame(width: 62, height: 62)
-                .background(Color.white.opacity(0.07))
-                .cornerRadius(18)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18)
-                        .stroke(Color(hex: "#28282E"), lineWidth: 0.5)
-                )
+                .foregroundColor(.white)
+                .frame(width: 72, height: 72)
+                .glassStyle(cornerRadius: 22)
             }
 
-            // Download / Save
+            // Save Button (Aurora Gradient)
             Button(action: onDownload) {
-                HStack(spacing: 8) {
+                HStack(spacing: 12) {
                     Image(systemName: downloadIcon)
-                        .font(.system(size: 17, weight: .bold))
+                        .font(.system(size: 18, weight: .bold))
                     Text(downloadLabel)
                         .font(.system(size: 17, weight: .bold))
                 }
-                .foregroundColor(Color(hex: "#0A0A0A"))
+                .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
-                .frame(height: 62)
-                .background(
-                    LinearGradient(
-                        colors: [Color(hex: "#F6C842"), Color(hex: "#C9920A")],
-                        startPoint: .leading, endPoint: .trailing
-                    )
-                )
-                .cornerRadius(22)
-                .shadow(color: Color(hex: "#D4A82A").opacity(0.4), radius: 12, y: 5)
+                .frame(height: 72)
+                .background(AppTheme.accentGradH)
+                .clipShape(RoundedRectangle(cornerRadius: 24))
+                .shadow(color: AppTheme.accentGlow, radius: 15, y: 8)
             }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 24)
         .padding(.bottom, 44)
     }
 
     private var downloadIcon: String {
         switch media {
-        case .video: return "arrow.down.to.line"
-        case .image: return "square.and.arrow.down"
+        case .video: return "arrow.down.circle.fill"
+        case .image: return "arrow.down.to.line.circle.fill"
         }
     }
 
     private var downloadLabel: String {
         switch media {
-        case .video: return "Save Video"
-        case .image: return "Save Image"
+        case .video: return "Save to Vault"
+        case .image: return "Export Image"
         }
     }
 }

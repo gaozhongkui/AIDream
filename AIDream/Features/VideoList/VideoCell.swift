@@ -6,7 +6,6 @@ final class VideoCell: UICollectionViewCell {
     static let identifier = "VideoCell"
 
     private var videoURL: URL?
-
     private var player: AVPlayer?
     private var playerLayer: AVPlayerLayer?
     private var endObserver: NSObjectProtocol?
@@ -15,7 +14,7 @@ final class VideoCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.backgroundColor = UIColor(red: 23/255, green: 23/255, blue: 31/255, alpha: 1)
+        imageView.backgroundColor = UIColor(white: 0.1, alpha: 1)
         return imageView
     }()
 
@@ -23,23 +22,31 @@ final class VideoCell: UICollectionViewCell {
         let layer = CAGradientLayer()
         layer.colors = [
             UIColor.clear.cgColor,
-            UIColor.black.withAlphaComponent(0.1).cgColor,
-            UIColor.black.withAlphaComponent(0.8).cgColor
+            UIColor.black.withAlphaComponent(0.2).cgColor,
+            UIColor.black.withAlphaComponent(0.9).cgColor
         ]
-        layer.locations = [0.0, 0.4, 1.0]
+        layer.locations = [0.0, 0.5, 1.0]
         return layer
     }()
 
-    private let gradientView: UIView = {
+    private let glassInfoView: UIView = {
         let view = UIView()
-        view.isUserInteractionEnabled = false
+        view.backgroundColor = UIColor.white.opacity(0.08)
+        let blur = UIBlurEffect(style: .systemThinMaterialDark)
+        let blurView = UIVisualEffectView(effect: blur)
+        view.insertSubview(blurView, at: 0)
+        blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        view.layer.cornerRadius = 14
+        view.clipsToBounds = true
+        view.layer.borderWidth = 0.5
+        view.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
         return view
     }()
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.numberOfLines = 2
-        label.font = .systemFont(ofSize: 14, weight: .semibold)
+        label.numberOfLines = 1
+        label.font = .systemFont(ofSize: 13, weight: .bold)
         label.textColor = .white
         return label
     }()
@@ -48,59 +55,48 @@ final class VideoCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 12 // 24/2 = 12 确保是圆
+        imageView.layer.cornerRadius = 10
         imageView.backgroundColor = .systemGray4
         return imageView
     }()
 
-    private let avatarInitialLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 12, weight: .bold) // 稍微大一点更清晰
-        label.textColor = .white
-        label.textAlignment = .center
-        return label
-    }()
-
     private let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 11, weight: .medium)
-        label.textColor = .white.withAlphaComponent(0.9)
+        label.font = .systemFont(ofSize: 10, weight: .medium)
+        label.textColor = .white.withAlphaComponent(0.7)
         return label
     }()
 
-    private let starIcon: UIImageView = {
-        let iv = UIImageView(image: UIImage(systemName: "heart.fill"))
-        iv.tintColor = UIColor(red: 246/255, green: 200/255, blue: 66/255, alpha: 0.9) // goldBright
+    private let likeIcon: UIImageView = {
+        let iv = UIImageView(image: UIImage(systemName: "bolt.heart.fill"))
+        iv.tintColor = UIColor(red: 0, green: 242/255, blue: 255/255, alpha: 1) // accentSecondary
         iv.contentMode = .scaleAspectFit
         return iv
-    }()
-
-    private let starLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 11, weight: .medium)
-        label.textColor = .white.withAlphaComponent(0.9)
-        return label
     }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        contentView.backgroundColor = UIColor(red: 23/255, green: 23/255, blue: 31/255, alpha: 1)
-        contentView.layer.cornerRadius = 16
+        contentView.backgroundColor = .clear
+        contentView.layer.cornerRadius = 20
         contentView.layer.masksToBounds = true
 
+        // 外层投影 (Shadow on the layer below)
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.3
+        layer.shadowOffset = CGSize(width: 0, height: 4)
+        layer.shadowRadius = 8
+
         contentView.addSubview(coverImageView)
-        contentView.addSubview(gradientView)
-        gradientView.layer.addSublayer(gradientLayer)
+        coverImageView.layer.addSublayer(gradientLayer)
 
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(avatarImageView)
-        avatarImageView.addSubview(avatarInitialLabel)
-        contentView.addSubview(nameLabel)
-        contentView.addSubview(starIcon)
-        contentView.addSubview(starLabel)
+        contentView.addSubview(glassInfoView)
+        glassInfoView.addSubview(titleLabel)
+        glassInfoView.addSubview(avatarImageView)
+        glassInfoView.addSubview(nameLabel)
+        glassInfoView.addSubview(likeIcon)
 
-        [coverImageView, gradientView, titleLabel, avatarImageView, avatarInitialLabel, nameLabel, starIcon, starLabel].forEach {
+        [coverImageView, glassInfoView, titleLabel, avatarImageView, nameLabel, likeIcon].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -110,47 +106,37 @@ final class VideoCell: UICollectionViewCell {
             coverImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             coverImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
 
-            gradientView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            gradientView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            gradientView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            gradientView.heightAnchor.constraint(equalToConstant: 100),
+            glassInfoView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            glassInfoView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            glassInfoView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+            glassInfoView.heightAnchor.constraint(equalToConstant: 52),
 
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            titleLabel.bottomAnchor.constraint(equalTo: avatarImageView.topAnchor, constant: -8),
-
-            avatarImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            avatarImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+            avatarImageView.leadingAnchor.constraint(equalTo: glassInfoView.leadingAnchor, constant: 8),
+            avatarImageView.centerYAnchor.constraint(equalTo: glassInfoView.centerYAnchor),
             avatarImageView.widthAnchor.constraint(equalToConstant: 24),
             avatarImageView.heightAnchor.constraint(equalToConstant: 24),
 
-            avatarInitialLabel.centerXAnchor.constraint(equalTo: avatarImageView.centerXAnchor),
-            avatarInitialLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 8),
+            titleLabel.topAnchor.constraint(equalTo: glassInfoView.topAnchor, constant: 8),
+            titleLabel.trailingAnchor.constraint(equalTo: likeIcon.leadingAnchor, constant: -8),
 
             nameLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 8),
-            nameLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
-            nameLabel.trailingAnchor.constraint(lessThanOrEqualTo: starIcon.leadingAnchor, constant: -4),
+            nameLabel.bottomAnchor.constraint(equalTo: glassInfoView.bottomAnchor, constant: -8),
 
-            starLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            starLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
-
-            starIcon.trailingAnchor.constraint(equalTo: starLabel.leadingAnchor, constant: -2),
-            starIcon.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
-            starIcon.widthAnchor.constraint(equalToConstant: 12),
-            starIcon.heightAnchor.constraint(equalToConstant: 12)
+            likeIcon.trailingAnchor.constraint(equalTo: glassInfoView.trailingAnchor, constant: -10),
+            likeIcon.centerYAnchor.constraint(equalTo: glassInfoView.centerYAnchor),
+            likeIcon.widthAnchor.constraint(equalToConstant: 16),
+            likeIcon.heightAnchor.constraint(equalToConstant: 16)
         ])
     }
 
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    required init?(coder: NSCoder) { fatalError() }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        // 禁用隐式动画，防止阴影（gradientLayer）在 Cell 布局变化时产生滑动效果
         CATransaction.begin()
         CATransaction.setDisableActions(true)
-        gradientLayer.frame = gradientView.bounds
+        gradientLayer.frame = coverImageView.bounds
         playerLayer?.frame = coverImageView.bounds
         CATransaction.commit()
     }
@@ -158,133 +144,53 @@ final class VideoCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         stopPlayback()
-        coverImageView.kf.cancelDownloadTask()
-        avatarImageView.kf.cancelDownloadTask()
-        videoURL = nil
         coverImageView.image = nil
         avatarImageView.image = nil
         titleLabel.text = nil
         nameLabel.text = nil
-        starLabel.text = nil
-        transform = .identity
-    }
-
-    override var isHighlighted: Bool {
-        didSet {
-            UIView.animate(withDuration: 0.1) {
-                self.transform = self.isHighlighted ? CGAffineTransform(scaleX: 0.96, y: 0.96) : .identity
-            }
-        }
     }
 
     func configure(with video: VideoData) {
         videoURL = video.videoURL
-
-        // 标题降噪：过滤 "Untitled"，优先使用 introduction
-        let displayTitle = video.title.lowercased() == "untitled" ? "" : video.title
-        titleLabel.text = displayTitle.isEmpty ? video.introduction : displayTitle
-        titleLabel.font = .systemFont(ofSize: 14, weight: .semibold)
-
+        titleLabel.text = video.title.lowercased() == "untitled" ? video.introduction : video.title
         nameLabel.text = video.userName
-        starLabel.text = formatCount(video.starCount)
 
-        // 设置首字母及其彩色背景
-        if let firstChar = video.userName.first {
-            avatarInitialLabel.text = String(firstChar).uppercased()
-            avatarInitialLabel.isHidden = false
-            avatarImageView.backgroundColor = colorForString(video.userName)
-        } else {
-            avatarInitialLabel.text = nil
-            avatarImageView.backgroundColor = .systemGray4
-        }
-
-        loadCoverImage(from: video.coverURL)
-        loadAvatarImage(from: video.userAvatarURL)
-    }
-
-    private func colorForString(_ str: String) -> UIColor {
-        let colors: [UIColor] = [.systemBlue, .systemIndigo, .systemPurple, .systemPink, .systemOrange, .systemTeal, .systemGreen]
-        let hash = abs(str.hashValue)
-        return colors[hash % colors.count].withAlphaComponent(0.9)
-    }
-
-    private func formatCount(_ count: Int) -> String {
-        if count >= 10000 {
-            return String(format: "%.1fw", Double(count) / 10000.0)
-        } else if count >= 1000 {
-            return String(format: "%.1fk", Double(count) / 1000.0)
-        }
-        return "\(count)"
+        coverImageView.kf.setImage(with: video.coverURL, options: [.transition(.fade(0.3))])
+        avatarImageView.kf.setImage(with: video.userAvatarURL, options: [.transition(.fade(0.2))])
     }
 
     func startPlayback() {
-        guard let videoURL else { return }
-        configurePlayback(with: videoURL)
+        guard let url = videoURL, player == nil else { return }
+        let item = AVPlayerItem(url: url)
+        player = AVPlayer(playerItem: item)
+        player?.isMuted = true
+        player?.actionAtItemEnd = .none
+
+        let layer = AVPlayerLayer(player: player)
+        layer.videoGravity = .resizeAspectFill
+        layer.frame = coverImageView.bounds
+        coverImageView.layer.insertSublayer(layer, at: 0)
+        playerLayer = layer
+
+        endObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main) { [weak self] _ in
+            self?.player?.seek(to: .zero)
+            self?.player?.play()
+        }
         player?.play()
     }
 
     func stopPlayback() {
         player?.pause()
-        if let endObserver {
-            NotificationCenter.default.removeObserver(endObserver)
-            self.endObserver = nil
-        }
-        playerLayer?.player = nil
+        if let observer = endObserver { NotificationCenter.default.removeObserver(observer) }
         playerLayer?.removeFromSuperlayer()
         playerLayer = nil
         player = nil
+        endObserver = nil
     }
+}
 
-    private func configurePlayback(with url: URL?) {
-        guard let url else {
-            stopPlayback()
-            return
-        }
-
-        if player == nil {
-            let item = AVPlayerItem(url: url)
-            let newPlayer = AVPlayer(playerItem: item)
-            newPlayer.isMuted = true
-            newPlayer.actionAtItemEnd = .none
-            player = newPlayer
-
-            let layer = AVPlayerLayer(player: newPlayer)
-            layer.videoGravity = .resizeAspectFill
-            layer.frame = coverImageView.bounds
-            coverImageView.layer.insertSublayer(layer, at: 0)
-            playerLayer = layer
-
-            endObserver = NotificationCenter.default.addObserver(
-                forName: .AVPlayerItemDidPlayToEndTime,
-                object: item,
-                queue: .main
-            ) { [weak self] _ in
-                self?.player?.seek(to: .zero)
-                self?.player?.play()
-            }
-        }
-    }
-
-    private func loadCoverImage(from url: URL?) {
-        coverImageView.kf.setImage(
-            with: url,
-            options: [
-                .transition(.fade(0.3)),
-                .cacheSerializer(DefaultCacheSerializer.default)
-            ]
-        )
-    }
-
-    private func loadAvatarImage(from url: URL?) {
-        avatarImageView.kf.setImage(
-            with: url,
-            options: [
-                .transition(.fade(0.2))
-            ]
-        ) { [weak self] result in
-            if case .success = result {
-                self?.avatarInitialLabel.isHidden = true
-            }
-        }
+extension UIColor {
+    func opacity(_ value: CGFloat) -> UIColor {
+        return self.withAlphaComponent(value)
     }
 }
