@@ -10,6 +10,7 @@ final class VideoCell: UICollectionViewCell {
     private var player: AVPlayer?
     private var playerLayer: AVPlayerLayer?
     private var endObserver: NSObjectProtocol?
+    private var favoriteObserver: NSObjectProtocol?
 
     private let coverImageView: UIImageView = {
         let imageView = UIImageView()
@@ -126,26 +127,46 @@ final class VideoCell: UICollectionViewCell {
 
             likeIcon.trailingAnchor.constraint(equalTo: glassInfoView.trailingAnchor, constant: -10),
             likeIcon.centerYAnchor.constraint(equalTo: glassInfoView.centerYAnchor),
-            likeIcon.widthAnchor.constraint(equalToConstant: 24), // 增大点击区域
+            likeIcon.widthAnchor.constraint(equalToConstant: 24),
             likeIcon.heightAnchor.constraint(equalToConstant: 24)
         ])
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(likeTapped))
         likeIcon.addGestureRecognizer(tap)
+
+        // Listen for global favorite changes to keep UI in sync
+        favoriteObserver = NotificationCenter.default.addObserver(
+            forName: FavoriteService.favoritesChangedNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let self = self,
+                  let videoId = notification.userInfo?["videoId"] as? Int,
+                  self.videoData?.id == videoId else { return }
+            self.updateLikeState()
+        }
     }
 
     required init?(coder: NSCoder) { fatalError() }
 
+    deinit {
+        if let observer = favoriteObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+
     @objc private func likeTapped() {
         guard let video = videoData else { return }
         FavoriteService.shared.toggleFavorite(video)
+        // toggleFavorite will post notification, which we handle above,
+        // but we can also trigger local update for immediate feedback
         updateLikeState()
 
-        // 触感反馈
+        // Haptic feedback
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
 
-        // 简单的动画效果
+        // Animation
         UIView.animate(withDuration: 0.1, animations: {
             self.likeIcon.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
         }) { _ in
@@ -159,7 +180,6 @@ final class VideoCell: UICollectionViewCell {
         guard let video = videoData else { return }
         let isFavorited = FavoriteService.shared.isFavorited(video.id)
         likeIcon.tintColor = isFavorited ? .systemRed : .white.withAlphaComponent(0.3)
-        // 如果是喜欢状态，可以使用更亮的图标
         likeIcon.image = UIImage(systemName: isFavorited ? "heart.fill" : "heart")
     }
 

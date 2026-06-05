@@ -9,6 +9,7 @@ final class VideoDetailCell: UICollectionViewCell {
     private var playerLayer: AVPlayerLayer?
     private var videoURL: URL?
     private var playerLayerObserver: NSKeyValueObservation?
+    private var favoriteObserver: NSObjectProtocol?
 
     private var videoData: VideoData?
     private var isLiked: Bool = false
@@ -125,6 +126,7 @@ final class VideoDetailCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
+        setupObservers()
     }
 
     required init?(coder: NSCoder) { fatalError() }
@@ -180,18 +182,38 @@ final class VideoDetailCell: UICollectionViewCell {
         likeButton.addTarget(self, action: #selector(likeTapped), for: .touchUpInside)
     }
 
+    private func setupObservers() {
+        favoriteObserver = NotificationCenter.default.addObserver(
+            forName: FavoriteService.favoritesChangedNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let self = self,
+                  let videoId = notification.userInfo?["videoId"] as? Int,
+                  self.videoData?.id == videoId else { return }
+
+            let newState = FavoriteService.shared.isFavorited(videoId)
+            if self.isLiked != newState {
+                self.isLiked = newState
+                if self.isLiked { self.currentStarCount += 1 } else { self.currentStarCount = max(0, self.currentStarCount - 1) }
+                self.updateLikeButtonStyle(animated: true)
+            }
+        }
+    }
+
+    deinit {
+        if let observer = favoriteObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+
     @objc private func backTapped() { onBackTapped?() }
 
     @objc private func likeTapped() {
         guard let video = videoData else { return }
 
-        isLiked.toggle()
-        if isLiked { currentStarCount += 1 } else { currentStarCount = max(0, currentStarCount - 1) }
-
-        // 核心修复：同步到收藏服务
+        // Toggle in service - this will trigger the notification we observe above
         FavoriteService.shared.toggleFavorite(video)
-
-        updateLikeButtonStyle(animated: true)
     }
 
     private func updateLikeButtonStyle(animated: Bool) {
@@ -220,8 +242,6 @@ final class VideoDetailCell: UICollectionViewCell {
         introLabel.text = video.introduction
 
         self.currentStarCount = video.starCount
-
-        // 核心修复：从服务读取初始状态
         self.isLiked = FavoriteService.shared.isFavorited(video.id)
         updateLikeButtonStyle(animated: false)
 
@@ -241,7 +261,7 @@ final class VideoDetailCell: UICollectionViewCell {
         let layer = AVPlayerLayer(player: player)
         layer.videoGravity = .resizeAspectFill
         layer.frame = contentView.bounds
-        playerContainer.layer.addSublayer(layer)
+        playerContainer.layer.insertSublayer(layer, at: 0)
         self.playerLayer = layer
 
         playerLayerObserver = layer.observe(\.isReadyForDisplay, options: [.new]) { [weak self] layer, _ in

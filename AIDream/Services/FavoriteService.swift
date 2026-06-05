@@ -19,30 +19,46 @@ final class FavoriteService: ObservableObject {
     }
 
     func toggleFavorite(_ video: VideoData) {
-        if favoriteIds.contains(video.id) {
-            favoriteIds.remove(video.id)
-            favoriteVideos.removeAll { $0.id == video.id }
-        } else {
-            favoriteIds.insert(video.id)
-            favoriteVideos.insert(video, at: 0) // Newest first
-        }
-        saveFavorites()
+        // Ensure updates happen on the main thread for SwiftUI observers
+        DispatchQueue.main.async {
+            if self.favoriteIds.contains(video.id) {
+                self.favoriteIds.remove(video.id)
+                self.favoriteVideos.removeAll { $0.id == video.id }
+            } else {
+                self.favoriteIds.insert(video.id)
+                self.favoriteVideos.insert(video, at: 0) // Newest first
+            }
+            self.saveFavorites()
 
-        // 发送全局通知，确保各处 UI 同步更新状态
-        NotificationCenter.default.post(name: Self.favoritesChangedNotification, object: nil, userInfo: ["videoId": video.id])
+            // Notify UIKit components or other observers
+            NotificationCenter.default.post(
+                name: Self.favoritesChangedNotification,
+                object: nil,
+                userInfo: ["videoId": video.id]
+            )
+        }
     }
 
     private func saveFavorites() {
-        if let encoded = try? JSONEncoder().encode(favoriteVideos) {
+        do {
+            let encoded = try JSONEncoder().encode(favoriteVideos)
             UserDefaults.standard.set(encoded, forKey: storageKey)
+            UserDefaults.standard.synchronize() // Force save for reliability
+        } catch {
+            print("Error saving favorites: \(error)")
         }
     }
 
     private func loadFavorites() {
-        if let data = UserDefaults.standard.data(forKey: storageKey),
-           let decoded = try? JSONDecoder().decode([VideoData].self, from: data) {
+        guard let data = UserDefaults.standard.data(forKey: storageKey) else { return }
+        do {
+            let decoded = try JSONDecoder().decode([VideoData].self, from: data)
             self.favoriteVideos = decoded
             self.favoriteIds = Set(decoded.map { $0.id })
+        } catch {
+            print("Error loading favorites: \(error)")
+            // If data is corrupted or model changed, consider clearing it
+            // UserDefaults.standard.removeObject(forKey: storageKey)
         }
     }
 }
