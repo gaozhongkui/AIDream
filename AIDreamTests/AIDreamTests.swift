@@ -2,9 +2,9 @@ import Testing
 import Foundation
 @testable import AIDream
 
+@MainActor // 确保测试在主线程运行，同步访问 FavoriteService
 struct AIDreamTests {
     @Test func videoDataInitialization() async throws {
-        // 使用当前简化的 VideoData 模型进行测试
         let video = VideoData(
             id: 1,
             title: "Vision AI Test",
@@ -39,14 +39,14 @@ struct AIDreamTests {
             height: 100
         )
 
-        // 确保初始状态（如果之前有残留数据则清空）
+        // 确保初始状态清理
         if service.isFavorited(999) {
             service.toggleFavorite(video)
         }
 
         #expect(service.isFavorited(999) == false)
 
-        // 测试收藏逻辑
+        // 测试收藏逻辑（由于标记了 @MainActor，这里是同步生效的）
         service.toggleFavorite(video)
         #expect(service.isFavorited(999) == true)
         #expect(service.favoriteVideos.contains(where: { $0.id == 999 }))
