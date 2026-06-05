@@ -24,10 +24,17 @@ struct ImageSourcePickerView: View {
                 }.padding(.horizontal, 24)
 
                 HStack(spacing: 16) {
-                    pickerTile(icon: "camera.fill", title: "Camera", action: onPickCamera)
+                    // 相机按钮
+                    Button(action: onPickCamera) {
+                        tileLabel(icon: "camera.fill", title: "Camera")
+                    }
+                    .buttonStyle(.plain)
+
+                    // 相册选择器 - 修复：内部不再嵌套 Button，直接使用 Label
                     PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
-                        pickerTile(icon: "photo.on.rectangle.angled", title: "Library", action: {})
-                    }.buttonStyle(.plain)
+                        tileLabel(icon: "photo.on.rectangle.angled", title: "Library")
+                    }
+                    .buttonStyle(.plain)
                 }.padding(.horizontal, 24)
                 Spacer()
             }
@@ -43,16 +50,15 @@ struct ImageSourcePickerView: View {
         }
     }
 
-    private func pickerTile(icon: String, title: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            VStack(spacing: 12) {
-                Image(systemName: icon).font(.system(size: 28)).foregroundStyle(AppTheme.accentGrad)
-                Text(title).font(.system(size: 15, weight: .bold)).foregroundColor(.white)
-            }
-            .frame(maxWidth: .infinity).frame(height: 120)
-            .background(Color.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 24))
-            .overlay(RoundedRectangle(cornerRadius: 24).stroke(Color.white.opacity(0.1), lineWidth: 1))
+    // 提取纯 UI 部分，避免嵌套 Button 拦截事件
+    private func tileLabel(icon: String, title: String) -> some View {
+        VStack(spacing: 12) {
+            Image(systemName: icon).font(.system(size: 28)).foregroundStyle(AppTheme.accentGrad)
+            Text(title).font(.system(size: 15, weight: .bold)).foregroundColor(.white)
         }
+        .frame(maxWidth: .infinity).frame(height: 120)
+        .background(Color.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 24))
+        .overlay(RoundedRectangle(cornerRadius: 24).stroke(Color.white.opacity(0.1), lineWidth: 1))
     }
 }
 

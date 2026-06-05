@@ -12,7 +12,10 @@ struct ImageToVideoView: View {
     @State private var isShowingCamera = false
     @State private var startImage: UIImage?
     @State private var endImage: UIImage?
-    @State private var imageSelectionError: String?
+
+    // 状态反馈提示
+    @State private var toastMessage: String?
+    @State private var showToast = false
 
     @ObservedObject private var videoGenerator = AIVideoGenerator.shared
 
@@ -39,12 +42,11 @@ struct ImageToVideoView: View {
                         aspectRatioSection
                     }
 
-                    Spacer(minLength: 220) // 增加滚动占位
+                    Spacer(minLength: 220)
                 }
                 .padding(.horizontal, 20)
             }
 
-            // ── 悬浮底部生成栏 ──
             VStack {
                 Spacer()
                 if !isGenerating {
@@ -60,6 +62,21 @@ struct ImageToVideoView: View {
                 )
                 .transition(.opacity)
                 .zIndex(10)
+            }
+
+            // Toast 提示
+            if showToast, let msg = toastMessage {
+                VStack {
+                    Spacer()
+                    Text(msg)
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 12)
+                        .background(BlurView(style: .systemUltraThinMaterialDark).clipShape(Capsule()))
+                        .padding(.bottom, 150)
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
         .fullScreenCover(isPresented: completionBinding) {
@@ -83,7 +100,6 @@ struct ImageToVideoView: View {
                 }
             )
             .presentationDetents([.height(280)])
-            .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $isShowingCamera) {
             CameraPicker { image in
@@ -221,6 +237,7 @@ struct ImageToVideoView: View {
     private var bottomActionSection: some View {
         VStack(spacing: 16) {
             Button {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                 videoGenerator.generateVideo(
                     prompt: promptText,
                     image: startImage,
@@ -254,10 +271,42 @@ struct ImageToVideoView: View {
             }
         }
         .padding(.horizontal, 20).padding(.top, 20)
-        .padding(.bottom, 140) // 抬高底部内边距，避开悬浮 TabBar
+        .padding(.bottom, 140)
         .background(
             LinearGradient(colors: [AppTheme.bgPrimary.opacity(0), AppTheme.bgPrimary], startPoint: .top, endPoint: .bottom)
         )
+    }
+
+    // MARK: - Actions
+    private func saveVideo(url: URL) {
+        Task {
+            do {
+                let (tempData, _) = try await URLSession.shared.data(from: url)
+                let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".mp4")
+                try tempData.write(to: tempURL)
+
+                UISaveVideoAtPathToSavedPhotosAlbum(tempURL.path, nil, nil, nil)
+                showToast(message: "Video saved to gallery")
+            } catch {
+                showToast(message: "Failed to save video")
+            }
+        }
+    }
+
+    private func shareVideo(url: URL) {
+        let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let rootVC = scene.windows.first?.rootViewController {
+            rootVC.present(av, animated: true)
+        }
+    }
+
+    private func showToast(message: String) {
+        toastMessage = message
+        withAnimation { showToast = true }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            withAnimation { showToast = false }
+        }
     }
 
     // MARK: - Helpers
@@ -293,9 +342,6 @@ struct ImageToVideoView: View {
     private func applySelectedImage(_ image: UIImage) {
         if activeImageTarget == .start { startImage = image } else { endImage = image }
     }
-
-    private func saveVideo(url: URL) {}
-    private func shareVideo(url: URL) {}
 }
 
 private enum ImageFrameTarget { case start, end }
