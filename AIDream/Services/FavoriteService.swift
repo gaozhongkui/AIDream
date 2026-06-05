@@ -19,8 +19,7 @@ final class FavoriteService: ObservableObject {
     }
 
     func toggleFavorite(_ video: VideoData) {
-        // Ensure updates happen on the main thread for SwiftUI observers
-        DispatchQueue.main.async {
+        let updateBlock = {
             if self.favoriteIds.contains(video.id) {
                 self.favoriteIds.remove(video.id)
                 self.favoriteVideos.removeAll { $0.id == video.id }
@@ -37,13 +36,19 @@ final class FavoriteService: ObservableObject {
                 userInfo: ["videoId": video.id]
             )
         }
+
+        if Thread.isMainThread {
+            updateBlock()
+        } else {
+            DispatchQueue.main.async(execute: updateBlock)
+        }
     }
 
     private func saveFavorites() {
         do {
             let encoded = try JSONEncoder().encode(favoriteVideos)
             UserDefaults.standard.set(encoded, forKey: storageKey)
-            UserDefaults.standard.synchronize() // Force save for reliability
+            UserDefaults.standard.synchronize()
         } catch {
             print("Error saving favorites: \(error)")
         }
@@ -57,8 +62,6 @@ final class FavoriteService: ObservableObject {
             self.favoriteIds = Set(decoded.map { $0.id })
         } catch {
             print("Error loading favorites: \(error)")
-            // If data is corrupted or model changed, consider clearing it
-            // UserDefaults.standard.removeObject(forKey: storageKey)
         }
     }
 }

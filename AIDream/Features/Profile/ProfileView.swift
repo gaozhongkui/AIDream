@@ -29,23 +29,14 @@ struct ProfileView: View {
                             NavigationLink(destination: Text("Creative History").foregroundColor(.white)) {
                                 menuRowContent(icon: "video.badge.plus.fill", title: "Creative History")
                             }
-
-                            Rectangle()
-                                .fill(Color.white.opacity(0.05))
-                                .frame(height: 1)
-                                .padding(.leading, 72)
-
-                            NavigationLink(destination: Text("Quick Drafts").foregroundColor(.white)) {
-                                menuRowContent(icon: "bolt.horizontal.circle.fill", title: "Quick Drafts")
-                            }
                         }
                         .glassStyle(cornerRadius: 22)
                         .padding(.horizontal, 20)
 
                         sectionLabel("Preferences").padding(.top, 32)
                         menuSection([
-                            MenuRow(icon: "person.badge.shield.check.fill", title: "Account & Privacy", dest: "Security"),
-                            MenuRow(icon: "paintpalette.fill",      title: "UI Appearance",    dest: "Theme"),
+                            MenuRow(icon: "doc.text.fill", title: "Privacy Policy", dest: "Privacy Policy"),
+                            MenuRow(icon: "scroll.fill",   title: "Terms of Service", dest: "Terms of Service"),
                         ])
 
                         logoutButton.padding(.top, 40).padding(.bottom, 60)
