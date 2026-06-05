@@ -10,6 +10,7 @@ final class VideoDetailCell: UICollectionViewCell {
     private var videoURL: URL?
     private var playerLayerObserver: NSKeyValueObservation?
 
+    private var videoData: VideoData?
     private var isLiked: Bool = false
     private var currentStarCount: Int = 0
 
@@ -82,7 +83,6 @@ final class VideoDetailCell: UICollectionViewCell {
         config.baseForegroundColor = .white
         config.cornerStyle = .large
         let btn = UIButton(configuration: config)
-        // Add subtle glass border
         btn.layer.borderWidth = 0.5
         btn.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
         btn.layer.cornerRadius = 18
@@ -103,18 +103,16 @@ final class VideoDetailCell: UICollectionViewCell {
         btn.tintColor = .white
         btn.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
 
-        // Aurora gradient background
         let gradient = CAGradientLayer()
         gradient.colors = [
-            UIColor(red: 0.3, green: 0.62, blue: 1.0, alpha: 1).cgColor, // accentPrimary
-            UIColor(red: 0, green: 0.95, blue: 1.0, alpha: 1).cgColor  // accentSecondary
+            UIColor(red: 0.3, green: 0.62, blue: 1.0, alpha: 1).cgColor,
+            UIColor(red: 0, green: 0.95, blue: 1.0, alpha: 1).cgColor
         ]
         gradient.startPoint = CGPoint(x: 0, y: 0.5)
         gradient.endPoint   = CGPoint(x: 1, y: 0.5)
         gradient.name = "accentGradient"
         btn.layer.insertSublayer(gradient, at: 0)
 
-        // Add outer glow
         btn.layer.shadowColor = UIColor(red: 0.3, green: 0.62, blue: 1.0, alpha: 0.4).cgColor
         btn.layer.shadowOffset = CGSize(width: 0, height: 4)
         btn.layer.shadowOpacity = 1
@@ -185,8 +183,14 @@ final class VideoDetailCell: UICollectionViewCell {
     @objc private func backTapped() { onBackTapped?() }
 
     @objc private func likeTapped() {
+        guard let video = videoData else { return }
+
         isLiked.toggle()
         if isLiked { currentStarCount += 1 } else { currentStarCount = max(0, currentStarCount - 1) }
+
+        // 核心修复：同步到收藏服务
+        FavoriteService.shared.toggleFavorite(video)
+
         updateLikeButtonStyle(animated: true)
     }
 
@@ -209,12 +213,16 @@ final class VideoDetailCell: UICollectionViewCell {
     }
 
     func configure(with video: VideoData) {
+        self.videoData = video
         self.videoURL = video.videoURL
         nameLabel.text = "@\(video.userName)"
         titleLabel.text = video.title.lowercased() == "untitled" ? "" : video.title
         introLabel.text = video.introduction
 
         self.currentStarCount = video.starCount
+
+        // 核心修复：从服务读取初始状态
+        self.isLiked = FavoriteService.shared.isFavorited(video.id)
         updateLikeButtonStyle(animated: false)
 
         coverImageView.isHidden = false
@@ -268,5 +276,6 @@ final class VideoDetailCell: UICollectionViewCell {
         stopPlayback()
         coverImageView.image = nil
         coverImageView.alpha = 1
+        videoData = nil
     }
 }

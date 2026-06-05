@@ -5,6 +5,7 @@ import Kingfisher
 final class VideoCell: UICollectionViewCell {
     static let identifier = "VideoCell"
 
+    private var videoData: VideoData?
     private var videoURL: URL?
     private var player: AVPlayer?
     private var playerLayer: AVPlayerLayer?
@@ -31,7 +32,7 @@ final class VideoCell: UICollectionViewCell {
 
     private let glassInfoView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.white.opacity(0.08)
+        view.backgroundColor = UIColor.white.withAlphaComponent(0.08)
         let blur = UIBlurEffect(style: .systemThinMaterialDark)
         let blurView = UIVisualEffectView(effect: blur)
         view.insertSubview(blurView, at: 0)
@@ -68,9 +69,10 @@ final class VideoCell: UICollectionViewCell {
     }()
 
     private let likeIcon: UIImageView = {
-        let iv = UIImageView(image: UIImage(systemName: "bolt.heart.fill"))
-        iv.tintColor = UIColor(red: 0, green: 242/255, blue: 255/255, alpha: 1) // accentSecondary
+        let iv = UIImageView(image: UIImage(systemName: "heart.fill"))
+        iv.tintColor = .white.withAlphaComponent(0.3)
         iv.contentMode = .scaleAspectFit
+        iv.isUserInteractionEnabled = true
         return iv
     }()
 
@@ -81,7 +83,6 @@ final class VideoCell: UICollectionViewCell {
         contentView.layer.cornerRadius = 20
         contentView.layer.masksToBounds = true
 
-        // 外层投影 (Shadow on the layer below)
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOpacity = 0.3
         layer.shadowOffset = CGSize(width: 0, height: 4)
@@ -125,12 +126,42 @@ final class VideoCell: UICollectionViewCell {
 
             likeIcon.trailingAnchor.constraint(equalTo: glassInfoView.trailingAnchor, constant: -10),
             likeIcon.centerYAnchor.constraint(equalTo: glassInfoView.centerYAnchor),
-            likeIcon.widthAnchor.constraint(equalToConstant: 16),
-            likeIcon.heightAnchor.constraint(equalToConstant: 16)
+            likeIcon.widthAnchor.constraint(equalToConstant: 24), // 增大点击区域
+            likeIcon.heightAnchor.constraint(equalToConstant: 24)
         ])
+
+        let tap = UITapGestureRecognizer(target: self, action: #selector(likeTapped))
+        likeIcon.addGestureRecognizer(tap)
     }
 
     required init?(coder: NSCoder) { fatalError() }
+
+    @objc private func likeTapped() {
+        guard let video = videoData else { return }
+        FavoriteService.shared.toggleFavorite(video)
+        updateLikeState()
+
+        // 触感反馈
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
+
+        // 简单的动画效果
+        UIView.animate(withDuration: 0.1, animations: {
+            self.likeIcon.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+        }) { _ in
+            UIView.animate(withDuration: 0.1) {
+                self.likeIcon.transform = .identity
+            }
+        }
+    }
+
+    private func updateLikeState() {
+        guard let video = videoData else { return }
+        let isFavorited = FavoriteService.shared.isFavorited(video.id)
+        likeIcon.tintColor = isFavorited ? .systemRed : .white.withAlphaComponent(0.3)
+        // 如果是喜欢状态，可以使用更亮的图标
+        likeIcon.image = UIImage(systemName: isFavorited ? "heart.fill" : "heart")
+    }
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -148,15 +179,19 @@ final class VideoCell: UICollectionViewCell {
         avatarImageView.image = nil
         titleLabel.text = nil
         nameLabel.text = nil
+        videoData = nil
     }
 
     func configure(with video: VideoData) {
+        self.videoData = video
         videoURL = video.videoURL
         titleLabel.text = video.title.lowercased() == "untitled" ? video.introduction : video.title
         nameLabel.text = video.userName
 
         coverImageView.kf.setImage(with: video.coverURL, options: [.transition(.fade(0.3))])
         avatarImageView.kf.setImage(with: video.userAvatarURL, options: [.transition(.fade(0.2))])
+
+        updateLikeState()
     }
 
     func startPlayback() {
@@ -186,11 +221,5 @@ final class VideoCell: UICollectionViewCell {
         playerLayer = nil
         player = nil
         endObserver = nil
-    }
-}
-
-extension UIColor {
-    func opacity(_ value: CGFloat) -> UIColor {
-        return self.withAlphaComponent(value)
     }
 }

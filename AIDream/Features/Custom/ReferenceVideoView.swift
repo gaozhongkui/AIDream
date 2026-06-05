@@ -22,7 +22,6 @@ struct ReferenceVideoView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 32) {
                     referenceImageUploadSection.padding(.top, 24)
-
                     promptSection
 
                     VStack(spacing: 24) {
@@ -30,21 +29,19 @@ struct ReferenceVideoView: View {
                                   options: ["6s", "10s"],
                                   selection: $selectedDuration,
                                   proOptions: ["10s"])
-
                         optionRow(title: "Quality",
                                   options: ["Standard", "High", "Ultra HD"],
                                   selection: $selectedQuality,
                                   proOptions: ["High", "Ultra HD"])
-
                         aspectRatioSection
                     }
 
-                    Spacer(minLength: 220) // 增加滚动占位，确保内容不被抬高的按钮遮挡
+                    // 统一增加底部占位至 280
+                    Spacer(minLength: 280)
                 }
                 .padding(.horizontal, 20)
             }
 
-            // ── 悬浮底部生成栏 ──
             VStack {
                 Spacer()
                 if !isGenerating {
@@ -93,24 +90,17 @@ struct ReferenceVideoView: View {
         }
     }
 
-    // MARK: - Modern Components
-
+    // MARK: - Components
     private var referenceImageUploadSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Label("Visual References", systemImage: "photo.stack.fill")
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(AppTheme.accentSecondary)
-
             HStack(spacing: 12) {
                 ForEach(0..<3) { index in
                     referenceCard(index: index)
                 }
             }
-
-            Text("Add 1–3 images to guide the AI's visual style.")
-                .font(.system(size: 12))
-                .foregroundColor(AppTheme.textMuted)
-                .padding(.leading, 4)
         }
     }
 
@@ -148,7 +138,6 @@ struct ReferenceVideoView: View {
             Label("Evolution Description", systemImage: "sparkles")
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(AppTheme.accentSecondary)
-
             ZStack(alignment: .topLeading) {
                 TextEditor(text: $promptText)
                     .frame(height: 120)
@@ -157,13 +146,11 @@ struct ReferenceVideoView: View {
                     .glassStyle(cornerRadius: 20)
                     .font(.system(size: 15))
                     .foregroundColor(.white)
-
                 if promptText.isEmpty {
-                    Text("How should the images transform? Describe the flow...")
+                    Text("How should the images transform?...")
                         .font(.system(size: 14))
                         .foregroundColor(AppTheme.textMuted)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 22)
+                        .padding(20)
                         .allowsHitTesting(false)
                 }
             }
@@ -172,29 +159,18 @@ struct ReferenceVideoView: View {
 
     private func optionRow(title: String, options: [String], selection: Binding<String>, proOptions: [String]) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(title.uppercased())
-                .font(.system(size: 11, weight: .bold))
-                .tracking(1.5)
-                .foregroundColor(AppTheme.textMuted)
-
+            Text(title.uppercased()).font(.system(size: 11, weight: .bold)).tracking(1.5).foregroundColor(AppTheme.textMuted)
             HStack(spacing: 10) {
                 ForEach(options, id: \.self) { opt in
                     Button { selection.wrappedValue = opt } label: {
                         HStack(spacing: 4) {
-                            Text(opt)
-                                .font(.system(size: 14, weight: selection.wrappedValue == opt ? .bold : .medium))
-                            if proOptions.contains(opt) {
-                                Image(systemName: "crown.fill").font(.system(size: 10))
-                            }
+                            Text(opt).font(.system(size: 14, weight: selection.wrappedValue == opt ? .bold : .medium))
+                            if proOptions.contains(opt) { Image(systemName: "crown.fill").font(.system(size: 10)) }
                         }
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 46)
+                        .frame(maxWidth: .infinity).frame(height: 46)
                         .background(selection.wrappedValue == opt ? AppTheme.accentPrimary.opacity(0.15) : Color.white.opacity(0.05))
                         .clipShape(RoundedRectangle(cornerRadius: 14))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .stroke(selection.wrappedValue == opt ? AppTheme.accentPrimary : Color.clear, lineWidth: 1.5)
-                        )
+                        .overlay(RoundedRectangle(cornerRadius: 14).stroke(selection.wrappedValue == opt ? AppTheme.accentPrimary : Color.clear, lineWidth: 1.5))
                     }
                     .foregroundColor(selection.wrappedValue == opt ? .white : AppTheme.textSecondary)
                 }
@@ -204,11 +180,7 @@ struct ReferenceVideoView: View {
 
     private var aspectRatioSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("ASPECT RATIO")
-                .font(.system(size: 11, weight: .bold))
-                .tracking(1.5)
-                .foregroundColor(AppTheme.textMuted)
-
+            Text("ASPECT RATIO").font(.system(size: 11, weight: .bold)).tracking(1.5).foregroundColor(AppTheme.textMuted)
             HStack(spacing: 12) {
                 ratioButton(label: "9:16", icon: "iphone.gen3", isSelected: selectedRatio == "9:16") { selectedRatio = "9:16" }
                 ratioButton(label: "1:1",  icon: "square", isSelected: selectedRatio == "1:1")  { selectedRatio = "1:1" }
@@ -222,14 +194,10 @@ struct ReferenceVideoView: View {
                 Image(systemName: icon).font(.system(size: 18))
                 Text(label).font(.system(size: 15, weight: isSelected ? .bold : .medium))
             }
-            .frame(maxWidth: .infinity)
-            .frame(height: 56)
+            .frame(maxWidth: .infinity).frame(height: 56)
             .background(isSelected ? AppTheme.accentPrimary.opacity(0.1) : Color.white.opacity(0.05))
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(isSelected ? AppTheme.accentPrimary : Color.white.opacity(0.1), lineWidth: isSelected ? 1.5 : 1)
-            )
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(isSelected ? AppTheme.accentPrimary : Color.white.opacity(0.1), lineWidth: isSelected ? 1.5 : 1))
         }
         .foregroundColor(isSelected ? .white : AppTheme.textSecondary)
     }
@@ -237,88 +205,43 @@ struct ReferenceVideoView: View {
     private var bottomActionSection: some View {
         VStack(spacing: 16) {
             Button {
-                videoGenerator.generateVideo(
-                    prompt: promptText,
-                    image: referenceImages.compactMap{$0}.first,
-                    endImage: referenceImages.compactMap{$0}.dropFirst().last,
-                    duration: selectedDuration,
-                    quality: selectedQuality,
-                    ratio: selectedRatio
-                )
+                videoGenerator.generateVideo(prompt: promptText, image: referenceImages.compactMap{$0}.first, endImage: referenceImages.compactMap{$0}.dropFirst().last, duration: selectedDuration, quality: selectedQuality, ratio: selectedRatio)
             } label: {
                 HStack(spacing: 12) {
-                    Image(systemName: "film.fill")
-                        .font(.system(size: 20, weight: .bold))
-                    Text("Sync & Generate")
-                        .font(.system(size: 17, weight: .bold))
-
+                    Image(systemName: "film.fill").font(.system(size: 20, weight: .bold))
+                    Text("Sync & Generate").font(.system(size: 17, weight: .bold))
                     Spacer()
-
-                    HStack(spacing: 4) {
-                        Image(systemName: "bolt.fill")
-                        Text("200")
-                    }
-                    .font(.system(size: 14, weight: .bold))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(Color.black.opacity(0.2))
-                    .clipShape(Capsule())
+                    HStack(spacing: 4) { Image(systemName: "bolt.fill"); Text("200") }
+                    .font(.system(size: 14, weight: .bold)).padding(.horizontal, 10).padding(.vertical, 4)
+                    .background(Color.black.opacity(0.5)).clipShape(Capsule())
                 }
-                .padding(.horizontal, 24)
-                .frame(maxWidth: .infinity)
-                .frame(height: 64)
-                .background(AppTheme.accentGradH)
-                .foregroundColor(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 22))
+                .padding(.horizontal, 24).frame(maxWidth: .infinity).frame(height: 64)
+                .background(AppTheme.accentGradH).foregroundColor(.white).clipShape(RoundedRectangle(cornerRadius: 22))
                 .shadow(color: AppTheme.accentGlow, radius: 15, y: 8)
             }
-
-            Text("Syncing multiple references may take longer")
-                .font(.system(size: 12, weight: .medium))
-                .foregroundColor(AppTheme.textMuted)
         }
-        .padding(.horizontal, 20).padding(.top, 20)
-        .padding(.bottom, 140) // 抬高底部内边距，确保悬浮在 TabBar 之上
-        .background(
-            LinearGradient(colors: [AppTheme.bgPrimary.opacity(0), AppTheme.bgPrimary], startPoint: .top, endPoint: .bottom)
-        )
+        .padding(.horizontal, 20).padding(.top, 24)
+        .padding(.bottom, 140) // 抬高间距，避开 TabBar
+        .background(AppTheme.bgPrimary.overlay(Rectangle().fill(AppTheme.borderSubtle).frame(height: 0.5), alignment: .top))
     }
 
     // MARK: - Helpers
-
     private var isGenerating: Bool {
         switch videoGenerator.state {
         case .uploading, .generating: return true
         default: return false
         }
     }
-
     private var currentProgress: Double {
         if case .generating(let p) = videoGenerator.state { return p }
         return 0.05
     }
-
     private var completionBinding: Binding<Bool> {
-        Binding(
-            get: { if case .completed = videoGenerator.state { return true } else { return false } },
-            set: { if !$0 { videoGenerator.cancelGeneration() } }
-        )
+        Binding(get: { if case .completed = videoGenerator.state { return true } else { return false } }, set: { if !$0 { videoGenerator.cancelGeneration() } })
     }
-
-    private func openImagePicker(for index: Int) {
-        activeReferenceIndex = index
-        isShowingImagePicker = true
-    }
-
-    private func openCamera() {
-        isShowingImagePicker = false
-        isShowingCamera = true
-    }
-
-    private func applySelectedImage(_ image: UIImage) {
-        if let index = activeReferenceIndex { referenceImages[index] = image }
-    }
-
+    private func openImagePicker(for index: Int) { activeReferenceIndex = index; isShowingImagePicker = true }
+    private func openCamera() { isShowingImagePicker = false; isShowingCamera = true }
+    private func applySelectedImage(_ image: UIImage) { if let index = activeReferenceIndex { referenceImages[index] = image } }
     private func saveVideo(url: URL) {}
     private func shareVideo(url: URL) {}
 }

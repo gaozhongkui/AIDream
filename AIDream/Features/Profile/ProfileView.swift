@@ -12,11 +12,35 @@ struct ProfileView: View {
                         statsRow.padding(.top, 32)
 
                         sectionLabel("Studio").padding(.top, 40)
-                        menuSection([
-                            MenuRow(icon: "video.badge.plus.fill", title: "Creative History", dest: "History"),
-                            MenuRow(icon: "heart.square.fill",     title: "My Inspirations", dest: "Favorites"),
-                            MenuRow(icon: "bolt.horizontal.circle.fill", title: "Quick Drafts", dest: "Drafts"),
-                        ])
+
+                        // 菜单区域
+                        VStack(spacing: 0) {
+                            // My Inspirations 跳转到收藏页
+                            NavigationLink(destination: FavoritesView()) {
+                                menuRowContent(icon: "heart.square.fill", title: "My Inspirations")
+                            }
+
+                            Rectangle()
+                                .fill(Color.white.opacity(0.05))
+                                .frame(height: 1)
+                                .padding(.leading, 72)
+
+                            // 其他暂未实现的页面
+                            NavigationLink(destination: Text("Creative History").foregroundColor(.white)) {
+                                menuRowContent(icon: "video.badge.plus.fill", title: "Creative History")
+                            }
+
+                            Rectangle()
+                                .fill(Color.white.opacity(0.05))
+                                .frame(height: 1)
+                                .padding(.leading, 72)
+
+                            NavigationLink(destination: Text("Quick Drafts").foregroundColor(.white)) {
+                                menuRowContent(icon: "bolt.horizontal.circle.fill", title: "Quick Drafts")
+                            }
+                        }
+                        .glassStyle(cornerRadius: 22)
+                        .padding(.horizontal, 20)
 
                         sectionLabel("Preferences").padding(.top, 32)
                         menuSection([
@@ -36,7 +60,6 @@ struct ProfileView: View {
     private var profileHeader: some View {
         VStack(spacing: 18) {
             ZStack {
-                // Outer Glow
                 Circle()
                     .fill(AppTheme.accentGlow)
                     .frame(width: 100, height: 100)
@@ -100,7 +123,6 @@ struct ProfileView: View {
         .glassStyle(cornerRadius: 18)
     }
 
-    // MARK: - Section Label
     private func sectionLabel(_ text: String) -> some View {
         HStack {
             Text(text.uppercased())
@@ -113,7 +135,7 @@ struct ProfileView: View {
         .padding(.bottom, 12)
     }
 
-    // MARK: - Modern Menu
+    // MARK: - Menu Helpers
     private struct MenuRow: Identifiable {
         var id: String { title }
         let icon: String
@@ -125,27 +147,8 @@ struct ProfileView: View {
         VStack(spacing: 0) {
             ForEach(Array(rows.enumerated()), id: \.element.id) { idx, row in
                 NavigationLink(destination: Text(row.dest).foregroundColor(.white)) {
-                    HStack(spacing: 16) {
-                        Image(systemName: row.icon)
-                            .font(.system(size: 18))
-                            .foregroundStyle(AppTheme.accentGradH)
-                            .frame(width: 40, height: 40)
-                            .background(Circle().fill(Color.white.opacity(0.05)))
-
-                        Text(row.title)
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.white.opacity(0.9))
-
-                        Spacer()
-
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(AppTheme.textMuted)
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 14)
+                    menuRowContent(icon: row.icon, title: row.title)
                 }
-
                 if idx < rows.count - 1 {
                     Rectangle()
                         .fill(Color.white.opacity(0.05))
@@ -158,7 +161,28 @@ struct ProfileView: View {
         .padding(.horizontal, 20)
     }
 
-    // MARK: - Logout
+    private func menuRowContent(icon: String, title: String) -> some View {
+        HStack(spacing: 16) {
+            Image(systemName: icon)
+                .font(.system(size: 18))
+                .foregroundStyle(AppTheme.accentGradH)
+                .frame(width: 40, height: 40)
+                .background(Circle().fill(Color.white.opacity(0.05)))
+
+            Text(title)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.white.opacity(0.9))
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundColor(AppTheme.textMuted)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+    }
+
     private var logoutButton: some View {
         Button(action: {}) {
             HStack(spacing: 10) {
