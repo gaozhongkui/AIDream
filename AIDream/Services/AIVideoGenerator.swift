@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 import Combine
 
-// MARK: - 视频生成状态
+// MARK: - 视频生成服务
 @MainActor
 class AIVideoGenerator: ObservableObject {
 
@@ -16,8 +16,8 @@ class AIVideoGenerator: ObservableObject {
         var description: String {
             switch self {
             case .idle:               return "Ready"
-            case .uploading:          return "Submitting job…"
-            case .generating(let p):  return "Generating… \(Int(p * 100))%"
+            case .uploading:          return "Connecting to AI..."
+            case .generating(let p):  return "Generating... \(Int(p * 100))%"
             case .completed:          return "Video Ready"
             case .failed(let e):      return "Error: \(e)"
             }
@@ -38,36 +38,33 @@ class AIVideoGenerator: ObservableObject {
         quality: String,
         ratio: String
     ) {
-        let finalPrompt = prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "A cinematic video with high quality motion" : prompt
-        print("🚀 [VideoGen] Start (Model: \(AIConfig.shared.openRouterVideoModel))")
+        print("🚀 [VideoGen] Starting generation via OpenRouter Dedicated Video API...")
 
         pollingTask?.cancel()
         pollingTask = Task {
             state = .uploading
             do {
-                let result = try await submitJob(
-                    prompt: finalPrompt,
+                // 1. 提交专属异步视频任务
+                let jobId = try await submitVideoJob(
+                    prompt: prompt,
                     image: image,
                     endImage: endImage,
                     duration: duration,
-                    quality: quality,
-                    ratio: ratio
+                    ratio: ratio,
+                    quality: quality
                 )
 
-                switch result {
-                case .completed(let url):
-                    state = .completed(url)
-                case .polling(let pollingURL):
-                    state = .generating(0.05)
-                    let videoURL = try await pollUntilDone(pollingURL: pollingURL)
-                    state = .completed(videoURL)
-                }
+                state = .generating(0.05)
+                
+                // 2. 轮询专属媒体任务状态
+                let videoURL = try await pollVideoJob(jobId: jobId)
+                state = .completed(videoURL)
+                
             } catch is CancellationError {
                 state = .idle
             } catch {
-                let msg = error.localizedDescription
-                print("❌ [VideoGen] Final Failure: \(msg)")
-                state = .failed(msg)
+                print("❌ [VideoGen] Final Failure: \(error.localizedDescription)")
+                state = .failed(error.localizedDescription)
             }
         }
     }
@@ -78,166 +75,156 @@ class AIVideoGenerator: ObservableObject {
         state = .idle
     }
 
-    private enum SubmitResult {
-        case completed(URL)
-        case polling(URL)
-    }
-
-    private func submitJob(
+    // MARK: - 1. 提交专属视频任务 (POST /api/v1/videos)
+    private func submitVideoJob(
         prompt: String,
         image: UIImage?,
         endImage: UIImage?,
         duration: String,
-        quality: String,
-        ratio: String
-    ) async throws -> SubmitResult {
+        ratio: String,
+        quality: String
+    ) async throws -> String {
 
         let apiKey = AIConfig.shared.openRouterApiKey
         guard !apiKey.isEmpty else { throw VideoError.missingApiKey }
 
-        // 统一使用 chat/completions 路径
-        let base = AIConfig.shared.openRouterBaseURL
-        let urlString = base.hasSuffix("/") ? "\(base)chat/completions" : "\(base)/chat/completions"
-        guard let url = URL(string: urlString) else { throw VideoError.invalidURL }
+        let url = URL(string: "https://openrouter.ai/api/v1/videos")!
 
         var request = URLRequest(url: url, timeoutInterval: 120)
         request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)",   forHTTPHeaderField: "Authorization")
-        request.setValue("application/json",    forHTTPHeaderField: "Content-Type")
-        request.setValue("AIDream-iOS",         forHTTPHeaderField: "X-Title")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("https://aidream.app", forHTTPHeaderField: "HTTP-Referer")
+        request.setValue("AIDream", forHTTPHeaderField: "X-Title")
 
-        // 构造消息内容
-        var userContent: [[String: Any]] = [["type": "text", "text": prompt]]
-
-        // 限制参考图尺寸在 512px 以内，显著减小请求体体积
-        if let img = image, let b64 = processAndEncodeImage(img, maxDim: 512) {
-            userContent.append([
-                "type": "image_url",
-                "image_url": ["url": "data:image/jpeg;base64,\(b64)"]
-            ])
-        }
-
-        if let img = endImage, let b64 = processAndEncodeImage(img, maxDim: 512) {
-            userContent.append([
-                "type": "image_url",
-                "image_url": ["url": "data:image/jpeg;base64,\(b64)"]
-            ])
-        }
-
-        // 构建请求体：视频特有参数放入 extra_body
-        let body: [String: Any] = [
+        // 构造标准的多模态视频 Body 骨架
+        var body: [String: Any] = [
             "model": AIConfig.shared.openRouterVideoModel,
-            "messages": [["role": "user", "content": userContent]],
-            "extra_body": [
-                "duration": durationInt(from: duration),
-                "aspect_ratio": ratio,
-                "resolution": resolution(from: quality)
-            ]
+            "prompt": prompt.isEmpty ? "A cinematic video with high quality motion" : prompt,
+            "aspect_ratio": ratio
         ]
+
+        // 提取统一的时长数字
+        let durationVal = Int(duration.replacingOccurrences(of: "s", with: "")) ?? 5
+        body["duration"] = durationVal
+
+        // 🟢 完美对齐 OpenRouter Zod 严格断言的嵌套图片数组
+        var frameImages: [[String: Any]] = []
+
+        // 处理起始帧 (first_frame)
+        if let img = image, let b64 = processAndEncodeImage(img, maxDim: 720) {
+            frameImages.append([
+                "type": "image_url",
+                "image_url": [
+                    "url": "data:image/jpeg;base64,\(b64)"
+                ],
+                "frame_type": "first_frame"
+            ])
+        }
+
+        // 处理结束帧 (last_frame)
+        if let endImg = endImage, let b64End = processAndEncodeImage(endImg, maxDim: 720) {
+            frameImages.append([
+                "type": "image_url",
+                "image_url": [
+                    "url": "data:image/jpeg;base64,\(b64End)"
+                ],
+                "frame_type": "last_frame"
+            ])
+        }
+
+        if !frameImages.isEmpty {
+            body["frame_images"] = frameImages
+        }
 
         let bodyData = try JSONSerialization.data(withJSONObject: body)
         request.httpBody = bodyData
 
-        print("📡 [VideoGen] Request Body Size: \(bodyData.count / 1024) KB")
+        print("📡 [VideoGen] Request Payload Size: \(bodyData.count / 1024) KB")
         let (data, response) = try await URLSession.shared.data(for: request)
 
         guard let http = response as? HTTPURLResponse else { throw VideoError.invalidResponse }
 
         if http.statusCode >= 400 {
-            let raw = String(data: data, encoding: .utf8) ?? "Unknown Error"
-            print("📡 [VideoGen] HTTP \(http.statusCode) Response: \(raw)")
-            throw VideoError.serverError("Server (\(http.statusCode)): \(raw.prefix(200))")
+            let rawBody = String(data: data, encoding: .utf8) ?? "No body"
+            print("📡 [VideoGen] HTTP \(http.statusCode) Error Response: \(rawBody)")
+            throw VideoError.serverError("HTTP \(http.statusCode): \(rawBody)")
         }
 
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             throw VideoError.invalidResponse
         }
 
-        // 1. 尝试解析轮询 URL
-        if let pollingPath = json["polling_url"] as? String ?? (json["data"] as? [String: Any])?["polling_url"] as? String,
-           let pollingURL = URL(string: pollingPath) {
-            return .polling(pollingURL)
+        // 解析下发的异步生成 Job ID
+        guard let jobId = json["id"] as? String ?? (json["data"] as? [String: Any])?["id"] as? String else {
+            throw VideoError.serverError("Accepted, but no video job ID returned.")
         }
 
-        // 2. 尝试解析 ID 构造轮询路径
-        if let id = json["id"] as? String ?? (json["data"] as? [String: Any])?["id"] as? String {
-            // OpenRouter 视频任务通常在 /generations/{id} 下查询
-            let baseWithoutV1 = base.replacingOccurrences(of: "/v1", with: "")
-            let pollURLString = "\(baseWithoutV1)/generations/\(id)"
-            if let pURL = URL(string: pollURLString) { return .polling(pURL) }
-        }
-
-        // 3. 尝试直接获取结果
-        if let choices = json["choices"] as? [[String: Any]],
-           let message = choices.first?["message"] as? [String: Any],
-           let videoURL = extractVideoURL(from: message) {
-            return .completed(videoURL)
-        }
-
-        throw VideoError.serverError("Job accepted but result path unknown.")
+        print("✅ [VideoGen] Job Created Successfully. ID: \(jobId)")
+        return jobId
     }
 
-    private func pollUntilDone(pollingURL url: URL) async throws -> URL {
+    // MARK: - 2. 轮询专属视频状态 (GET /api/v1/videos/{id})
+    private func pollVideoJob(jobId: String) async throws -> URL {
         let apiKey = AIConfig.shared.openRouterApiKey
+        let url = URL(string: "https://openrouter.ai/api/v1/videos/\(jobId)")!
+        
         var request = URLRequest(url: url, timeoutInterval: 30)
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
+        // 视频生成时间通常在 15s - 120s 之间，保持 200 次轮询
         for attempt in 1...200 {
             try Task.checkCancellation()
-            try await Task.sleep(nanoseconds: 5_000_000_000)
+            try await Task.sleep(nanoseconds: 5_000_000_000) // 间隔 5 秒
             try Task.checkCancellation()
 
-            let (data, _) = try await URLSession.shared.data(for: request)
+            print("🔍 [VideoGen] Polling attempt \(attempt)...")
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            guard let http = response as? HTTPURLResponse, http.statusCode == 200 else { continue }
             guard let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else { continue }
 
-            let status = (json["status"] as? String ?? (json["data"] as? [String: Any])?["status"] as? String)?.lowercased() ?? "pending"
-            print("🔍 [VideoGen] Polling attempt #\(attempt): \(status)")
+            let jobInfo = json["data"] as? [String: Any] ?? json
+            let status = (jobInfo["status"] as? String)?.lowercased() ?? "pending"
+            print("   -> Current Status: \(status)")
 
             state = .generating(min(0.05 + Double(attempt) * 0.005, 0.99))
 
-            if ["completed", "succeeded", "success"].contains(status) {
-                let urlStr = (json["unsigned_urls"] as? [String])?.first ??
-                             (json["results"] as? [[String: Any]])?.first?["url"] as? String ??
-                             ((json["data"] as? [String: Any])?["urls"] as? [String])?.first
-                if let urlStr = urlStr, let finalURL = URL(string: urlStr) { return finalURL }
+            switch status {
+            case "completed", "succeeded", "success":
+                // 兼容解析不同的结果承载字段
+                let urlStr = (jobInfo["unsigned_urls"] as? [String])?.first ??
+                             (jobInfo["results"] as? [[String: Any]])?.first?["url"] as? String ??
+                             (jobInfo["url"] as? String)
+                
+                if let urlStr = urlStr, let finalURL = URL(string: urlStr) {
+                    return finalURL
+                }
                 throw VideoError.urlNotFound
-            } else if ["failed", "error", "cancelled"].contains(status) {
-                let msg = json["error"] as? String ?? (json["data"] as? [String: Any])?["error"] as? String ?? status
+
+            case "failed", "error", "cancelled", "expired":
+                let msg = jobInfo["error"] as? String ?? (jobInfo["data"] as? [String: Any])?["error"] as? String ?? "Generation failed"
                 throw VideoError.serverError(msg)
+
+            default:
+                continue
             }
         }
         throw VideoError.timeout
     }
 
-    private func extractVideoURL(from message: [String: Any]) -> URL? {
-        if let video = message["video"] as? [String: Any], let urlStr = video["url"] as? String { return URL(string: urlStr) }
-        if let files = message["files"] as? [[String: Any]], let urlStr = files.first?["url"] as? String { return URL(string: urlStr) }
-        if let content = message["content"] as? String, content.hasPrefix("http"), content.contains(".mp4") { return URL(string: content) }
-        return nil
-    }
-
+    // MARK: - 辅助：高质量图片缩放编码
     private func processAndEncodeImage(_ image: UIImage, maxDim: CGFloat) -> String? {
-        var newSize = image.size
-        if image.size.width > maxDim || image.size.height > maxDim {
-            let ratio = min(maxDim / image.size.width, maxDim / image.size.height)
-            newSize = CGSize(width: image.size.width * ratio, height: image.size.height * ratio)
-        }
-
+        let size = image.size
+        let ratio = min(maxDim / size.width, maxDim / size.height, 1.0)
+        let newSize = CGSize(width: size.width * ratio, height: size.height * ratio)
+        
         UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
         image.draw(in: CGRect(origin: .zero, size: newSize))
-        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        let resized = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-
-        guard let data = resizedImage?.jpegData(compressionQuality: 0.5) else { return nil }
-        return data.base64EncodedString()
-    }
-
-    private func durationInt(from duration: String) -> Int {
-        return Int(duration.replacingOccurrences(of: "s", with: "")) ?? 6
-    }
-
-    private func resolution(from quality: String) -> String {
-        return quality.contains("High") || quality.contains("Ultra") ? "1080p" : "720p"
+        
+        return resized?.jpegData(compressionQuality: 0.5)?.base64EncodedString()
     }
 
     enum VideoError: LocalizedError {
@@ -247,7 +234,7 @@ class AIVideoGenerator: ObservableObject {
             case .missingApiKey: return "API Key Missing"
             case .serverError(let s): return "Server: \(s)"
             case .timeout: return "Timeout"
-            default: return "Generation failed."
+            default: return "Video creation failed."
             }
         }
     }
