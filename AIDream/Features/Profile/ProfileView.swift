@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @ObservedObject var creationService = CreationService.shared
+    @ObservedObject var favoriteService = FavoriteService.shared
+
     var body: some View {
         NavigationView {
             ZStack {
@@ -25,9 +28,18 @@ struct ProfileView: View {
                                 .frame(height: 1)
                                 .padding(.leading, 72)
 
-                            // 其他暂未实现的页面
-                            NavigationLink(destination: Text("Creative History").foregroundColor(.white)) {
+                            // 跳转到创作历史
+                            NavigationLink(destination: HistoryView()) {
                                 menuRowContent(icon: "video.badge.plus.fill", title: "Creative History")
+                            }
+
+                            Rectangle()
+                                .fill(Color.white.opacity(0.05))
+                                .frame(height: 1)
+                                .padding(.leading, 72)
+
+                            NavigationLink(destination: Text("Quick Drafts").foregroundColor(.white)) {
+                                menuRowContent(icon: "bolt.horizontal.circle.fill", title: "Quick Drafts")
                             }
                         }
                         .glassStyle(cornerRadius: 22)
@@ -93,8 +105,8 @@ struct ProfileView: View {
     // MARK: - Glass Stats
     private var statsRow: some View {
         HStack(spacing: 12) {
-            statCard(value: "24", label: "Creations")
-            statCard(value: "1.2k", label: "Likes")
+            statCard(value: "\(creationService.creations.count)", label: "Creations")
+            statCard(value: "\(favoriteService.favoriteVideos.count)", label: "Likes")
             statCard(value: "8", label: "Assets")
         }
         .padding(.horizontal, 20)

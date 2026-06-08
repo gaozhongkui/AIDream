@@ -88,6 +88,10 @@ struct ImageToVideoView: View {
                     onDownload: { saveVideo(url: url) },
                     onShare:    { shareVideo(url: url) }
                 )
+                .onAppear {
+                    // 修正：参数名需匹配 CreationService 的 url
+                    CreationService.shared.addCreation(prompt: promptText, url: url)
+                }
             }
         }
         .sheet(isPresented: $isShowingImagePicker) {
@@ -266,7 +270,7 @@ struct ImageToVideoView: View {
             }
 
             HStack(spacing: 6) {
-                Image(systemName: "checkmark.shield.badge.check.fill").foregroundColor(AppTheme.accentSecondary)
+                Image(systemName: "checkmark.seal.fill").foregroundColor(AppTheme.accentSecondary)
                 Text("Quality Guaranteed · Refundable").font(.system(size: 12, weight: .medium)).foregroundColor(AppTheme.textMuted)
             }
         }
@@ -281,6 +285,7 @@ struct ImageToVideoView: View {
     private func saveVideo(url: URL) {
         Task {
             do {
+                showToast(message: "Downloading video...")
                 let (tempData, _) = try await URLSession.shared.data(from: url)
                 let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".mp4")
                 try tempData.write(to: tempURL)
@@ -288,6 +293,7 @@ struct ImageToVideoView: View {
                 UISaveVideoAtPathToSavedPhotosAlbum(tempURL.path, nil, nil, nil)
                 showToast(message: "Video saved to gallery")
             } catch {
+                print("Save error: \(error)")
                 showToast(message: "Failed to save video")
             }
         }
@@ -304,7 +310,7 @@ struct ImageToVideoView: View {
     private func showToast(message: String) {
         toastMessage = message
         withAnimation { showToast = true }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
             withAnimation { showToast = false }
         }
     }

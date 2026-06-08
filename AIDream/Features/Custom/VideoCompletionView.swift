@@ -14,6 +14,8 @@ struct VideoCompletionView: View {
     var onDownload: () -> Void
     var onShare: () -> Void
 
+    @State private var player: AVPlayer?
+
     var body: some View {
         ZStack {
             AppTheme.bgPrimary.ignoresSafeArea()
@@ -40,6 +42,28 @@ struct VideoCompletionView: View {
                 // ── Glass Action Bar ──
                 actionBar
             }
+        }
+        .onAppear {
+            setupPlayer()
+        }
+        .onDisappear {
+            player?.pause()
+        }
+    }
+
+    private func setupPlayer() {
+        if case .video(let url) = media {
+            print("🎬 [CompletionView] Initializing player for local URL: \(url.path)")
+            let player = AVPlayer(url: url)
+            self.player = player
+
+            // Loop playback
+            NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { _ in
+                player.seek(to: .zero)
+                player.play()
+            }
+
+            player.play()
         }
     }
 
@@ -88,26 +112,28 @@ struct VideoCompletionView: View {
             // Content
             Group {
                 switch media {
-                case .video(let url):
-                    VideoPlayer(player: AVPlayer(url: url))
-                        .onAppear {
-                            // Optional: loop behavior can be added via observer
-                        }
+                case .video:
+                    if let player = player {
+                        VideoPlayer(player: player)
+                            .clipShape(RoundedRectangle(cornerRadius: 32))
+                    } else {
+                        ProgressView().tint(.white)
+                    }
                 case .image(let img):
                     Image(uiImage: img)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
+                        .clipShape(RoundedRectangle(cornerRadius: 32))
                 }
             }
-            .frame(width: 260, height: 460)
-            .clipShape(RoundedRectangle(cornerRadius: 32))
+            .frame(width: 280, height: 480)
             .primaryBorder(cornerRadius: 32, active: true)
 
-            // Subtle Scanline Effect (Optional Sci-fi touch)
+            // Subtle Scanline Effect
             Rectangle()
                 .fill(LinearGradient(colors: [.clear, Color.white.opacity(0.03), .clear], startPoint: .top, endPoint: .bottom))
                 .frame(height: 100)
-                .offset(y: -150) // Static for now, could animate
+                .offset(y: -150)
                 .allowsHitTesting(false)
         }
     }
