@@ -1,6 +1,8 @@
 import Foundation
 import Combine
 
+/// 管理收藏夹服务的单例。
+/// 使用 @MainActor 确保所有状态更新都在主线程进行，解决 UI 同步和测试竞争问题。
 @MainActor
 final class FavoriteService: ObservableObject {
     static let shared = FavoriteService()
@@ -20,16 +22,16 @@ final class FavoriteService: ObservableObject {
     }
 
     func toggleFavorite(_ video: VideoData) {
-        if self.favoriteIds.contains(video.id) {
-            self.favoriteIds.remove(video.id)
-            self.favoriteVideos.removeAll { $0.id == video.id }
+        if favoriteIds.contains(video.id) {
+            favoriteIds.remove(video.id)
+            favoriteVideos.removeAll { $0.id == video.id }
         } else {
-            self.favoriteIds.insert(video.id)
-            self.favoriteVideos.insert(video, at: 0) // Newest first
+            favoriteIds.insert(video.id)
+            favoriteVideos.insert(video, at: 0) // 新收藏的排在最前面
         }
-        self.saveFavorites()
+        saveFavorites()
 
-        // 发送全局通知，确保各处 UI 同步更新状态
+        // 发送全局通知，主要用于 UIKit 组件监听（如 VideoCell）
         NotificationCenter.default.post(
             name: Self.favoritesChangedNotification,
             object: nil,
@@ -38,16 +40,24 @@ final class FavoriteService: ObservableObject {
     }
 
     private func saveFavorites() {
-        if let encoded = try? JSONEncoder().encode(favoriteVideos) {
+        do {
+            let encoded = try JSONEncoder().encode(favoriteVideos)
             UserDefaults.standard.set(encoded, forKey: storageKey)
+            // 显式调用以确保即时保存，尽管现代系统会自动处理
+            UserDefaults.standard.synchronize()
+        } catch {
+            print("Error saving favorites: \(error)")
         }
     }
 
     private func loadFavorites() {
-        if let data = UserDefaults.standard.data(forKey: storageKey),
-           let decoded = try? JSONDecoder().decode([VideoData].self, from: data) {
+        guard let data = UserDefaults.standard.data(forKey: storageKey) else { return }
+        do {
+            let decoded = try JSONDecoder().decode([VideoData].self, from: data)
             self.favoriteVideos = decoded
             self.favoriteIds = Set(decoded.map { $0.id })
+        } catch {
+            print("Error loading favorites: \(error)")
         }
     }
 }
