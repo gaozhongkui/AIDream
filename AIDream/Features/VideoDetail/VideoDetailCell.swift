@@ -279,7 +279,10 @@ final class VideoDetailCell: UICollectionViewCell {
 
         coverImageView.isHidden = false
         coverImageView.alpha = 1
-        coverImageView.kf.setImage(with: video.coverURL)
+        coverImageView.kf.setImage(
+            with: video.coverURL,
+            options: [.keepCurrentImageWhileLoading]
+        )
 
         setupPlayer()
     }

@@ -4,3 +4,6 @@
 AGENTS.md
 AIDream.xcodeproj/xcuserdata/gaozhongkui.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist
 AIDream.xcodeproj/project.xcworkspace/xcuserdata/gaozhongkui.xcuserdatad/UserInterfaceState.xcuserstate
+
+# Secrets
+AIDream/Config.plist

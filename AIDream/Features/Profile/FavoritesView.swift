@@ -101,6 +101,9 @@ struct FavoriteVideoCard: View {
                 // Cover image
                 KFImage(video.coverURL)
                     .resizable()
+                    .placeholder {
+                        Color(white: 0.08)
+                    }
                     .aspectRatio(contentMode: .fill)
                     .frame(minWidth: 0, maxWidth: .infinity)
                     .frame(minHeight: 180)

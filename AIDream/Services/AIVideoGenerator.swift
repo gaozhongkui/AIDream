@@ -1,6 +1,9 @@
 import SwiftUI
 import UIKit
 import Combine
+import OSLog
+
+private let logger = Logger(subsystem: "com.aidream", category: "VideoGen")
 
 // MARK: - 视频生成服务
 @MainActor
@@ -38,7 +41,7 @@ class AIVideoGenerator: ObservableObject {
         quality: String,
         ratio: String
     ) {
-        print("🚀 [VideoGen] Starting generation via OpenRouter Dedicated Video API...")
+        logger.info("Starting generation via OpenRouter Dedicated Video API")
 
         pollingTask?.cancel()
         pollingTask = Task {
@@ -63,7 +66,7 @@ class AIVideoGenerator: ObservableObject {
             } catch is CancellationError {
                 state = .idle
             } catch {
-                print("❌ [VideoGen] Final Failure: \(error.localizedDescription)")
+                logger.error("Final Failure: \(error.localizedDescription)")
                 state = .failed(error.localizedDescription)
             }
         }
@@ -140,14 +143,14 @@ class AIVideoGenerator: ObservableObject {
         let bodyData = try JSONSerialization.data(withJSONObject: body)
         request.httpBody = bodyData
 
-        print("📡 [VideoGen] Request Payload Size: \(bodyData.count / 1024) KB")
+        logger.debug("Request Payload Size: \(bodyData.count / 1024) KB")
         let (data, response) = try await URLSession.shared.data(for: request)
 
         guard let http = response as? HTTPURLResponse else { throw VideoError.invalidResponse }
 
         if http.statusCode >= 400 {
             let rawBody = String(data: data, encoding: .utf8) ?? "No body"
-            print("📡 [VideoGen] HTTP \(http.statusCode) Error Response: \(rawBody)")
+            logger.error("HTTP \(http.statusCode) Error Response: \(rawBody)")
             throw VideoError.serverError("HTTP \(http.statusCode): \(rawBody)")
         }
 
@@ -160,7 +163,7 @@ class AIVideoGenerator: ObservableObject {
             throw VideoError.serverError("Accepted, but no video job ID returned.")
         }
 
-        print("✅ [VideoGen] Job Created Successfully. ID: \(jobId)")
+        logger.info("Job Created Successfully. ID: \(jobId)")
         return jobId
     }
 
@@ -178,7 +181,7 @@ class AIVideoGenerator: ObservableObject {
             try await Task.sleep(nanoseconds: 5_000_000_000) // 间隔 5 秒
             try Task.checkCancellation()
 
-            print("🔍 [VideoGen] Polling attempt \(attempt)...")
+            logger.debug("Polling attempt \(attempt)")
             let (data, response) = try await URLSession.shared.data(for: request)
             
             guard let http = response as? HTTPURLResponse, http.statusCode == 200 else { continue }
@@ -186,7 +189,7 @@ class AIVideoGenerator: ObservableObject {
 
             let jobInfo = json["data"] as? [String: Any] ?? json
             let status = (jobInfo["status"] as? String)?.lowercased() ?? "pending"
-            print("   -> Current Status: \(status)")
+            logger.debug("Current Status: \(status)")
 
             state = .generating(min(0.05 + Double(attempt) * 0.005, 0.99))
 

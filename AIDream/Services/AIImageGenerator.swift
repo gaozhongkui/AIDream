@@ -8,6 +8,9 @@
 
 import SwiftUI
 import UIKit
+import OSLog
+
+private let logger = Logger(subsystem: "com.aidream", category: "ImageGen")
 
 class AIImageGenerator {
 
@@ -187,9 +190,9 @@ class AIImageGenerator {
                     lastError = error
                     if shouldMarkCooldown(for: error) {
                         markCooldown(provider)
-                        print("[ImageGenerator] Provider \(provider) throttled, switching next.")
+                        logger.warning("Provider \(provider.description) throttled, switching next.")
                     } else {
-                        print("[ImageGenerator] Provider \(provider) failed: \(error.localizedDescription)")
+                        logger.error("Provider \(provider.description) failed: \(error.localizedDescription)")
                     }
                 }
             }

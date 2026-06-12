@@ -93,9 +93,7 @@ struct ReferenceVideoView: View {
             .ignoresSafeArea()
         }
         .sheet(isPresented: $isShowingStore) {
-            NavigationView {
-                DiamondStoreView()
-            }
+            DiamondStoreView()
         }
         .alert("Insufficient Diamonds", isPresented: $showInsufficientDiamondsAlert) {
             Button("Go to Store") { isShowingStore = true }

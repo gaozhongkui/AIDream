@@ -191,7 +191,13 @@ final class VideoCell: UICollectionViewCell {
 
         coverImageView.kf.setImage(
             with: video.coverURL,
-            options: [.transition(.fade(0.25))]
+            options: [
+                .transition(.fade(0.25)),
+                .keepCurrentImageWhileLoading,
+                .onFailureImage(UIImage(systemName: "play.slash")?.withTintColor(
+                    UIColor.white.withAlphaComponent(0.15), renderingMode: .alwaysOriginal
+                ))
+            ]
         )
 
         updateLikeState()

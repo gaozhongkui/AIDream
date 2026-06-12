@@ -89,6 +89,23 @@ final class VideoListViewController: UIViewController {
         return label
     }()
 
+    // MARK: - Error Banner
+    private let errorBanner: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(red: 1, green: 0.3, blue: 0.3, alpha: 0.15)
+        view.layer.cornerRadius = 12
+        view.isHidden = true
+        return view
+    }()
+
+    private let errorLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 13, weight: .medium)
+        label.textColor = UIColor(red: 1, green: 0.5, blue: 0.5, alpha: 1)
+        label.textAlignment = .center
+        return label
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(red: 5/255, green: 5/255, blue: 5/255, alpha: 1)
@@ -140,10 +157,12 @@ final class VideoListViewController: UIViewController {
         view.addSubview(collectionView)
         view.addSubview(activityIndicator)
         view.addSubview(emptyStateView)
+        view.addSubview(errorBanner)
+        errorBanner.addSubview(errorLabel)
         emptyStateView.addSubview(emptyIcon)
         emptyStateView.addSubview(emptyLabel)
 
-        [collectionView, activityIndicator, emptyStateView, emptyIcon, emptyLabel].forEach {
+        [collectionView, activityIndicator, emptyStateView, emptyIcon, emptyLabel, errorBanner, errorLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -165,7 +184,15 @@ final class VideoListViewController: UIViewController {
             emptyIcon.heightAnchor.constraint(equalToConstant: 48),
 
             emptyLabel.centerXAnchor.constraint(equalTo: emptyStateView.centerXAnchor),
-            emptyLabel.topAnchor.constraint(equalTo: emptyIcon.bottomAnchor, constant: 16)
+            emptyLabel.topAnchor.constraint(equalTo: emptyIcon.bottomAnchor, constant: 16),
+
+            errorBanner.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            errorBanner.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            errorBanner.topAnchor.constraint(equalTo: headerContainer.bottomAnchor, constant: 8),
+            errorBanner.heightAnchor.constraint(equalToConstant: 44),
+
+            errorLabel.centerXAnchor.constraint(equalTo: errorBanner.centerXAnchor),
+            errorLabel.centerYAnchor.constraint(equalTo: errorBanner.centerYAnchor)
         ])
     }
 
@@ -174,7 +201,17 @@ final class VideoListViewController: UIViewController {
     }
 
     @objc private func handleRefresh() {
+        errorBanner.isHidden = true
         loadPage(reset: true)
+    }
+
+    private func showErrorBanner(_ message: String) {
+        errorLabel.text = message
+        errorBanner.isHidden = false
+        UIView.animate(withDuration: 0.3) { self.view.layoutIfNeeded() }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+            UIView.animate(withDuration: 0.3) { self.errorBanner.isHidden = true }
+        }
     }
 
     // MARK: - Data Loading
@@ -239,7 +276,7 @@ final class VideoListViewController: UIViewController {
                         }
                     }
                 case .failure(let error):
-                    print("Video fetch error: \(error)")
+                    self.showErrorBanner("Network error — pull to retry")
                     self.emptyStateView.isHidden = !self.allVideos.isEmpty
                     self.updateFooterStatus()
                 }

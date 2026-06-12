@@ -79,6 +79,19 @@ struct GeneratingView: View {
 
                 Spacer()
 
+                // Cancel button
+                Button(action: onBackToHome) {
+                    Text("Cancel Generation")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(AppTheme.textMuted)
+                        .padding(.horizontal, 28)
+                        .padding(.vertical, 12)
+                        .background(Color.white.opacity(0.06))
+                        .clipShape(Capsule())
+                        .overlay(Capsule().stroke(Color.white.opacity(0.08), lineWidth: 0.5))
+                }
+                .padding(.bottom, 16)
+
                 // Bottom hint
                 Text("You can leave this screen — we'll keep working.")
                     .font(.system(size: 12))
