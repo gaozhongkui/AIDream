@@ -5,26 +5,34 @@ final class LoadingFooterView: UICollectionReusableView {
 
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .medium)
+        indicator.color = UIColor(red: 0.3, green: 0.62, blue: 1.0, alpha: 1.0)
         indicator.hidesWhenStopped = true
         return indicator
     }()
 
     private let noMoreLabel: UILabel = {
         let label = UILabel()
-        label.text = "— 已经到底啦 —"
-        label.font = .systemFont(ofSize: 12)
-        label.textColor = UIColor.white.withAlphaComponent(0.28)
+        label.font = .systemFont(ofSize: 11, weight: .medium)
+        label.textColor = UIColor.white.withAlphaComponent(0.2)
         label.textAlignment = .center
         label.isHidden = true
         return label
+    }()
+
+    private let separatorLine: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.white.withAlphaComponent(0.05)
+        view.isHidden = true
+        return view
     }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(activityIndicator)
         addSubview(noMoreLabel)
+        addSubview(separatorLine)
 
-        [activityIndicator, noMoreLabel].forEach {
+        [activityIndicator, noMoreLabel, separatorLine].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -32,8 +40,13 @@ final class LoadingFooterView: UICollectionReusableView {
             activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor),
 
+            separatorLine.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40),
+            separatorLine.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -40),
+            separatorLine.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            separatorLine.heightAnchor.constraint(equalToConstant: 0.5),
+
             noMoreLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-            noMoreLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
+            noMoreLabel.topAnchor.constraint(equalTo: separatorLine.bottomAnchor, constant: 14)
         ])
     }
 
@@ -45,9 +58,17 @@ final class LoadingFooterView: UICollectionReusableView {
         if isLoading {
             activityIndicator.startAnimating()
             noMoreLabel.isHidden = true
+            separatorLine.isHidden = true
         } else {
             activityIndicator.stopAnimating()
-            noMoreLabel.isHidden = hasMore // 如果没有更多了，就显示文字
+            if hasMore {
+                noMoreLabel.isHidden = true
+                separatorLine.isHidden = true
+            } else {
+                noMoreLabel.text = "— End of the universe —"
+                noMoreLabel.isHidden = false
+                separatorLine.isHidden = false
+            }
         }
     }
 }

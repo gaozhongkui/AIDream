@@ -66,7 +66,7 @@ final class CreationService: ObservableObject {
                 creations.insert(newItem, at: 0)
                 saveCreations()
                 print("✅ Creation recorded and file saved: \(fileName)")
-            } catch {
+            }  catch {
                 print("❌ Failed to save creation to history: \(error)")
             }
         }

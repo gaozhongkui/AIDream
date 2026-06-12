@@ -12,93 +12,75 @@ final class VideoCell: UICollectionViewCell {
     private var endObserver: NSObjectProtocol?
     private var favoriteObserver: NSObjectProtocol?
 
+    // MARK: - Cover Image
     private let coverImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.backgroundColor = UIColor(white: 0.1, alpha: 1)
-        return imageView
+        let iv = UIImageView()
+        iv.contentMode = .scaleAspectFill
+        iv.clipsToBounds = true
+        iv.backgroundColor = UIColor(white: 0.07, alpha: 1)
+        return iv
     }()
 
+    // MARK: - Gradient (bottom fade only)
     private let gradientLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
         layer.colors = [
             UIColor.clear.cgColor,
-            UIColor.black.withAlphaComponent(0.2).cgColor,
-            UIColor.black.withAlphaComponent(0.9).cgColor
+            UIColor.clear.cgColor,
+            UIColor.black.withAlphaComponent(0.72).cgColor
         ]
-        layer.locations = [0.0, 0.5, 1.0]
+        layer.locations = [0.0, 0.52, 1.0]
         return layer
     }()
 
-    private let glassInfoView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.white.withAlphaComponent(0.08)
-        let blur = UIBlurEffect(style: .systemThinMaterialDark)
-        let blurView = UIVisualEffectView(effect: blur)
-        view.insertSubview(blurView, at: 0)
-        blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        view.layer.cornerRadius = 14
-        view.clipsToBounds = true
-        view.layer.borderWidth = 0.5
-        view.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
-        return view
-    }()
-
+    // MARK: - Floating Info
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.numberOfLines = 1
-        label.font = .systemFont(ofSize: 13, weight: .bold)
-        label.textColor = .white
+        label.numberOfLines = 2
+        label.font = .systemFont(ofSize: 12, weight: .semibold)
+        label.textColor = UIColor.white.withAlphaComponent(0.95)
         return label
     }()
 
-    private let avatarImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 10
-        imageView.backgroundColor = .systemGray4
-        return imageView
-    }()
-
-    private let nameLabel: UILabel = {
+    private let metaLabel: UILabel = {
         let label = UILabel()
+        label.numberOfLines = 1
         label.font = .systemFont(ofSize: 10, weight: .medium)
-        label.textColor = .white.withAlphaComponent(0.7)
+        label.textColor = UIColor.white.withAlphaComponent(0.45)
         return label
     }()
 
-    private let likeIcon: UIImageView = {
-        let iv = UIImageView(image: UIImage(systemName: "heart.fill"))
-        iv.tintColor = .white.withAlphaComponent(0.3)
-        iv.contentMode = .scaleAspectFit
-        iv.isUserInteractionEnabled = true
-        return iv
+    private let likeButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "heart"), for: .normal)
+        button.tintColor = UIColor.white.withAlphaComponent(0.3)
+        button.imageView?.contentMode = .scaleAspectFit
+        return button
     }()
 
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        contentView.backgroundColor = .clear
-        contentView.layer.cornerRadius = 20
+        contentView.backgroundColor = UIColor(red: 0.05, green: 0.05, blue: 0.07, alpha: 1)
+        contentView.layer.cornerRadius = 12
         contentView.layer.masksToBounds = true
+        contentView.layer.borderWidth = 0.5
+        contentView.layer.borderColor = UIColor.white.withAlphaComponent(0.05).cgColor
 
         layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOpacity = 0.3
-        layer.shadowOffset = CGSize(width: 0, height: 4)
-        layer.shadowRadius = 8
+        layer.shadowOpacity = 0.35
+        layer.shadowOffset = CGSize(width: 0, height: 2)
+        layer.shadowRadius = 6
 
         contentView.addSubview(coverImageView)
         coverImageView.layer.addSublayer(gradientLayer)
 
-        contentView.addSubview(glassInfoView)
-        glassInfoView.addSubview(titleLabel)
-        glassInfoView.addSubview(avatarImageView)
-        glassInfoView.addSubview(nameLabel)
-        glassInfoView.addSubview(likeIcon)
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(metaLabel)
+        contentView.addSubview(likeButton)
 
-        [coverImageView, glassInfoView, titleLabel, avatarImageView, nameLabel, likeIcon].forEach {
+        [coverImageView, titleLabel, metaLabel, likeButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -108,39 +90,28 @@ final class VideoCell: UICollectionViewCell {
             coverImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             coverImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
 
-            glassInfoView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            glassInfoView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            glassInfoView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
-            glassInfoView.heightAnchor.constraint(equalToConstant: 52),
+            likeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            likeButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+            likeButton.widthAnchor.constraint(equalToConstant: 26),
+            likeButton.heightAnchor.constraint(equalToConstant: 26),
 
-            avatarImageView.leadingAnchor.constraint(equalTo: glassInfoView.leadingAnchor, constant: 8),
-            avatarImageView.centerYAnchor.constraint(equalTo: glassInfoView.centerYAnchor),
-            avatarImageView.widthAnchor.constraint(equalToConstant: 24),
-            avatarImageView.heightAnchor.constraint(equalToConstant: 24),
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            titleLabel.trailingAnchor.constraint(equalTo: likeButton.leadingAnchor, constant: -8),
+            titleLabel.bottomAnchor.constraint(equalTo: metaLabel.topAnchor, constant: -2),
 
-            titleLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 8),
-            titleLabel.topAnchor.constraint(equalTo: glassInfoView.topAnchor, constant: 8),
-            titleLabel.trailingAnchor.constraint(equalTo: likeIcon.leadingAnchor, constant: -8),
-
-            nameLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 8),
-            nameLabel.bottomAnchor.constraint(equalTo: glassInfoView.bottomAnchor, constant: -8),
-
-            likeIcon.trailingAnchor.constraint(equalTo: glassInfoView.trailingAnchor, constant: -10),
-            likeIcon.centerYAnchor.constraint(equalTo: glassInfoView.centerYAnchor),
-            likeIcon.widthAnchor.constraint(equalToConstant: 24),
-            likeIcon.heightAnchor.constraint(equalToConstant: 24)
+            metaLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            metaLabel.trailingAnchor.constraint(equalTo: likeButton.leadingAnchor, constant: -8),
+            metaLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
         ])
 
-        let tap = UITapGestureRecognizer(target: self, action: #selector(likeTapped))
-        likeIcon.addGestureRecognizer(tap)
+        likeButton.addTarget(self, action: #selector(likeTapped), for: .touchUpInside)
 
-        // Listen for global favorite changes to keep UI in sync
         favoriteObserver = NotificationCenter.default.addObserver(
             forName: FavoriteService.favoritesChangedNotification,
             object: nil,
             queue: .main
         ) { [weak self] notification in
-            guard let self = self,
+            guard let self,
                   let videoId = notification.userInfo?["videoId"] as? Int,
                   self.videoData?.id == videoId else { return }
             self.updateLikeState()
@@ -155,34 +126,37 @@ final class VideoCell: UICollectionViewCell {
         }
     }
 
+    // MARK: - Like Action
     @objc private func likeTapped() {
         guard let video = videoData else { return }
         FavoriteService.shared.toggleFavorite(video)
-        // toggleFavorite will post notification, which we handle above,
-        // but we can also trigger local update for immediate feedback
         updateLikeState()
 
-        // Haptic feedback
-        let generator = UIImpactFeedbackGenerator(style: .medium)
+        let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
 
-        // Animation
-        UIView.animate(withDuration: 0.1, animations: {
-            self.likeIcon.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+        UIView.animate(withDuration: 0.12, animations: {
+            self.likeButton.transform = CGAffineTransform(scaleX: 1.35, y: 1.35)
         }) { _ in
-            UIView.animate(withDuration: 0.1) {
-                self.likeIcon.transform = .identity
+            UIView.animate(withDuration: 0.12, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5) {
+                self.likeButton.transform = .identity
             }
         }
     }
 
     private func updateLikeState() {
         guard let video = videoData else { return }
-        let isFavorited = FavoriteService.shared.isFavorited(video.id)
-        likeIcon.tintColor = isFavorited ? .systemRed : .white.withAlphaComponent(0.3)
-        likeIcon.image = UIImage(systemName: isFavorited ? "heart.fill" : "heart")
+        let favorited = FavoriteService.shared.isFavorited(video.id)
+        likeButton.tintColor = favorited
+            ? UIColor.systemRed
+            : UIColor.white.withAlphaComponent(0.3)
+        likeButton.setImage(
+            UIImage(systemName: favorited ? "heart.fill" : "heart"),
+            for: .normal
+        )
     }
 
+    // MARK: - Layout
     override func layoutSubviews() {
         super.layoutSubviews()
         CATransaction.begin()
@@ -192,28 +166,38 @@ final class VideoCell: UICollectionViewCell {
         CATransaction.commit()
     }
 
+    // MARK: - Reuse
     override func prepareForReuse() {
         super.prepareForReuse()
         stopPlayback()
         coverImageView.image = nil
-        avatarImageView.image = nil
         titleLabel.text = nil
-        nameLabel.text = nil
+        metaLabel.text = nil
         videoData = nil
     }
 
+    // MARK: - Configure
     func configure(with video: VideoData) {
         self.videoData = video
         videoURL = video.videoURL
-        titleLabel.text = video.title.lowercased() == "untitled" ? video.introduction : video.title
-        nameLabel.text = video.userName
 
-        coverImageView.kf.setImage(with: video.coverURL, options: [.transition(.fade(0.3))])
-        avatarImageView.kf.setImage(with: video.userAvatarURL, options: [.transition(.fade(0.2))])
+        let displayTitle = video.title.lowercased() == "untitled"
+            ? video.introduction
+            : video.title
+        titleLabel.text = displayTitle
+
+        let stars = formatCount(video.starCount)
+        metaLabel.text = "@\(video.userName) · ★\(stars)"
+
+        coverImageView.kf.setImage(
+            with: video.coverURL,
+            options: [.transition(.fade(0.25))]
+        )
 
         updateLikeState()
     }
 
+    // MARK: - Playback
     func startPlayback() {
         guard let url = videoURL, player == nil else { return }
         let item = AVPlayerItem(url: url)
@@ -227,7 +211,11 @@ final class VideoCell: UICollectionViewCell {
         coverImageView.layer.insertSublayer(layer, at: 0)
         playerLayer = layer
 
-        endObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main) { [weak self] _ in
+        endObserver = NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemDidPlayToEndTime,
+            object: item,
+            queue: .main
+        ) { [weak self] _ in
             self?.player?.seek(to: .zero)
             self?.player?.play()
         }
@@ -236,10 +224,20 @@ final class VideoCell: UICollectionViewCell {
 
     func stopPlayback() {
         player?.pause()
-        if let observer = endObserver { NotificationCenter.default.removeObserver(observer) }
+        if let observer = endObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
         playerLayer?.removeFromSuperlayer()
         playerLayer = nil
         player = nil
         endObserver = nil
+    }
+
+    // MARK: - Helpers
+    private func formatCount(_ count: Int) -> String {
+        if count >= 1000 {
+            return String(format: "%.1fk", Double(count) / 1000.0)
+        }
+        return "\(count)"
     }
 }

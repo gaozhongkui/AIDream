@@ -12,6 +12,7 @@ class WaterfallLayout: UICollectionViewLayout {
 
     private let numberOfColumns = 2
     private let cellPadding: CGFloat = 8
+    private let columnSpacing: CGFloat = 8
     private var cache: [UICollectionViewLayoutAttributes] = []
     private var footerAttributes: UICollectionViewLayoutAttributes?
     private var contentHeight: CGFloat = 0
@@ -36,16 +37,17 @@ class WaterfallLayout: UICollectionViewLayout {
     override func prepare() {
         guard cache.isEmpty, let collectionView = collectionView else { return }
 
-        let columnWidth = contentWidth / CGFloat(numberOfColumns)
+        let totalSpacing = columnSpacing * CGFloat(numberOfColumns - 1)
+        let columnWidth = (contentWidth - totalSpacing) / CGFloat(numberOfColumns)
+
         var xOffset: [CGFloat] = []
         for column in 0..<numberOfColumns {
-            xOffset.append(CGFloat(column) * columnWidth)
+            xOffset.append(CGFloat(column) * (columnWidth + columnSpacing))
         }
 
         var column = 0
         var yOffset: [CGFloat] = Array(repeating: 0, count: numberOfColumns)
 
-        // 布局 Items
         for item in 0..<collectionView.numberOfItems(inSection: 0) {
             let indexPath = IndexPath(item: item, section: 0)
             let width = columnWidth - cellPadding * 2
@@ -64,7 +66,6 @@ class WaterfallLayout: UICollectionViewLayout {
             column = yOffset[0] <= yOffset[1] ? 0 : 1
         }
 
-        // 布局 Footer (加载更多)
         let availableHeight = collectionView.bounds.height - collectionView.adjustedContentInset.top - collectionView.adjustedContentInset.bottom
         let footerHeight = delegate?.collectionView(collectionView, heightForFooterIn: 0, contentHeight: contentHeight, availableHeight: availableHeight) ?? 0
         if footerHeight > 0 {
