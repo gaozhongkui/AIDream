@@ -17,7 +17,8 @@ struct FavoritesView: View {
                             .font(.system(size: 16, weight: .bold))
                             .foregroundColor(.white)
                             .frame(width: 40, height: 40)
-                            .background(Circle().fill(Color.white.opacity(0.1)))
+                            .background(Circle().fill(Color.white.opacity(0.08)))
+                            .overlay(Circle().stroke(Color.white.opacity(0.1), lineWidth: 0.5))
                     }
 
                     Spacer()
@@ -37,12 +38,20 @@ struct FavoritesView: View {
                     emptyState
                 } else {
                     ScrollView {
-                        LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                        LazyVGrid(
+                            columns: [
+                                GridItem(.flexible(), spacing: 12),
+                                GridItem(.flexible(), spacing: 12)
+                            ],
+                            spacing: 12
+                        ) {
                             ForEach(favoriteService.favoriteVideos) { video in
                                 FavoriteVideoCard(video: video)
                             }
                         }
-                        .padding(16)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+                        .padding(.bottom, 40)
                     }
                 }
             }
@@ -53,25 +62,29 @@ struct FavoritesView: View {
     private var emptyState: some View {
         VStack(spacing: 20) {
             Spacer()
-            Image(systemName: "heart.slash.fill")
-                .font(.system(size: 60))
-                .foregroundStyle(AppTheme.accentGrad)
-                .opacity(0.5)
-
+            ZStack {
+                Circle()
+                    .fill(AppTheme.accentGlow)
+                    .frame(width: 80, height: 80)
+                    .blur(radius: 20)
+                Image(systemName: "heart.slash.fill")
+                    .font(.system(size: 36))
+                    .foregroundStyle(AppTheme.accentGrad)
+            }
             Text("No inspirations yet")
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(AppTheme.textSecondary)
-
-            Text("Go to Explore and find something you like!")
-                .font(.system(size: 14))
+            Text("Find something you like in Explore and save it here!")
+                .font(.system(size: 13))
                 .foregroundColor(AppTheme.textMuted)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
+                .padding(.horizontal, 50)
             Spacer()
         }
     }
 }
 
+// MARK: - Favorite Video Card
 struct FavoriteVideoCard: View {
     let video: VideoData
 
@@ -85,30 +98,66 @@ struct FavoriteVideoCard: View {
             }
         } label: {
             ZStack(alignment: .bottomLeading) {
+                // Cover image
                 KFImage(video.coverURL)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(minWidth: 0, maxWidth: .infinity)
-                    .frame(height: 220)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .frame(minHeight: 180)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
 
-                // Info Overlay
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(video.title)
-                        .font(.system(size: 12, weight: .bold))
-                        .lineLimit(1)
-                    Text("@\(video.userName)")
-                        .font(.system(size: 10))
-                        .foregroundColor(.white.opacity(0.8))
-                }
-                .padding(10)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(
-                    LinearGradient(colors: [.clear, .black.opacity(0.8)], startPoint: .top, endPoint: .bottom)
+                // Bottom gradient
+                LinearGradient(
+                    colors: [.clear, .clear, Color.black.opacity(0.72)],
+                    startPoint: .top,
+                    endPoint: .bottom
                 )
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+
+                // Floating info
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(video.title.lowercased() == "untitled" ? video.introduction : video.title)
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.white)
+                        .lineLimit(2)
+
+                    HStack(spacing: 4) {
+                        Text("@\(video.userName)")
+                            .font(.system(size: 9, weight: .medium))
+                            .foregroundColor(Color.white.opacity(0.5))
+
+                        Text("·")
+                            .foregroundColor(Color.white.opacity(0.3))
+
+                        Image(systemName: "star.fill")
+                            .font(.system(size: 8))
+                            .foregroundColor(Color(red: 1, green: 0.82, blue: 0.2))
+
+                        Text(formatCount(video.starCount))
+                            .font(.system(size: 9, weight: .medium))
+                            .foregroundColor(Color.white.opacity(0.5))
+                    }
+                }
+                .padding(.horizontal, 10)
+                .padding(.bottom, 10)
             }
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color(red: 0.05, green: 0.05, blue: 0.07))
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.white.opacity(0.05), lineWidth: 0.5)
+            )
         }
         .buttonStyle(.plain)
+    }
+
+    private func formatCount(_ count: Int) -> String {
+        if count >= 1000 {
+            return String(format: "%.1fk", Double(count) / 1000.0)
+        }
+        return "\(count)"
     }
 }

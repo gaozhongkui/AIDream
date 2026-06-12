@@ -108,33 +108,41 @@ struct VideoCompletionView: View {
 
     // MARK: - Media Card
     private var mediaCard: some View {
-        ZStack {
-            // Content
-            Group {
-                switch media {
-                case .video:
-                    if let player = player {
-                        VideoPlayer(player: player)
-                            .clipShape(RoundedRectangle(cornerRadius: 32))
-                    } else {
-                        ProgressView().tint(.white)
-                    }
-                case .image(let img):
-                    Image(uiImage: img)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .clipShape(RoundedRectangle(cornerRadius: 32))
-                }
-            }
-            .frame(width: 280, height: 480)
-            .primaryBorder(cornerRadius: 32, active: true)
+        GeometryReader { geo in
+            let cardWidth = min(geo.size.width - 48, 340)
+            let cardHeight = min(cardWidth * 1.6, geo.size.height * 0.6)
 
-            // Subtle Scanline Effect
-            Rectangle()
-                .fill(LinearGradient(colors: [.clear, Color.white.opacity(0.03), .clear], startPoint: .top, endPoint: .bottom))
-                .frame(height: 100)
-                .offset(y: -150)
-                .allowsHitTesting(false)
+            ZStack {
+                // Content
+                Group {
+                    switch media {
+                    case .video:
+                        if let player = player {
+                            VideoPlayer(player: player)
+                                .clipShape(RoundedRectangle(cornerRadius: 32))
+                        } else {
+                            ProgressView().tint(.white)
+                                .frame(width: cardWidth, height: cardHeight)
+                        }
+                    case .image(let img):
+                        Image(uiImage: img)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: cardWidth, height: cardHeight)
+                            .clipShape(RoundedRectangle(cornerRadius: 32))
+                    }
+                }
+                .frame(width: cardWidth, height: cardHeight)
+                .primaryBorder(cornerRadius: 32, active: true)
+
+                // Subtle Scanline Effect
+                Rectangle()
+                    .fill(LinearGradient(colors: [.clear, Color.white.opacity(0.03), .clear], startPoint: .top, endPoint: .bottom))
+                    .frame(height: 100)
+                    .offset(y: -cardHeight * 0.3)
+                    .allowsHitTesting(false)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 

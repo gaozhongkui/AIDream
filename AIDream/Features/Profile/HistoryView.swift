@@ -17,7 +17,8 @@ struct HistoryView: View {
                             .font(.system(size: 16, weight: .bold))
                             .foregroundColor(.white)
                             .frame(width: 40, height: 40)
-                            .background(Circle().fill(Color.white.opacity(0.1)))
+                            .background(Circle().fill(Color.white.opacity(0.08)))
+                            .overlay(Circle().stroke(Color.white.opacity(0.1), lineWidth: 0.5))
                     }
                     Spacer()
                     Text("Creative History")
@@ -33,12 +34,14 @@ struct HistoryView: View {
                     emptyState
                 } else {
                     ScrollView {
-                        LazyVStack(spacing: 16) {
+                        LazyVStack(spacing: 14) {
                             ForEach(creationService.creations) { item in
-                                HistoryRow(item: item)
+                                HistoryCard(item: item)
                             }
                         }
-                        .padding(20)
+                        .padding(.horizontal, 20)
+                        .padding(.top, 12)
+                        .padding(.bottom, 40)
                     }
                 }
             }
@@ -49,57 +52,99 @@ struct HistoryView: View {
     private var emptyState: some View {
         VStack(spacing: 20) {
             Spacer()
-            Image(systemName: "video.slash.fill")
-                .font(.system(size: 60))
-                .foregroundStyle(AppTheme.accentGrad)
-                .opacity(0.5)
+            ZStack {
+                Circle()
+                    .fill(AppTheme.accentGlow)
+                    .frame(width: 80, height: 80)
+                    .blur(radius: 20)
+                Image(systemName: "wand.and.stars")
+                    .font(.system(size: 36))
+                    .foregroundStyle(AppTheme.accentGrad)
+            }
             Text("No creations yet")
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(AppTheme.textSecondary)
+            Text("Your AI-generated masterpieces will appear here")
+                .font(.system(size: 13))
+                .foregroundColor(AppTheme.textMuted)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 50)
             Spacer()
         }
     }
 }
 
-struct HistoryRow: View {
+// MARK: - History Card
+struct HistoryCard: View {
     let item: CreationItem
     @State private var showDetail = false
 
     var body: some View {
         Button { showDetail = true } label: {
-            HStack(spacing: 16) {
-                // Video Preview (Placeholder or generated thumb)
+            HStack(spacing: 0) {
+                // 左侧预览区
                 ZStack {
-                    Color.white.opacity(0.05)
-                        .frame(width: 100, height: 140)
-                        .cornerRadius(12)
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color(hex: "#1A1D4A"), Color(hex: "#0E1030")],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 88, height: 120)
 
-                    Image(systemName: "play.fill")
-                        .foregroundColor(.white.opacity(0.5))
+                    // 装饰光点
+                    Circle()
+                        .fill(AppTheme.accentPrimary.opacity(0.15))
+                        .frame(width: 50, height: 50)
+                        .blur(radius: 15)
+
+                    ZStack {
+                        Circle()
+                            .fill(Color.white.opacity(0.1))
+                            .frame(width: 36, height: 36)
+                        Image(systemName: "play.fill")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.white.opacity(0.7))
+                            .offset(x: 1)
+                    }
                 }
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.white.opacity(0.06), lineWidth: 0.5)
+                )
 
+                // 右侧信息
                 VStack(alignment: .leading, spacing: 8) {
                     Text(item.prompt)
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.white)
                         .lineLimit(2)
 
-                    Text(item.displayDate)
-                        .font(.system(size: 12))
-                        .foregroundColor(AppTheme.textMuted)
-
                     Spacer()
+
+                    HStack(spacing: 6) {
+                        Image(systemName: "clock")
+                            .font(.system(size: 10))
+                            .foregroundColor(AppTheme.textMuted)
+                        Text(item.displayDate)
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(AppTheme.textMuted)
+                    }
                 }
-                .padding(.vertical, 8)
+                .padding(.leading, 16)
+                .padding(.vertical, 14)
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 12))
+                    .font(.system(size: 12, weight: .bold))
                     .foregroundColor(AppTheme.textMuted)
+                    .padding(.trailing, 4)
             }
             .padding(12)
-            .glassStyle(cornerRadius: 20)
+            .glassStyle(cornerRadius: 22)
         }
         .buttonStyle(.plain)
         .fullScreenCover(isPresented: $showDetail) {

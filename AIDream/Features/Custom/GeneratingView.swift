@@ -4,11 +4,24 @@ struct GeneratingView: View {
     var progress: Double
     var onBackToHome: () -> Void
 
+    @State private var tipIndex: Int = 0
+    private let tips = [
+        "Crafting every frame with neural precision...",
+        "AI is painting motion from your imagination...",
+        "Polishing details, one pixel at a time...",
+        "Translating your vision into reality...",
+        "Almost there — greatness takes a moment...",
+        "Weaving light and motion together...",
+        "Your masterpiece is materializing..."
+    ]
+
+    private let timer = Timer.publish(every: 4, on: .main, in: .common).autoconnect()
+
     var body: some View {
         ZStack {
             AppTheme.bgPrimary.ignoresSafeArea()
 
-            // Core energy glow in background
+            // Core energy glow
             RadialGradient(
                 colors: [AppTheme.accentPrimary.opacity(0.12), .clear],
                 center: .center,
@@ -20,72 +33,61 @@ struct GeneratingView: View {
             VStack(spacing: 0) {
                 Spacer()
 
-                // Center futuristic container
+                // Progress Ring + Lottie
                 VStack(spacing: 32) {
                     ZStack {
-                        // Progress Ring (Visual backdrop)
+                        // Background ring
                         Circle()
-                            .stroke(Color.white.opacity(0.05), lineWidth: 8)
-                            .frame(width: 200, height: 200)
+                            .stroke(Color.white.opacity(0.05), lineWidth: 6)
+                            .frame(width: 180, height: 180)
 
-                        // Animated Lottie/Icon
+                        // Animated icon
                         LottieView(name: "ai_generating_a")
-                            .frame(width: 140, height: 140)
+                            .frame(width: 120, height: 120)
 
-                        // Active Progress Arc
+                        // Progress arc
                         Circle()
                             .trim(from: 0, to: CGFloat(progress))
                             .stroke(
                                 AppTheme.accentGrad,
-                                style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                                style: StrokeStyle(lineWidth: 6, lineCap: .round)
                             )
-                            .frame(width: 200, height: 200)
+                            .frame(width: 180, height: 180)
                             .rotationEffect(.degrees(-90))
-                            .animation(.linear, value: progress)
+                            .animation(.linear(duration: 0.5), value: progress)
                     }
                     .shadow(color: AppTheme.accentGlow, radius: 20)
 
-                    VStack(spacing: 12) {
-                        Text("\(Int(progress * 100))%")
-                            .font(.system(size: 48, weight: .black, design: .rounded))
-                            .foregroundStyle(AppTheme.accentGrad)
+                    // Percentage
+                    Text("\(Int(progress * 100))%")
+                        .font(.system(size: 44, weight: .black, design: .rounded))
+                        .foregroundStyle(AppTheme.accentGrad)
 
-                        Text("Synthesizing your vision...")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(AppTheme.textSecondary)
-                    }
+                    // Dynamic tip
+                    Text(tips[tipIndex])
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(AppTheme.textSecondary)
+                        .multilineTextAlignment(.center)
+                        .frame(height: 40)
+                        .transition(.opacity.combined(with: .move(edge: .bottom)))
+                        .id(tipIndex)
+                        .animation(.easeInOut(duration: 0.5), value: tipIndex)
                 }
-                .padding(40)
-                .glassStyle(cornerRadius: 40)
+                .padding(36)
+                .glassStyle(cornerRadius: 36)
                 .padding(.horizontal, 30)
 
                 Spacer()
 
-                // Bottom actions
-                VStack(spacing: 20) {
-                    Button(action: onBackToHome) {
-                        HStack(spacing: 10) {
-                            Image(systemName: "house.fill")
-                            Text("Minimize to Background")
-                                .font(.system(size: 16, weight: .bold))
-                        }
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 56)
-                        .background(Color.white.opacity(0.08))
-                        .clipShape(RoundedRectangle(cornerRadius: 18))
-                        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.1), lineWidth: 1))
-                    }
-                    .padding(.horizontal, 24)
-
-                    Text("We'll push a notification when the masterpiece is ready.")
-                        .font(.system(size: 12))
-                        .foregroundColor(AppTheme.textMuted)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 40)
-                }
-                .padding(.bottom, 50)
+                // Bottom hint
+                Text("You can leave this screen — we'll keep working.")
+                    .font(.system(size: 12))
+                    .foregroundColor(AppTheme.textMuted)
+                    .padding(.bottom, 50)
             }
+        }
+        .onReceive(timer) { _ in
+            withAnimation { tipIndex = (tipIndex + 1) % tips.count }
         }
     }
 }
