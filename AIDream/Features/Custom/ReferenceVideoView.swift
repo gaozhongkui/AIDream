@@ -12,8 +12,12 @@ struct ReferenceVideoView: View {
     @State private var isShowingImagePicker = false
     @State private var isShowingCamera = false
     @State private var imageSelectionError: String?
+    @State private var showInsufficientDiamondsAlert = false
+    @State private var isShowingStore = false
 
     @ObservedObject private var videoGenerator = AIVideoGenerator.shared
+    @ObservedObject private var userService = UserService.shared
+    private let generationCost = 200
 
     var body: some View {
         ZStack {
@@ -87,6 +91,17 @@ struct ReferenceVideoView: View {
                 applySelectedImage(image)
             }
             .ignoresSafeArea()
+        }
+        .sheet(isPresented: $isShowingStore) {
+            NavigationView {
+                DiamondStoreView()
+            }
+        }
+        .alert("Insufficient Diamonds", isPresented: $showInsufficientDiamondsAlert) {
+            Button("Go to Store") { isShowingStore = true }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("You need \(generationCost) diamonds to generate a video. Your current balance is \(userService.diamonds) diamonds.")
         }
     }
 
@@ -205,7 +220,7 @@ struct ReferenceVideoView: View {
     private var bottomActionSection: some View {
         VStack(spacing: 16) {
             Button {
-                videoGenerator.generateVideo(prompt: promptText, image: referenceImages.compactMap{$0}.first, endImage: referenceImages.compactMap{$0}.dropFirst().last, duration: selectedDuration, quality: selectedQuality, ratio: selectedRatio)
+                handleGenerate()
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "film.fill").font(.system(size: 20, weight: .bold))
@@ -223,6 +238,24 @@ struct ReferenceVideoView: View {
         .padding(.horizontal, 20).padding(.top, 24)
         .padding(.bottom, 140) // 抬高间距，避开 TabBar
         .background(AppTheme.bgPrimary.overlay(Rectangle().fill(AppTheme.borderSubtle).frame(height: 0.5), alignment: .top))
+    }
+
+    // MARK: - Actions
+    private func handleGenerate() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+
+        if userService.consumeDiamonds(generationCost) {
+            videoGenerator.generateVideo(
+                prompt: promptText,
+                image: referenceImages.compactMap { $0 }.first,
+                endImage: referenceImages.compactMap { $0 }.dropFirst().last,
+                duration: selectedDuration,
+                quality: selectedQuality,
+                ratio: selectedRatio
+            )
+        } else {
+            showInsufficientDiamondsAlert = true
+        }
     }
 
     // MARK: - Helpers

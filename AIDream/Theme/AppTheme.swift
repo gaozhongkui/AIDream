@@ -31,6 +31,13 @@ struct AppTheme {
         )
     }
 
+    static var accentGradV: LinearGradient {
+        LinearGradient(
+            colors: [Color(hex: "#4D9FFF"), Color(hex: "#00F2FF")],
+            startPoint: .top, endPoint: .bottom
+        )
+    }
+
     // MARK: 文本色系 (Text)
     static let textPrimary   = Color.white
     static let textSecondary = Color.white.opacity(0.65)
@@ -51,7 +58,7 @@ extension View {
         self.overlay(
             RoundedRectangle(cornerRadius: cornerRadius)
                 .stroke(
-                    active ? AppTheme.accentGrad : LinearGradient(colors: [AppTheme.borderSubtle], startPoint: .top, endPoint: .bottom),
+                    active ? AnyShapeStyle(AppTheme.accentGrad) : AnyShapeStyle(LinearGradient(colors: [AppTheme.borderSubtle], startPoint: .top, endPoint: .bottom)),
                     lineWidth: active ? 1.5 : 0.8
                 )
         )

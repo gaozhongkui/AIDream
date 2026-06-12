@@ -16,8 +16,13 @@ struct ImageToVideoView: View {
     // 状态反馈提示
     @State private var toastMessage: String?
     @State private var showToast = false
+    @State private var showInsufficientDiamondsAlert = false
+    @State private var isShowingStore = false
 
     @ObservedObject private var videoGenerator = AIVideoGenerator.shared
+    @ObservedObject private var userService = UserService.shared
+
+    private let generationCost = 200
 
     var body: some View {
         ZStack {
@@ -25,7 +30,8 @@ struct ImageToVideoView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 32) {
-                    imageUploadSection.padding(.top, 20)
+                    headerSection.padding(.top, 10)
+                    imageUploadSection
                     promptSection
 
                     VStack(spacing: 24) {
@@ -89,7 +95,6 @@ struct ImageToVideoView: View {
                     onShare:    { shareVideo(url: url) }
                 )
                 .onAppear {
-                    // 修正：参数名需匹配 CreationService 的 url
                     CreationService.shared.addCreation(prompt: promptText, url: url)
                 }
             }
@@ -111,9 +116,40 @@ struct ImageToVideoView: View {
             }
             .ignoresSafeArea()
         }
+        .sheet(isPresented: $isShowingStore) {
+            NavigationView {
+                DiamondStoreView()
+            }
+        }
+        .alert("Insufficient Diamonds", isPresented: $showInsufficientDiamondsAlert) {
+            Button("Go to Store") { isShowingStore = true }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("You need \(generationCost) diamonds to generate a video. Your current balance is \(userService.diamonds) diamonds.")
+        }
     }
 
     // MARK: - UI Components
+    private var headerSection: some View {
+        HStack {
+            Spacer()
+            Button(action: { isShowingStore = true }) {
+                HStack(spacing: 6) {
+                    Text("💎")
+                    Text("\(userService.diamonds)")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.white)
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 12))
+                        .foregroundColor(AppTheme.accentSecondary)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Capsule().fill(Color.white.opacity(0.1)))
+            }
+        }
+    }
+
     private var imageUploadSection: some View {
         HStack(spacing: 16) {
             imageCard(title: "Start Frame", image: startImage) { openImagePicker(for: .start) }
@@ -241,23 +277,15 @@ struct ImageToVideoView: View {
     private var bottomActionSection: some View {
         VStack(spacing: 16) {
             Button {
-                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                videoGenerator.generateVideo(
-                    prompt: promptText,
-                    image: startImage,
-                    endImage: endImage,
-                    duration: selectedDuration,
-                    quality: selectedQuality,
-                    ratio: selectedRatio
-                )
+                handleGenerate()
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "wand.and.rays").font(.system(size: 20, weight: .bold))
                     Text("Generate Creation").font(.system(size: 17, weight: .bold))
                     Spacer()
                     HStack(spacing: 4) {
-                        Image(systemName: "bolt.fill")
-                        Text("200")
+                        Text("💎")
+                        Text("\(generationCost)")
                     }
                     .font(.system(size: 14, weight: .bold))
                     .padding(.horizontal, 10).padding(.vertical, 4)
@@ -282,6 +310,23 @@ struct ImageToVideoView: View {
     }
 
     // MARK: - Actions
+    private func handleGenerate() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+
+        if userService.consumeDiamonds(generationCost) {
+            videoGenerator.generateVideo(
+                prompt: promptText,
+                image: startImage,
+                endImage: endImage,
+                duration: selectedDuration,
+                quality: selectedQuality,
+                ratio: selectedRatio
+            )
+        } else {
+            showInsufficientDiamondsAlert = true
+        }
+    }
+
     private func saveVideo(url: URL) {
         Task {
             do {
@@ -346,8 +391,14 @@ struct ImageToVideoView: View {
     }
 
     private func applySelectedImage(_ image: UIImage) {
-        if activeImageTarget == .start { startImage = image } else { endImage = image }
+        if activeImageTarget == .start {
+            startImage = image
+        } else {
+            endImage = image
+        }
+    }
+
+    enum ImageFrameTarget {
+        case start, end
     }
 }
-
-private enum ImageFrameTarget { case start, end }

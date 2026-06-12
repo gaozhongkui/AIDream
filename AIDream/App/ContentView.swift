@@ -74,12 +74,3 @@ struct BlurView: UIViewRepresentable {
     }
     func updateUIView(_ uiView: UIVisualEffectView, context: Context) {}
 }
-
-extension AppTheme {
-    static var accentGradV: LinearGradient {
-        LinearGradient(
-            colors: [Color(hex: "#4D9FFF"), Color(hex: "#00F2FF")],
-            startPoint: .top, endPoint: .bottom
-        )
-    }
-}

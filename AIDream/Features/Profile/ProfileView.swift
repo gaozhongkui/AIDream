@@ -3,6 +3,7 @@ import SwiftUI
 struct ProfileView: View {
     @ObservedObject var creationService = CreationService.shared
     @ObservedObject var favoriteService = FavoriteService.shared
+    @ObservedObject var userService = UserService.shared
 
     var body: some View {
         NavigationView {
@@ -13,6 +14,8 @@ struct ProfileView: View {
                     VStack(spacing: 0) {
                         profileHeader.padding(.top, 40)
                         statsRow.padding(.top, 32)
+
+                        diamondBalanceCard.padding(.top, 28)
 
                         sectionLabel("Studio").padding(.top, 40)
 
@@ -38,8 +41,9 @@ struct ProfileView: View {
                                 .frame(height: 1)
                                 .padding(.leading, 72)
 
-                            NavigationLink(destination: Text("Quick Drafts").foregroundColor(.white)) {
-                                menuRowContent(icon: "bolt.horizontal.circle.fill", title: "Quick Drafts")
+                            // Diamond Store
+                            NavigationLink(destination: DiamondStoreView()) {
+                                menuRowContent(icon: "diamond.fill", title: "Diamond Store", trailing: "💎 \(userService.diamonds)")
                             }
                         }
                         .glassStyle(cornerRadius: 22)
@@ -89,7 +93,7 @@ struct ProfileView: View {
                     Image(systemName: "bolt.fill")
                         .font(.system(size: 10))
                         .foregroundColor(AppTheme.accentSecondary)
-                    Text("SVIP MEMBER")
+                    Text(userService.isPremium ? "PRO MEMBER" : "FREE MEMBER")
                         .font(.system(size: 10, weight: .black))
                         .tracking(1)
                 }
@@ -107,7 +111,7 @@ struct ProfileView: View {
         HStack(spacing: 12) {
             statCard(value: "\(creationService.creations.count)", label: "Creations")
             statCard(value: "\(favoriteService.favoriteVideos.count)", label: "Likes")
-            statCard(value: "8", label: "Assets")
+            statCard(value: "\(userService.diamonds)", label: "Diamonds")
         }
         .padding(.horizontal, 20)
     }
@@ -164,7 +168,7 @@ struct ProfileView: View {
         .padding(.horizontal, 20)
     }
 
-    private func menuRowContent(icon: String, title: String) -> some View {
+    private func menuRowContent(icon: String, title: String, trailing: String? = nil) -> some View {
         HStack(spacing: 16) {
             Image(systemName: icon)
                 .font(.system(size: 18))
@@ -178,12 +182,67 @@ struct ProfileView: View {
 
             Spacer()
 
+            if let trailing = trailing {
+                Text(trailing)
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(AppTheme.accentSecondary)
+                    .padding(.trailing, 4)
+            }
+
             Image(systemName: "chevron.right")
                 .font(.system(size: 12, weight: .bold))
                 .foregroundColor(AppTheme.textMuted)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
+    }
+
+    // MARK: - Diamond Balance Card
+    private var diamondBalanceCard: some View {
+        NavigationLink(destination: DiamondStoreView()) {
+            HStack(spacing: 0) {
+                // 左侧：钻石图标 + 余额
+                HStack(spacing: 14) {
+                    ZStack {
+                        Circle()
+                            .fill(AppTheme.accentGrad.opacity(0.2))
+                            .frame(width: 46, height: 46)
+
+                        Image(systemName: "diamond.fill")
+                            .font(.system(size: 20))
+                            .foregroundStyle(AppTheme.accentGrad)
+                    }
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Diamond Balance")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(AppTheme.textMuted)
+                        Text("💎 \(userService.diamonds)")
+                            .font(.system(size: 22, weight: .bold))
+                            .foregroundColor(.white)
+                    }
+                }
+
+                Spacer()
+
+                // 右侧：充值按钮
+                Text("Recharge")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 10)
+                    .background(AppTheme.accentGradH)
+                    .clipShape(Capsule())
+                    .shadow(color: AppTheme.accentGlow.opacity(0.4), radius: 6, y: 3)
+            }
+            .padding(18)
+            .glassStyle(cornerRadius: 20)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(AppTheme.accentPrimary.opacity(0.2), lineWidth: 1)
+            )
+        }
+        .padding(.horizontal, 20)
     }
 
     private var logoutButton: some View {

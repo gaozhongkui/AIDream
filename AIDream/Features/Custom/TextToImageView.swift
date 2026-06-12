@@ -11,6 +11,10 @@ struct TextToImageView: View {
     @State private var completedImage: UIImage? = nil
     @State private var errorMessage: String? = nil
     @State private var showCompletion: Bool = false
+    @State private var showInsufficientDiamondsAlert = false
+    @State private var isShowingStore = false
+    @ObservedObject private var userService = UserService.shared
+    private let generationCost = 40
 
     var body: some View {
         ZStack {
@@ -78,6 +82,17 @@ struct TextToImageView: View {
                     }
                 )
             }
+        }
+        .sheet(isPresented: $isShowingStore) {
+            NavigationView {
+                DiamondStoreView()
+            }
+        }
+        .alert("Insufficient Diamonds", isPresented: $showInsufficientDiamondsAlert) {
+            Button("Go to Store") { isShowingStore = true }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("You need \(generationCost) diamonds to generate an image. Your current balance is \(userService.diamonds) diamonds.")
         }
     }
 
@@ -251,6 +266,11 @@ struct TextToImageView: View {
     private func generateImage() {
         let trimmed = promptText.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }
+        
+        guard userService.consumeDiamonds(generationCost) else {
+            showInsufficientDiamondsAlert = true
+            return
+        }
 
         isGenerating = true
         errorMessage = nil
