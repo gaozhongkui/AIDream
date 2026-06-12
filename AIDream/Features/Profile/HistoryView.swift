@@ -78,6 +78,7 @@ struct HistoryView: View {
 struct HistoryCard: View {
     let item: CreationItem
     @State private var showDetail = false
+    @State private var toastMessage: String?
 
     var body: some View {
         Button { showDetail = true } label: {
@@ -152,9 +153,49 @@ struct HistoryCard: View {
                 media: .video(item.videoURL),
                 onClose: { showDetail = false },
                 onRetake: { showDetail = false },
-                onDownload: {},
-                onShare: {}
+                onDownload: { saveToLibrary() },
+                onShare: { shareVideo() }
             )
+        }
+        .overlay(alignment: .bottom) {
+            if let msg = toastMessage {
+                Text(msg)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(Capsule().fill(Color.black.opacity(0.8)))
+                    .padding(.bottom, 120)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            withAnimation { toastMessage = nil }
+                        }
+                    }
+            }
+        }
+    }
+
+    private func saveToLibrary() {
+        let path = item.videoURL.path
+        guard FileManager.default.fileExists(atPath: path) else {
+            toastMessage = "File not found"
+            return
+        }
+        UISaveVideoAtPathToSavedPhotosAlbum(path, nil, nil, nil)
+        toastMessage = "Saved to gallery"
+    }
+
+    private func shareVideo() {
+        let url = item.videoURL
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            toastMessage = "File not found"
+            return
+        }
+        let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let rootVC = scene.windows.first?.rootViewController {
+            rootVC.present(av, animated: true)
         }
     }
 }

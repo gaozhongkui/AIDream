@@ -107,9 +107,16 @@ class AIVideoGenerator: ObservableObject {
             "aspect_ratio": ratio
         ]
 
-        // 提取统一的时长数字
+        // 时长
         let durationVal = Int(duration.replacingOccurrences(of: "s", with: "")) ?? 5
         body["duration"] = durationVal
+
+        // 品质映射
+        switch quality {
+        case "Ultra HD": body["quality"] = "ultra_hd"
+        case "High":     body["quality"] = "high"
+        default:         body["quality"] = "standard"
+        }
 
         // 🟢 完美对齐 OpenRouter Zod 严格断言的嵌套图片数组
         var frameImages: [[String: Any]] = []

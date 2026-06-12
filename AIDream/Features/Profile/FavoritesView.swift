@@ -90,10 +90,12 @@ struct FavoriteVideoCard: View {
 
     var body: some View {
         Button {
+            let allVideos = FavoriteService.shared.favoriteVideos
+            guard let idx = allVideos.firstIndex(where: { $0.id == video.id }) else { return }
             if let rootVC = UIApplication.shared.connectedScenes
                 .compactMap({ $0 as? UIWindowScene })
                 .first?.windows.first?.rootViewController {
-                let detailVC = VideoDetailViewController(videos: [video], initialIndex: 0)
+                let detailVC = VideoDetailViewController(videos: allVideos, initialIndex: idx)
                 rootVC.present(detailVC, animated: true)
             }
         } label: {

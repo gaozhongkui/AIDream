@@ -1,4 +1,7 @@
 import Foundation
+import OSLog
+
+private let logger = Logger(subsystem: "com.aidream", category: "Cache")
 
 class VideoCacheService {
     static let shared = VideoCacheService()
@@ -16,7 +19,7 @@ class VideoCacheService {
             let data = try JSONEncoder().encode(videos)
             try data.write(to: fileURL)
         } catch {
-            print("Failed to save videos to cache: \(error)")
+            logger.error("Failed to save videos to cache: \(error)")
         }
     }
 
@@ -26,7 +29,7 @@ class VideoCacheService {
             let videos = try JSONDecoder().decode([VideoData].self, from: data)
             return videos
         } catch {
-            print("Failed to load videos from cache: \(error)")
+            logger.warning("Failed to load videos from cache: \(error)")
             return []
         }
     }

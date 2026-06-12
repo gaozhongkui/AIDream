@@ -70,6 +70,30 @@ struct ImageToVideoView: View {
                 .zIndex(10)
             }
 
+            // 生成失败提示
+            if case .failed(let msg) = videoGenerator.state {
+                VStack {
+                    Spacer()
+                    HStack(spacing: 12) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(AppTheme.error)
+                        Text(msg)
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(AppTheme.error)
+                        Button("Retry") { handleGenerate() }
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundColor(AppTheme.accentSecondary)
+                    }
+                    .padding(16)
+                    .background(AppTheme.error.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 200)
+                }
+                .transition(.opacity)
+                .zIndex(5)
+            }
+
             // Toast 提示
             if showToast, let msg = toastMessage {
                 VStack {
@@ -336,7 +360,6 @@ struct ImageToVideoView: View {
                 UISaveVideoAtPathToSavedPhotosAlbum(tempURL.path, nil, nil, nil)
                 showToast(message: "Video saved to gallery")
             } catch {
-                print("Save error: \(error)")
                 showToast(message: "Failed to save video")
             }
         }

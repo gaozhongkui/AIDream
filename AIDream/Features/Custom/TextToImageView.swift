@@ -3,7 +3,6 @@ import SwiftUI
 struct TextToImageView: View {
     @State private var promptText: String = ""
     @State private var selectedRatio: String = "1:1"
-    @State private var imageCount: Int = 3
 
     // 生成状态
     @State private var isGenerating: Bool = false
@@ -13,6 +12,7 @@ struct TextToImageView: View {
     @State private var showCompletion: Bool = false
     @State private var showInsufficientDiamondsAlert = false
     @State private var isShowingStore = false
+
     @ObservedObject private var userService = UserService.shared
     private let generationCost = 40
 
@@ -28,15 +28,14 @@ struct TextToImageView: View {
 
                     promptSection.padding(.top, 20)
                     aspectRatioSection
-                    imageCountSection
 
-                    // 大幅增加底部占位，确保内容不被悬浮的操作栏遮挡
-                    Spacer(minLength: 280)
+                    // 底部留白确保不被悬浮操作栏遮挡
+                    Spacer(minLength: 200)
                 }
                 .padding(.horizontal, 20)
             }
 
-            // ── 悬浮底部生成栏 ──
+            // 悬浮底部生成栏
             VStack {
                 Spacer()
                 if !isGenerating {
@@ -94,8 +93,7 @@ struct TextToImageView: View {
         }
     }
 
-    // MARK: - Modern Components
-
+    // MARK: - Error Banner
     private func errorBanner(_ message: String) -> some View {
         HStack(spacing: 12) {
             Image(systemName: "exclamationmark.circle.fill")
@@ -104,8 +102,16 @@ struct TextToImageView: View {
                 .font(.system(size: 13, weight: .medium))
                 .foregroundColor(AppTheme.error)
             Spacer()
-            Button { errorMessage = nil } label: {
-                Image(systemName: "xmark").font(.system(size: 12, weight: .bold))
+            Button {
+                errorMessage = nil
+                generateImage()
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.clockwise")
+                    Text("Retry")
+                }
+                .font(.system(size: 12, weight: .bold))
+                .foregroundColor(AppTheme.accentSecondary)
             }
         }
         .padding(16)
@@ -114,6 +120,7 @@ struct TextToImageView: View {
         .overlay(RoundedRectangle(cornerRadius: 16).stroke(AppTheme.error.opacity(0.2), lineWidth: 1))
     }
 
+    // MARK: - Prompt Section
     private var promptSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Imagination Prompt", systemImage: "sparkles")
@@ -141,6 +148,7 @@ struct TextToImageView: View {
         }
     }
 
+    // MARK: - Aspect Ratio
     private var aspectRatioSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("CANVAS RATIO")
@@ -172,46 +180,7 @@ struct TextToImageView: View {
         }
     }
 
-    private var imageCountSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("ITERATIONS")
-                .font(.system(size: 11, weight: .bold))
-                .tracking(1.5)
-                .foregroundColor(AppTheme.textMuted)
-
-            HStack {
-                stepperButton(icon: "minus") { if imageCount > 1 { imageCount -= 1 } }
-
-                Spacer()
-
-                VStack(spacing: 2) {
-                    Text("\(imageCount)")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundStyle(AppTheme.accentGrad)
-                    Text("Variants")
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(AppTheme.textSecondary)
-                }
-
-                Spacer()
-
-                stepperButton(icon: "plus") { if imageCount < 10 { imageCount += 1 } }
-            }
-            .padding(16)
-            .glassStyle(cornerRadius: 22)
-        }
-    }
-
-    private func stepperButton(icon: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: icon)
-                .font(.system(size: 16, weight: .bold))
-                .foregroundColor(.white)
-                .frame(width: 44, height: 44)
-                .background(Circle().fill(Color.white.opacity(0.1)))
-        }
-    }
-
+    // MARK: - Bottom Action
     private var bottomActionSection: some View {
         VStack(spacing: 16) {
             Button { generateImage() } label: {
@@ -225,7 +194,7 @@ struct TextToImageView: View {
 
                     HStack(spacing: 4) {
                         Image(systemName: "bolt.fill")
-                        Text("40")
+                        Text("\(generationCost)")
                     }
                     .font(.system(size: 14, weight: .bold))
                     .padding(.horizontal, 10).padding(.vertical, 4)
@@ -249,7 +218,7 @@ struct TextToImageView: View {
             }
         }
         .padding(.horizontal, 20).padding(.top, 20)
-        .padding(.bottom, 140) // 抬高底部内边距，确保悬浮在 TabBar 之上并适配 Home Indicator
+        .padding(.bottom, 140)
         .background(
             LinearGradient(
                 colors: [AppTheme.bgPrimary.opacity(0), AppTheme.bgPrimary],
@@ -260,11 +229,10 @@ struct TextToImageView: View {
     }
 
     // MARK: - Logic
-
     private func generateImage() {
         let trimmed = promptText.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }
-        
+
         guard userService.consumeDiamonds(generationCost) else {
             showInsufficientDiamondsAlert = true
             return
@@ -286,7 +254,8 @@ struct TextToImageView: View {
         AIImageGenerator.shared.generateImage(
             prompt: trimmed,
             options: options,
-            onStateChange: { [self] state in
+            onStateChange: { [weak self] state in
+                guard let self else { return }
                 switch state {
                 case .preparing:           generationProgress = 0.08
                 case .requesting:          generationProgress = 0.25
@@ -295,10 +264,12 @@ struct TextToImageView: View {
                 default: break
                 }
             },
-            onProgress: { [self] p in
+            onProgress: { [weak self] p in
+                guard let self else { return }
                 generationProgress = max(generationProgress, 0.25 + p * 0.65)
             }
-        ) { [self] result in
+        ) { [weak self] result in
+            guard let self else { return }
             isGenerating = false
             switch result {
             case .success(let res):
