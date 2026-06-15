@@ -353,13 +353,29 @@ struct ImageToVideoView: View {
         Task {
             do {
                 showToast(message: "Downloading video...")
-                let (tempData, _) = try await URLSession.shared.data(from: url)
+
+                // 🟢 修复：添加 Auth Header 以支持 OpenRouter 视频下载
+                var request = URLRequest(url: url)
+                if url.absoluteString.contains("openrouter.ai") {
+                    request.setValue("Bearer \(AIConfig.shared.openRouterApiKey)", forHTTPHeaderField: "Authorization")
+                }
+
+                let (tempData, response) = try await URLSession.shared.data(for: request)
+
+                if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                    throw NSError(domain: "DownloadError", code: httpResponse.statusCode)
+                }
+
                 let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".mp4")
                 try tempData.write(to: tempURL)
 
-                UISaveVideoAtPathToSavedPhotosAlbum(tempURL.path, nil, nil, nil)
-                showToast(message: "Video saved to gallery")
+                // 🟢 确保在主线程保存到相册
+                DispatchQueue.main.async {
+                    UISaveVideoAtPathToSavedPhotosAlbum(tempURL.path, nil, nil, nil)
+                    showToast(message: "Video saved to gallery")
+                }
             } catch {
+                print("Save failed: \(error)")
                 showToast(message: "Failed to save video")
             }
         }
