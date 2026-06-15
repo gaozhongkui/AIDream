@@ -21,7 +21,7 @@ class AIVideoGenerator: ObservableObject {
             case .idle:               return "Ready"
             case .uploading:          return "Connecting to AI..."
             case .generating(let p):  return "Generating... \(Int(p * 100))%"
-            case .completed:          return "Video Ready"
+            case .completed(_):       return "Video Ready"
             case .failed(let e):      return "Error: \(e)"
             }
         }

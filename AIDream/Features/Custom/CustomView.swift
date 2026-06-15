@@ -8,6 +8,7 @@ enum GenerationMode {
 
 struct CustomView: View {
     @State private var selectedMode: GenerationMode = .imageToVideo
+    @State private var showTip = false
 
     var body: some View {
         NavigationView {
@@ -31,21 +32,29 @@ struct CustomView: View {
                     .transition(.opacity.combined(with: .move(edge: .bottom)))
                 }
             }
-            .navigationBarHidden(true)
+        .navigationBarHidden(true)
+        .alert("Generation Tips", isPresented: $showTip) {
+            Button("Got it") {}
+        } message: {
+            Text("Video: Upload a start frame image, add a prompt, and AI will animate it.\nReference: Upload reference images to guide the style.\nImage: Describe your vision in words and AI will paint it.")
         }
+    }
     }
 
     // MARK: - Modern Nav Bar
     private var customNavBar: some View {
         HStack {
-            Button(action: {}) {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 14, weight: .bold))
+            // 钻石余额快捷入口
+            HStack(spacing: 6) {
+                Text("💎")
+                Text("\(UserService.shared.diamonds)")
+                    .font(.system(size: 13, weight: .bold))
                     .foregroundColor(.white)
-                    .frame(width: 40, height: 40)
-                    .background(Circle().fill(Color.white.opacity(0.08)))
-                    .overlay(Circle().stroke(Color.white.opacity(0.1), lineWidth: 0.5))
             }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(Capsule().fill(Color.white.opacity(0.08)))
+            .overlay(Capsule().stroke(Color.white.opacity(0.1), lineWidth: 0.5))
 
             Spacer()
 
@@ -55,8 +64,9 @@ struct CustomView: View {
 
             Spacer()
 
-            Button(action: {}) {
-                Image(systemName: "sparkles")
+            // 帮助提示
+            Button(action: { showTip.toggle() }) {
+                Image(systemName: "questionmark.circle")
                     .font(.system(size: 16))
                     .foregroundColor(AppTheme.accentSecondary)
                     .frame(width: 40, height: 40)

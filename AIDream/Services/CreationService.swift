@@ -1,6 +1,9 @@
 import Foundation
 import SwiftUI
 import Combine
+import OSLog
+
+private let logger = Logger(subsystem: "com.aidream", category: "Creation")
 
 struct CreationItem: Identifiable, Codable {
     let id: UUID
@@ -46,12 +49,12 @@ final class CreationService: ObservableObject {
                     if fileManager.fileExists(atPath: url.path) {
                         try fileManager.copyItem(at: url, to: destinationURL)
                     } else {
-                        print("❌ Source file missing at: \(url.path)")
+                        logger.error("Source file missing at: \(url.path)")
                         return
                     }
                 } else {
                     // Download from remote to permanent Documents
-                    print("📥 [CreationService] Downloading remote video for history: \(url)")
+                    logger.info("Downloading remote video for history: \(url)")
                     let (data, _) = try await URLSession.shared.data(from: url)
                     try data.write(to: destinationURL)
                 }
@@ -65,9 +68,9 @@ final class CreationService: ObservableObject {
 
                 creations.insert(newItem, at: 0)
                 saveCreations()
-                print("✅ Creation recorded and file saved: \(fileName)")
+                logger.info("Creation recorded and file saved: \(fileName)")
             }  catch {
-                print("❌ Failed to save creation to history: \(error)")
+                logger.error("Failed to save creation to history: \(error)")
             }
         }
     }

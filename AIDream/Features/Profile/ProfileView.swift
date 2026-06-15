@@ -246,19 +246,25 @@ struct ProfileView: View {
     }
 
     private var logoutButton: some View {
-        Button(action: {}) {
+        Button(action: {
+            userService.consumeDiamonds(userService.diamonds)
+            userService.addDiamonds(500)
+            creationService.creations.removeAll()
+            favoriteService.favoriteVideos.removeAll()
+            favoriteService.favoriteIds.removeAll()
+        }) {
             HStack(spacing: 10) {
-                Image(systemName: "power")
+                Image(systemName: "arrow.triangle.2.circlepath")
                     .font(.system(size: 16, weight: .bold))
-                Text("Sign Out")
+                Text("Reset Account")
                     .font(.system(size: 15, weight: .bold))
             }
-            .foregroundColor(AppTheme.error.opacity(0.8))
+            .foregroundColor(AppTheme.textMuted)
             .frame(maxWidth: .infinity)
             .frame(height: 56)
-            .background(AppTheme.error.opacity(0.05))
+            .background(Color.white.opacity(0.05))
             .cornerRadius(18)
-            .overlay(RoundedRectangle(cornerRadius: 18).stroke(AppTheme.error.opacity(0.15), lineWidth: 1))
+            .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.08), lineWidth: 1))
         }
         .padding(.horizontal, 20)
     }

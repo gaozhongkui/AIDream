@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 struct GeneratingView: View {
     var progress: Double

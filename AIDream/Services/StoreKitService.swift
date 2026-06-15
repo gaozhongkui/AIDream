@@ -1,6 +1,7 @@
 import Foundation
 import StoreKit
 import OSLog
+import Combine
 
 private let logger = Logger(subsystem: "com.aidream", category: "StoreKit")
 
@@ -60,7 +61,7 @@ final class StoreKitService: ObservableObject {
             let products = try await Product.products(for: allIDs)
 
             diamondProducts = products
-                .filter { !StoreProductID(rawValue: $0.id)?.isSubscription ?? false }
+                .filter { !(StoreProductID(rawValue: $0.id)?.isSubscription ?? false) }
                 .sorted { ($0.price as Decimal) < ($1.price as Decimal) }
 
             subscriptionProduct = products.first {

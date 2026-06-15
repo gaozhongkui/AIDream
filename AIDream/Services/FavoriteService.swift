@@ -1,5 +1,8 @@
 import Foundation
 import Combine
+import OSLog
+
+private let logger = Logger(subsystem: "com.aidream", category: "Favorite")
 
 /// 管理收藏夹服务的单例。
 /// 使用 @MainActor 确保所有状态更新都在主线程进行，解决 UI 同步和测试竞争问题。
@@ -46,7 +49,7 @@ final class FavoriteService: ObservableObject {
             // 显式调用以确保即时保存，尽管现代系统会自动处理
             UserDefaults.standard.synchronize()
         } catch {
-            print("Error saving favorites: \(error)")
+            logger.error("Error saving favorites: \(error)")
         }
     }
 
@@ -57,7 +60,7 @@ final class FavoriteService: ObservableObject {
             self.favoriteVideos = decoded
             self.favoriteIds = Set(decoded.map { $0.id })
         } catch {
-            print("Error loading favorites: \(error)")
+            logger.error("Error loading favorites: \(error)")
         }
     }
 }

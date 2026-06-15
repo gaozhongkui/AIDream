@@ -254,8 +254,7 @@ struct TextToImageView: View {
         AIImageGenerator.shared.generateImage(
             prompt: trimmed,
             options: options,
-            onStateChange: { [weak self] state in
-                guard let self else { return }
+            onStateChange: { state in
                 switch state {
                 case .preparing:           generationProgress = 0.08
                 case .requesting:          generationProgress = 0.25
@@ -264,12 +263,10 @@ struct TextToImageView: View {
                 default: break
                 }
             },
-            onProgress: { [weak self] p in
-                guard let self else { return }
+            onProgress: { p in
                 generationProgress = max(generationProgress, 0.25 + p * 0.65)
             }
-        ) { [weak self] result in
-            guard let self else { return }
+        ) { result in
             isGenerating = false
             switch result {
             case .success(let res):

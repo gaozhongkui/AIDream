@@ -384,7 +384,7 @@ struct ImageToVideoView: View {
     // MARK: - Helpers
     private var isGenerating: Bool {
         switch videoGenerator.state {
-        case .uploading, .generating: return true
+        case .uploading, .generating(_): return true
         default: return false
         }
     }
@@ -396,7 +396,7 @@ struct ImageToVideoView: View {
 
     private var completionBinding: Binding<Bool> {
         Binding(
-            get: { if case .completed = videoGenerator.state { return true } else { return false } },
+            get: { if case .completed(_) = videoGenerator.state { return true } else { return false } },
             set: { if !$0 { videoGenerator.cancelGeneration() } }
         )
     }

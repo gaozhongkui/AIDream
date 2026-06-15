@@ -27,7 +27,7 @@ class AIImageGenerator {
 
         var isLoading: Bool {
             switch self {
-            case .idle, .completed, .failed: return false
+            case .idle, .completed, .failed(_): return false
             default: return true
             }
         }

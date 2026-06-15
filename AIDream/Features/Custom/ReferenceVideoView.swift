@@ -1,6 +1,9 @@
 import SwiftUI
 import UIKit
 import PhotosUI
+import OSLog
+
+private let logger = Logger(subsystem: "com.aidream", category: "ReferenceVideo")
 
 struct ReferenceVideoView: View {
     @State private var promptText: String = ""
@@ -40,7 +43,6 @@ struct ReferenceVideoView: View {
                         aspectRatioSection
                     }
 
-                    // 统一增加底部占位至 280
                     Spacer(minLength: 280)
                 }
                 .padding(.horizontal, 20)
@@ -108,7 +110,6 @@ struct ReferenceVideoView: View {
                 }
             )
             .presentationDetents([.height(280)])
-            .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $isShowingCamera) {
             CameraPicker { image in
@@ -258,7 +259,7 @@ struct ReferenceVideoView: View {
             }
         }
         .padding(.horizontal, 20).padding(.top, 24)
-        .padding(.bottom, 140) // 抬高间距，避开 TabBar
+        .padding(.bottom, 140)
         .background(AppTheme.bgPrimary.overlay(Rectangle().fill(AppTheme.borderSubtle).frame(height: 0.5), alignment: .top))
     }
 
@@ -283,7 +284,7 @@ struct ReferenceVideoView: View {
     // MARK: - Helpers
     private var isGenerating: Bool {
         switch videoGenerator.state {
-        case .uploading, .generating: return true
+        case .uploading, .generating(_): return true
         default: return false
         }
     }
@@ -292,11 +293,30 @@ struct ReferenceVideoView: View {
         return 0.05
     }
     private var completionBinding: Binding<Bool> {
-        Binding(get: { if case .completed = videoGenerator.state { return true } else { return false } }, set: { if !$0 { videoGenerator.cancelGeneration() } })
+        Binding(get: { if case .completed(_) = videoGenerator.state { return true } else { return false } }, set: { if !$0 { videoGenerator.cancelGeneration() } })
     }
     private func openImagePicker(for index: Int) { activeReferenceIndex = index; isShowingImagePicker = true }
     private func openCamera() { isShowingImagePicker = false; isShowingCamera = true }
     private func applySelectedImage(_ image: UIImage) { if let index = activeReferenceIndex { referenceImages[index] = image } }
-    private func saveVideo(url: URL) {}
-    private func shareVideo(url: URL) {}
+    private func saveVideo(url: URL) {
+        Task {
+            do {
+                let (data, _) = try await URLSession.shared.data(from: url)
+                let tempURL = FileManager.default.temporaryDirectory
+                    .appendingPathComponent(UUID().uuidString + ".mp4")
+                try data.write(to: tempURL)
+                UISaveVideoAtPathToSavedPhotosAlbum(tempURL.path, nil, nil, nil)
+            } catch {
+                logger.error("Save video failed: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func shareVideo(url: URL) {
+        let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let rootVC = scene.windows.first?.rootViewController {
+            rootVC.present(av, animated: true)
+        }
+    }
 }
