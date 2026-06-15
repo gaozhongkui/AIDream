@@ -22,78 +22,105 @@ struct GeneratingView: View {
         ZStack {
             AppTheme.bgPrimary.ignoresSafeArea()
 
-            // Core energy glow
-            RadialGradient(
-                colors: [AppTheme.accentPrimary.opacity(0.12), .clear],
-                center: .center,
-                startRadius: 50,
-                endRadius: 400
-            )
+            // HypeCut 紫色光晕装饰 — 多层椭圆模糊
+            ZStack {
+                // 大光晕
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [AppTheme.accentPrimary.opacity(0.15), .clear],
+                            center: .center, startRadius: 20, endRadius: 200
+                        )
+                    )
+                    .frame(width: 300, height: 300)
+                    .blur(radius: 80)
+                    .offset(y: -100)
+
+                // 中心光点
+                Circle()
+                    .fill(AppTheme.accentPrimary.opacity(0.08))
+                    .frame(width: 200, height: 200)
+                    .blur(radius: 40)
+
+                // 底部光晕
+                Circle()
+                    .fill(AppTheme.accentSecondary.opacity(0.06))
+                    .frame(width: 250, height: 250)
+                    .blur(radius: 60)
+                    .offset(y: 200)
+            }
             .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 Spacer()
 
-                // Progress Ring + Lottie
-                VStack(spacing: 32) {
+                // Progress Ring + Animation
+                VStack(spacing: 28) {
                     ZStack {
-                        // Background ring
+                        // 背景环
                         Circle()
-                            .stroke(Color.white.opacity(0.05), lineWidth: 6)
-                            .frame(width: 180, height: 180)
+                            .stroke(Color.white.opacity(0.06), lineWidth: 5)
+                            .frame(width: 160, height: 160)
 
-                        // Animated icon
+                        // Lottie 动画
                         LottieView(name: "ai_generating_a")
-                            .frame(width: 120, height: 120)
+                            .frame(width: 100, height: 100)
 
-                        // Progress arc
+                        // 紫色进度弧
                         Circle()
                             .trim(from: 0, to: CGFloat(progress))
                             .stroke(
                                 AppTheme.accentGrad,
-                                style: StrokeStyle(lineWidth: 6, lineCap: .round)
+                                style: StrokeStyle(lineWidth: 5, lineCap: .round)
                             )
-                            .frame(width: 180, height: 180)
+                            .frame(width: 160, height: 160)
                             .rotationEffect(.degrees(-90))
                             .animation(.linear(duration: 0.5), value: progress)
                     }
-                    .shadow(color: AppTheme.accentGlow, radius: 20)
+                    .shadow(color: AppTheme.accentGlow, radius: 24)
 
-                    // Percentage
+                    // 百分比
                     Text("\(Int(progress * 100))%")
-                        .font(.system(size: 44, weight: .black, design: .rounded))
+                        .font(.system(size: 40, weight: .bold, design: .rounded))
                         .foregroundStyle(AppTheme.accentGrad)
 
-                    // Dynamic tip
+                    // 动态提示
                     Text(tips[tipIndex])
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(AppTheme.textSecondary)
                         .multilineTextAlignment(.center)
-                        .frame(height: 40)
+                        .frame(height: 36)
                         .transition(.opacity.combined(with: .move(edge: .bottom)))
                         .id(tipIndex)
                         .animation(.easeInOut(duration: 0.5), value: tipIndex)
                 }
-                .padding(36)
-                .glassStyle(cornerRadius: 36)
+                .padding(32)
+                .background(
+                    RoundedRectangle(cornerRadius: 32)
+                        .fill(Color(hex: "#161418").opacity(0.6))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 32)
+                        .stroke(AppTheme.borderSubtle, lineWidth: 0.5)
+                )
                 .padding(.horizontal, 30)
 
                 Spacer()
 
-                // Cancel button
+                // 取消按钮
                 Button(action: onBackToHome) {
                     Text("Cancel Generation")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(AppTheme.textMuted)
                         .padding(.horizontal, 28)
                         .padding(.vertical, 12)
-                        .background(Color.white.opacity(0.06))
+                        .background(Color(hex: "#1A1629"))
                         .clipShape(Capsule())
-                        .overlay(Capsule().stroke(Color.white.opacity(0.08), lineWidth: 0.5))
+                        .overlay(Capsule().stroke(AppTheme.borderSubtle, lineWidth: 0.5))
                 }
                 .padding(.bottom, 16)
 
-                // Bottom hint
+                // 底部提示
                 Text("You can leave this screen — we'll keep working.")
                     .font(.system(size: 12))
                     .foregroundColor(AppTheme.textMuted)

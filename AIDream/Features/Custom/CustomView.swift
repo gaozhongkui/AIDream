@@ -41,20 +41,22 @@ struct CustomView: View {
     }
     }
 
-    // MARK: - Modern Nav Bar
+    // MARK: - Nav Bar
     private var customNavBar: some View {
         HStack {
             // 钻石余额快捷入口
             HStack(spacing: 6) {
-                Text("💎")
+                Image(systemName: "diamond.fill")
+                    .font(.system(size: 12))
+                    .foregroundStyle(AppTheme.accentGrad)
                 Text("\(UserService.shared.diamonds)")
                     .font(.system(size: 13, weight: .bold))
                     .foregroundColor(.white)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(Capsule().fill(Color.white.opacity(0.08)))
-            .overlay(Capsule().stroke(Color.white.opacity(0.1), lineWidth: 0.5))
+            .background(Capsule().fill(Color(hex: "#1A1629")))
+            .overlay(Capsule().stroke(AppTheme.borderSubtle, lineWidth: 0.5))
 
             Spacer()
 
@@ -70,8 +72,8 @@ struct CustomView: View {
                     .font(.system(size: 16))
                     .foregroundColor(AppTheme.accentSecondary)
                     .frame(width: 40, height: 40)
-                    .background(Circle().fill(Color.white.opacity(0.08)))
-                    .overlay(Circle().stroke(Color.white.opacity(0.1), lineWidth: 0.5))
+                    .background(Circle().fill(Color(hex: "#1A1629")))
+                    .overlay(Circle().stroke(AppTheme.borderSubtle, lineWidth: 0.5))
             }
         }
         .padding(.horizontal, 20)
@@ -86,7 +88,7 @@ struct CustomView: View {
         }
     }
 
-    // MARK: - Modern Mode Selector (Segmented)
+    // MARK: - HypeCut Style Mode Selector
     private var modeSelector: some View {
         HStack(spacing: 0) {
             ForEach(
@@ -96,28 +98,26 @@ struct CustomView: View {
                 Button {
                     withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) { selectedMode = mode }
                 } label: {
-                    VStack(spacing: 8) {
-                        Text(modeTitle(for: mode))
-                            .font(.system(size: 15, weight: selectedMode == mode ? .bold : .medium))
-                            .foregroundColor(selectedMode == mode ? .white : AppTheme.textMuted)
-
-                        if selectedMode == mode {
-                            Capsule()
-                                .fill(AppTheme.accentGradH)
-                                .frame(width: 24, height: 3)
-                                .matchedGeometryEffect(id: "tab", in: tabNamespace)
-                        } else {
-                            Capsule()
-                                .fill(Color.clear)
-                                .frame(width: 24, height: 3)
-                        }
-                    }
+                    Text(modeTitle(for: mode))
+                        .font(.system(size: 15, weight: selectedMode == mode ? .bold : .medium))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 34)
+                        .background(
+                            selectedMode == mode
+                                ? RoundedRectangle(cornerRadius: 10).fill(Color(hex: "#7032D6"))
+                                : RoundedRectangle(cornerRadius: 8).fill(Color.clear)
+                        )
                 }
-                .frame(maxWidth: .infinity)
             }
         }
-        .padding(.vertical, 16)
-        .background(AppTheme.bgPrimary)
+        .padding(4)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(hex: "#1A1629"))
+        )
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
     }
 
     @Namespace private var tabNamespace
