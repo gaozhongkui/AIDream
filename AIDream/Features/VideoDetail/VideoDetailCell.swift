@@ -220,7 +220,6 @@ final class VideoDetailCell: UICollectionViewCell {
 
             likeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             likeButton.bottomAnchor.constraint(equalTo: infoStackView.bottomAnchor),
-            likeButton.widthAnchor.constraint(equalToConstant: 56),
             likeButton.heightAnchor.constraint(equalToConstant: 60)
         ])
 

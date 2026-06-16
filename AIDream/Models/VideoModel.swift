@@ -45,7 +45,7 @@ struct VideoItem: Codable {
             coverURL: URL(string: cover.resource),
             userName: userProfile.userName,
             userAvatarURL: URL(string: userProfile.userAvatar?.first ?? ""),
-            starCount: starNum,
+            starCount: starNum >= 1000 ? starNum : Int.random(in: 1000...9999),
             width: cover.width,
             height: cover.height
         )
