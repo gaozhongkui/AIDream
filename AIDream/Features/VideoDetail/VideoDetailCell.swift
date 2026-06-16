@@ -87,12 +87,10 @@ final class VideoDetailCell: UICollectionViewCell {
     private let backButton: UIButton = {
         let btn = UIButton(type: .system)
         let config = UIImage.SymbolConfiguration(pointSize: 16, weight: .bold)
-        btn.setImage(UIImage(systemName: "chevron.down", withConfiguration: config), for: .normal)
+        btn.setImage(UIImage(systemName: "chevron.left", withConfiguration: config), for: .normal)
         btn.tintColor = .white
         btn.backgroundColor = UIColor.black.withAlphaComponent(0.4)
         btn.layer.cornerRadius = 18
-        btn.layer.borderWidth = 0.5
-        btn.layer.borderColor = UIColor.white.withAlphaComponent(0.12).cgColor
         return btn
     }()
 
@@ -207,7 +205,7 @@ final class VideoDetailCell: UICollectionViewCell {
             coverImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
 
             backButton.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 8),
-            backButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            backButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             backButton.widthAnchor.constraint(equalToConstant: 36),
             backButton.heightAnchor.constraint(equalToConstant: 36),
 

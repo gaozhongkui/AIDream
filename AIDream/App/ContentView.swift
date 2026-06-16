@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var selectedTab: Int = 1 // 默认选中 Create
+    @State private var selectedTab: Int = 0 // 默认选中 Explore
 
     var body: some View {
         ZStack(alignment: .bottom) {
