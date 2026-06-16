@@ -60,12 +60,16 @@ struct ContentView: View {
         } label: {
             VStack(spacing: 4) {
                 ZStack {
-                    // 选中态紫色圆形背景
+                    // 选中态紫色背景
                     if active {
                         RoundedRectangle(cornerRadius: 13)
                             .fill(Color(hex: "#7032D6").opacity(0.3))
                             .frame(width: 86, height: 34)
                     }
+                    // 图标
+                    Image(systemName: icon)
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(active ? Color(hex: "#A07BFF") : AppTheme.textMuted)
                 }
                 .frame(width: 86, height: 34)
 
