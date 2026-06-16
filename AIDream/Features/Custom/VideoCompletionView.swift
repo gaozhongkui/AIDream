@@ -6,6 +6,40 @@ import Photos
 
 private let logger = Logger(subsystem: "com.aidream", category: "Completion")
 
+// MARK: - 全屏视频播放器（UIViewRepresentable，videoGravity = .resizeAspectFill）
+
+/// 自定义 UIView，在 layoutSubviews 时自动同步 playerLayer.frame
+fileprivate final class PlayerContainerView: UIView {
+    var playerLayer: AVPlayerLayer? {
+        didSet { oldValue?.removeFromSuperlayer(); if let layer = playerLayer { self.layer.addSublayer(layer) } }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        playerLayer?.frame = bounds
+    }
+}
+
+fileprivate struct FullScreenVideoPlayer: UIViewRepresentable {
+    let player: AVPlayer
+
+    func makeUIView(context: Context) -> PlayerContainerView {
+        let view = PlayerContainerView()
+        view.backgroundColor = .black
+        let playerLayer = AVPlayerLayer(player: player)
+        playerLayer.videoGravity = .resizeAspectFill
+        view.playerLayer = playerLayer
+        return view
+    }
+
+    func updateUIView(_ uiView: PlayerContainerView, context: Context) {
+        if uiView.playerLayer?.player !== player {
+            uiView.playerLayer?.player = player
+        }
+    }
+}
+
+// MARK: - CompletionMedia
 enum CompletionMedia {
     case video(URL)
     case image(UIImage)
@@ -25,52 +59,92 @@ struct VideoCompletionView: View {
     @State private var loopObserver: Any?
     @State private var isSavingToGallery = false
     @State private var toastMessage: String?
-    @State private var showCompletionToast = true
 
     @State private var localVideoURL: URL?
     @State private var isLoadingVideo = false
 
     var body: some View {
         ZStack {
-            // 背景装饰 — 紫色渐变矩形
-            VStack(spacing: 0) {
-                AppTheme.bgPrimary.ignoresSafeArea()
+            // 全屏视频播放器
+            GeometryReader { geo in
+                ZStack {
+                    if let error = playerError {
+                        // 错误状态
+                        VStack(spacing: 12) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.system(size: 40))
+                                .foregroundColor(AppTheme.error)
+                            Text(error)
+                                .font(.system(size: 12))
+                                .foregroundColor(AppTheme.textMuted)
+                                .multilineTextAlignment(.center)
+                                .padding()
+                            Button("Retry") { loadMedia() }
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(AppTheme.accentSecondary)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.black)
+                    } else if isPlayerReady, let player = player {
+                        FullScreenVideoPlayer(player: player)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .clipped()
+                    } else if case .image(let uiImage) = media {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .background(Color.black)
+                    } else {
+                        VStack(spacing: 16) {
+                            ProgressView()
+                                .tint(AppTheme.accentSecondary)
+                                .scaleEffect(1.2)
+                            Text(isLoadingVideo ? "Downloading..." : "Loading...")
+                                .font(.system(size: 13))
+                                .foregroundColor(AppTheme.textMuted)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.black)
+                    }
+                }
+                .frame(width: geo.size.width, height: geo.size.height)
             }
-            .overlay(
-                // 顶部紫色光效
-                RadialGradient(
-                    colors: [AppTheme.accentPrimary.opacity(0.12), .clear],
-                    center: .top, startRadius: 40, endRadius: 450
-                )
-                .ignoresSafeArea()
-            )
+            .ignoresSafeArea()
+            .background(Color.black)
 
+            // 顶部渐变遮罩（状态栏区域）
+            VStack(spacing: 0) {
+                LinearGradient(
+                    colors: [Color.black.opacity(0.6), Color.clear],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 120)
+                .ignoresSafeArea(edges: .top)
+                Spacer()
+            }
+
+            // 底部渐变遮罩（操作栏区域，延伸到最底部）
+            VStack(spacing: 0) {
+                Spacer()
+                LinearGradient(
+                    colors: [Color.clear, Color.black.opacity(0.55), Color.black.opacity(0.85)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(maxHeight: .infinity)
+            }
+            .ignoresSafeArea(edges: .bottom)
+
+            // 内容覆盖层
             VStack(spacing: 0) {
                 navBar
                 Spacer()
-                mediaCard
-                    .shadow(color: AppTheme.accentGlow.opacity(0.15), radius: 24, y: 12)
-                Spacer()
                 actionBar
             }
-
-            // 完成提醒 Toast（HypeCut 风格）
-            if showCompletionToast {
-                VStack {
-                    Spacer()
-                    completionToast
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                        .padding(.bottom, 100)
-                }
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
-                        withAnimation(.easeOut(duration: 0.5)) {
-                            showCompletionToast = false
-                        }
-                    }
-                }
-            }
-
+            
+            // Toast 消息
             if let msg = toastMessage {
                 VStack {
                     Spacer()
@@ -80,74 +154,26 @@ struct VideoCompletionView: View {
                         .padding(.horizontal, 20)
                         .padding(.vertical, 12)
                         .background(Color.black.opacity(0.8).clipShape(Capsule()))
-                        .padding(.bottom, 120)
+                        .padding(.bottom, 130)
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
+        .background(Color.black.ignoresSafeArea())
         .onAppear { loadMedia() }
         .onDisappear { cleanupPlayer() }
     }
 
-    // MARK: - Completion Toast (HypeCut "完成提醒")
-    private var completionToast: some View {
-        HStack(spacing: 0) {
-            HStack(spacing: 12) {
-                ZStack {
-                    Circle()
-                        .fill(Color(hex: "#4CD890"))
-                        .frame(width: 28, height: 28)
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.white)
-                }
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("video ready! 🎉")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(.white)
-                    Text("Your masterpiece is complete.")
-                        .font(.system(size: 13))
-                        .foregroundColor(Color.white.opacity(0.8))
-                }
-            }
-
-            Spacer()
-
-            Button(action: {}) {
-                Text("Watch")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(Color(hex: "#858094"))
-                    .clipShape(Capsule())
-            }
-        }
-        .padding(16)
-        .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(
-                    LinearGradient(
-                        colors: [Color(hex: "#6F31D5").opacity(0.4), Color(hex: "#A07BFF").opacity(0.15)],
-                        startPoint: .topLeading, endPoint: .bottomTrailing
-                    )
-                )
-        )
-        .padding(.horizontal, 16)
-    }
-
-    // MARK: - Navigation Bar (HypeCut Style)
+    // MARK: - Navigation Bar（覆盖层）
     private var navBar: some View {
         HStack {
-            // 关闭按钮 — 圆形 #868095 背景
+            // 关闭按钮
             Button(action: onClose) {
                 Image(systemName: "xmark")
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(.white)
                     .frame(width: 44, height: 44)
-                    .background(Circle().fill(Color(hex: "#868095")))
+                    .background(Circle().fill(Color.white.opacity(0.15)))
             }
 
             Spacer()
@@ -155,74 +181,27 @@ struct VideoCompletionView: View {
             // 标题
             Text("Trending Now")
                 .font(.system(size: 18, weight: .bold))
-                .foregroundStyle(AppTheme.accentGradH)
+                .foregroundColor(.white)
 
             Spacer()
 
-            // 分享按钮 — 圆形 #868095 背景
+            // 分享按钮
             Button(action: onShare) {
                 Image(systemName: "square.and.arrow.up")
                     .font(.system(size: 16, weight: .bold))
                     .foregroundColor(.white)
                     .frame(width: 44, height: 44)
-                    .background(Circle().fill(Color(hex: "#868095")))
+                    .background(Circle().fill(Color.white.opacity(0.15)))
             }
         }
         .padding(.horizontal, 20)
-        .padding(.top, 12)
+        .padding(.top, 8)
     }
 
-    // MARK: - Media Card
-    private var mediaCard: some View {
-        GeometryReader { geo in
-            let w = min(geo.size.width - 48, 340)
-            let h = min(w * 1.6, geo.size.height * 0.55)
-            ZStack {
-                if let error = playerError {
-                    VStack(spacing: 12) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .font(.system(size: 40))
-                            .foregroundColor(AppTheme.error)
-                        Text(error)
-                            .font(.system(size: 12))
-                            .foregroundColor(AppTheme.textMuted)
-                            .multilineTextAlignment(.center)
-                            .padding()
-                        Button("Retry") { loadMedia() }
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(AppTheme.accentSecondary)
-                    }
-                } else if isPlayerReady, let player = player {
-                    VideoPlayer(player: player)
-                        .clipShape(RoundedRectangle(cornerRadius: 28))
-                } else if case .image(let uiImage) = media {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .clipShape(RoundedRectangle(cornerRadius: 28))
-                } else {
-                    VStack(spacing: 16) {
-                        ProgressView()
-                            .tint(AppTheme.accentSecondary)
-                            .scaleEffect(1.2)
-                        Text(isLoadingVideo ? "Downloading..." : "Loading...")
-                            .font(.system(size: 13))
-                            .foregroundColor(AppTheme.textMuted)
-                    }
-                }
-                // 紫色渐变边框
-                RoundedRectangle(cornerRadius: 28)
-                    .stroke(AppTheme.accentGrad, lineWidth: 1.5)
-            }
-            .frame(width: w, height: h)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-    }
-
-    // MARK: - Action Bar (HypeCut Style)
+    // MARK: - Action Bar（底部覆盖层）
     private var actionBar: some View {
         HStack(spacing: 10) {
-            // Retake 按钮 — 60x60, #868095 背景, r=22
+            // Retake 按钮
             Button(action: onRetake) {
                 VStack(spacing: 4) {
                     Image(systemName: "trash")
@@ -234,11 +213,11 @@ struct VideoCompletionView: View {
                 .frame(width: 60, height: 60)
                 .background(
                     RoundedRectangle(cornerRadius: 22)
-                        .fill(Color(hex: "#868095"))
+                        .fill(Color.white.opacity(0.15))
                 )
             }
 
-            // Download 按钮 — 紫色渐变, r=22, 265x60
+            // Download 按钮
             Button(action: handleDownload) {
                 HStack(spacing: 10) {
                     if isSavingToGallery {
