@@ -9,6 +9,29 @@ private extension UIColor {
     static let accentGlow      = UIColor(red: 77/255,  green: 159/255, blue: 255/255, alpha: 0.4)
 }
 
+// MARK: - GradientButton（自动同步渐变背景 frame）
+private final class GradientButton: UIButton {
+    private let accentGradient: CAGradientLayer = {
+        let layer = CAGradientLayer()
+        layer.colors = [UIColor.accentPrimary.cgColor, UIColor.accentSecondary.cgColor]
+        layer.startPoint = CGPoint(x: 0, y: 0.5)
+        layer.endPoint   = CGPoint(x: 1, y: 0.5)
+        layer.name = "accentGradient"
+        return layer
+    }()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        layer.insertSublayer(accentGradient, at: 0)
+    }
+    required init?(coder: NSCoder) { fatalError() }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        accentGradient.frame = bounds
+    }
+}
+
 final class VideoDetailCell: UICollectionViewCell {
     static let identifier = "VideoDetailCell"
 
@@ -123,8 +146,8 @@ final class VideoDetailCell: UICollectionViewCell {
     }()
 
     // MARK: - Remix Button
-    private let remixButton: UIButton = {
-        let btn = UIButton(type: .system)
+    private let remixButton: GradientButton = {
+        let btn = GradientButton(type: .system)
         btn.setTitle("  Remix This Style", for: .normal)
         btn.setTitleColor(.white, for: .normal)
         btn.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
@@ -135,13 +158,6 @@ final class VideoDetailCell: UICollectionViewCell {
 
         btn.layer.cornerRadius = 20
         btn.clipsToBounds = true
-
-        let gradient = CAGradientLayer()
-        gradient.colors = [UIColor.accentPrimary.cgColor, UIColor.accentSecondary.cgColor]
-        gradient.startPoint = CGPoint(x: 0, y: 0.5)
-        gradient.endPoint   = CGPoint(x: 1, y: 0.5)
-        gradient.name = "accentGradient"
-        btn.layer.insertSublayer(gradient, at: 0)
 
         btn.layer.shadowColor = UIColor.accentPrimary.withAlphaComponent(0.4).cgColor
         btn.layer.shadowOffset = CGSize(width: 0, height: 4)
@@ -325,9 +341,6 @@ final class VideoDetailCell: UICollectionViewCell {
         playerLayer?.frame = bounds
         topGradient.frame = CGRect(x: 0, y: 0, width: bounds.width, height: 180)
         bottomGradient.frame = CGRect(x: 0, y: bounds.height - 320, width: bounds.width, height: 320)
-        if let grad = remixButton.layer.sublayers?.first(where: { $0.name == "accentGradient" }) {
-            grad.frame = remixButton.bounds
-        }
         CATransaction.commit()
     }
 

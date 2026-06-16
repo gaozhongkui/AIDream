@@ -142,13 +142,13 @@ final class VideoListViewController: UIViewController {
             headerContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             headerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             headerContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            headerContainer.heightAnchor.constraint(equalToConstant: 64),
 
             headerTitleLabel.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor, constant: 24),
-            headerTitleLabel.bottomAnchor.constraint(equalTo: headerContainer.bottomAnchor, constant: -4),
+            headerTitleLabel.topAnchor.constraint(equalTo: headerContainer.topAnchor, constant: 8),
 
             headerSubtitleLabel.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor, constant: 24),
-            headerSubtitleLabel.topAnchor.constraint(equalTo: headerTitleLabel.bottomAnchor, constant: 2)
+            headerSubtitleLabel.topAnchor.constraint(equalTo: headerTitleLabel.bottomAnchor, constant: 4),
+            headerSubtitleLabel.bottomAnchor.constraint(equalTo: headerContainer.bottomAnchor, constant: -8)
         ])
     }
 
@@ -351,11 +351,12 @@ extension VideoListViewController: UICollectionViewDataSource, UICollectionViewD
 // MARK: - WaterfallLayoutDelegate
 extension VideoListViewController: WaterfallLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, heightForItemAt indexPath: IndexPath, with width: CGFloat) -> CGFloat {
-        guard indexPath.item < allVideos.count else { return 220 }
+        guard indexPath.item < allVideos.count else { return 260 }
         let video = allVideos[indexPath.item]
         let aspect = video.aspectRatio
-        guard aspect > 0 else { return 220 }
-        return max(160, min(width * aspect, 340))
+        let photoHeight: CGFloat = aspect > 0 ? max(160, min(width * aspect, 340)) : 220
+        // 底部留 40pt 给标题说明文字，避免和图片重叠
+        return photoHeight + 40
     }
 
     func collectionView(_ collectionView: UICollectionView, columnSpanForItemAt indexPath: IndexPath) -> Int { return 1 }
