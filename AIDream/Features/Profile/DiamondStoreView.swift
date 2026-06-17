@@ -397,7 +397,7 @@ struct DiamondStoreView: View {
                         .padding(.top, 10).padding(.bottom, 4)
                 }
             }
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity, minHeight: 190)
             .padding(.vertical, 20)
             .background(
                 RoundedRectangle(cornerRadius: 20)
