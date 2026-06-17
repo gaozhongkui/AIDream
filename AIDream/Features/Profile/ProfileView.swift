@@ -55,7 +55,7 @@ struct ProfileView: View {
                             MenuRow(icon: "scroll.fill",   title: "Terms of Service", dest: "Terms of Service"),
                         ])
 
-                        logoutButton.padding(.top, 40).padding(.bottom, 60)
+                        logoutButton.padding(.top, 40).padding(.bottom, 110)
                     }
                 }
             }
@@ -262,9 +262,11 @@ struct ProfileView: View {
             .foregroundColor(AppTheme.textMuted)
             .frame(maxWidth: .infinity)
             .frame(height: 56)
-            .background(Color.white.opacity(0.05))
-            .cornerRadius(18)
-            .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.08), lineWidth: 1))
+            .background(.ultraThinMaterial)
+            .background(Color.white.opacity(0.03))
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).stroke(Color.white.opacity(0.15), lineWidth: 0.5))
+            .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
         }
         .padding(.horizontal, 20)
     }

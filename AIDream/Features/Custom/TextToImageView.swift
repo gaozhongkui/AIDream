@@ -116,8 +116,8 @@ struct TextToImageView: View {
         }
         .padding(16)
         .background(AppTheme.error.opacity(0.1))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .overlay(RoundedRectangle(cornerRadius: 16).stroke(AppTheme.error.opacity(0.2), lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color.white.opacity(0.15), lineWidth: 0.5))
     }
 
     // MARK: - Prompt Section

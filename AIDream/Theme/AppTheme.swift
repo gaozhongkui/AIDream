@@ -61,26 +61,28 @@ struct AppTheme {
 
 // MARK: - 通用视图修饰符
 extension View {
-    func primaryBorder(cornerRadius: CGFloat = 16, active: Bool = true) -> some View {
+    /// Glassmorphism 描边 — 连续曲率 + 微光
+    func primaryBorder(cornerRadius: CGFloat = 20, active: Bool = true) -> some View {
         self.overlay(
-            RoundedRectangle(cornerRadius: cornerRadius)
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                 .stroke(
                     active ? AnyShapeStyle(AppTheme.accentGrad) : AnyShapeStyle(LinearGradient(colors: [AppTheme.borderSubtle], startPoint: .top, endPoint: .bottom)),
-                    lineWidth: active ? 1.5 : 0.8
+                    lineWidth: active ? 1.5 : 0.5
                 )
         )
     }
 
+    /// Glassmorphism 2.0 — 超薄毛玻璃材质 + 微透白增强 + 连续曲率 + 微光描边 + 柔和阴影
     func glassStyle(cornerRadius: CGFloat = 20) -> some View {
-        self.background(
-            RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(Color.white.opacity(0.05))
-                .blur(radius: 0.5)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: cornerRadius)
-                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
-        )
+        self
+            .background(.ultraThinMaterial)
+            .background(Color.white.opacity(0.03))
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
+            )
+            .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
     }
 
     /// HypeCut 风格卡片：深色半透明 + 紫色细边框

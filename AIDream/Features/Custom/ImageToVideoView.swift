@@ -86,7 +86,8 @@ struct ImageToVideoView: View {
                     }
                     .padding(16)
                     .background(AppTheme.error.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color.white.opacity(0.15), lineWidth: 0.5))
                     .padding(.horizontal, 20)
                     .padding(.bottom, 200)
                 }
@@ -167,7 +168,10 @@ struct ImageToVideoView: View {
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .background(Capsule().fill(Color.white.opacity(0.1)))
+                .background(.ultraThinMaterial)
+                .background(Color.white.opacity(0.03))
+                .clipShape(Capsule())
+                .overlay(Capsule().stroke(Color.white.opacity(0.15), lineWidth: 0.5))
             }
         }
     }

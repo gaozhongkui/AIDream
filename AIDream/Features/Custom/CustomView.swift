@@ -69,8 +69,11 @@ struct CustomView: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(Capsule().fill(Color(hex: "#1A1629")))
-            .overlay(Capsule().stroke(AppTheme.borderSubtle, lineWidth: 0.5))
+            .background(.ultraThinMaterial)
+            .background(Color.white.opacity(0.03))
+            .clipShape(Capsule())
+            .overlay(Capsule().stroke(Color.white.opacity(0.15), lineWidth: 0.5))
+            .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
 
             Spacer()
 
@@ -86,8 +89,11 @@ struct CustomView: View {
                     .font(.system(size: 16))
                     .foregroundColor(AppTheme.accentSecondary)
                     .frame(width: 40, height: 40)
-                    .background(Circle().fill(Color(hex: "#1A1629")))
-                    .overlay(Circle().stroke(AppTheme.borderSubtle, lineWidth: 0.5))
+                    .background(.ultraThinMaterial)
+                    .background(Color.white.opacity(0.03))
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(Color.white.opacity(0.15), lineWidth: 0.5))
+                    .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
             }
         }
         .padding(.horizontal, 20)
@@ -126,10 +132,14 @@ struct CustomView: View {
             }
         }
         .padding(4)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(hex: "#1A1629"))
+        .background(.ultraThinMaterial)
+        .background(Color.white.opacity(0.03))
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
         )
+        .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
         .padding(.horizontal, 16)
         .padding(.top, 12)
     }

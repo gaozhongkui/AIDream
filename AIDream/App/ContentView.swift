@@ -39,23 +39,16 @@ struct ContentView: View {
         .frame(height: 55)
         .padding(.vertical, 6)
         .padding(.horizontal, 6)
-        .background(
-            ZStack {
-                // 磨砂玻璃背景
-                RoundedRectangle(cornerRadius: 32)
-                    .fill(.ultraThinMaterial)
-                    .environment(\.colorScheme, .dark)
-
-                // 半透明填充层
-                RoundedRectangle(cornerRadius: 32)
-                    .fill(Color(hex: "#161418").opacity(0.85))
-
-                // 边框
-                RoundedRectangle(cornerRadius: 32)
-                    .stroke(AppTheme.borderSubtle, lineWidth: 0.5)
-            }
-            .shadow(color: Color.black.opacity(0.4), radius: 15, y: 10)
+        // Glassmorphism 2.0 — 链式材质，逐个叠加，不嵌套 ZStack
+        .background(.ultraThinMaterial)
+        .background(Color.white.opacity(0.03))
+        .background(Color(hex: "#0C0C0C").opacity(0.35))
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
         )
+        .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
         .padding(.horizontal, 20)
         .padding(.bottom, 24)
     }

@@ -95,14 +95,14 @@ struct GeneratingView: View {
                         .animation(.easeInOut(duration: 0.5), value: tipIndex)
                 }
                 .padding(32)
-                .background(
-                    RoundedRectangle(cornerRadius: 32)
-                        .fill(Color(hex: "#161418").opacity(0.6))
-                )
+                .background(.ultraThinMaterial)
+                .background(Color.white.opacity(0.03))
+                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 32)
-                        .stroke(AppTheme.borderSubtle, lineWidth: 0.5)
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
                 )
+                .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
                 .padding(.horizontal, 30)
 
                 Spacer()
@@ -114,9 +114,11 @@ struct GeneratingView: View {
                         .foregroundColor(AppTheme.textMuted)
                         .padding(.horizontal, 28)
                         .padding(.vertical, 12)
-                        .background(Color(hex: "#1A1629"))
+                        .background(.ultraThinMaterial)
+                        .background(Color.white.opacity(0.03))
                         .clipShape(Capsule())
-                        .overlay(Capsule().stroke(AppTheme.borderSubtle, lineWidth: 0.5))
+                        .overlay(Capsule().stroke(Color.white.opacity(0.15), lineWidth: 0.5))
+                        .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
                 }
                 .padding(.bottom, 16)
 

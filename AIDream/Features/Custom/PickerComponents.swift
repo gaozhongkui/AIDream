@@ -57,8 +57,11 @@ struct ImageSourcePickerView: View {
             Text(title).font(.system(size: 15, weight: .bold)).foregroundColor(.white)
         }
         .frame(maxWidth: .infinity).frame(height: 120)
-        .background(Color.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 24))
-        .overlay(RoundedRectangle(cornerRadius: 24).stroke(Color.white.opacity(0.1), lineWidth: 1))
+        .background(.ultraThinMaterial)
+        .background(Color.white.opacity(0.03))
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).stroke(Color.white.opacity(0.15), lineWidth: 0.5))
+        .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
     }
 }
 

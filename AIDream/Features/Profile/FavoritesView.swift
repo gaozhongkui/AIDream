@@ -17,8 +17,10 @@ struct FavoritesView: View {
                             .font(.system(size: 16, weight: .bold))
                             .foregroundColor(.white)
                             .frame(width: 40, height: 40)
-                            .background(Circle().fill(Color.white.opacity(0.08)))
-                            .overlay(Circle().stroke(Color.white.opacity(0.1), lineWidth: 0.5))
+                            .background(.ultraThinMaterial)
+                            .background(Color.white.opacity(0.03))
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.white.opacity(0.15), lineWidth: 0.5))
                     }
 
                     Spacer()
@@ -146,14 +148,12 @@ struct FavoriteVideoCard: View {
                 .padding(.horizontal, 10)
                 .padding(.bottom, 10)
             }
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(red: 0.05, green: 0.05, blue: 0.07))
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .background(.ultraThinMaterial)
+            .background(Color.white.opacity(0.03))
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.white.opacity(0.05), lineWidth: 0.5)
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
             )
         }
         .buttonStyle(.plain)

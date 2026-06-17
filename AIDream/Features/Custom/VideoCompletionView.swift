@@ -153,7 +153,10 @@ struct VideoCompletionView: View {
                         .foregroundColor(.white)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 12)
-                        .background(Color.black.opacity(0.8).clipShape(Capsule()))
+                        .background(.ultraThinMaterial)
+                        .background(Color.white.opacity(0.03))
+                        .clipShape(Capsule())
+                        .overlay(Capsule().stroke(Color.white.opacity(0.15), lineWidth: 0.5))
                         .padding(.bottom, 130)
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -173,7 +176,10 @@ struct VideoCompletionView: View {
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(.white)
                     .frame(width: 44, height: 44)
-                    .background(Circle().fill(Color.white.opacity(0.15)))
+                    .background(.ultraThinMaterial)
+                    .background(Color.white.opacity(0.03))
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(Color.white.opacity(0.15), lineWidth: 0.5))
             }
 
             Spacer()
@@ -191,7 +197,10 @@ struct VideoCompletionView: View {
                     .font(.system(size: 16, weight: .bold))
                     .foregroundColor(.white)
                     .frame(width: 44, height: 44)
-                    .background(Circle().fill(Color.white.opacity(0.15)))
+                    .background(.ultraThinMaterial)
+                    .background(Color.white.opacity(0.03))
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(Color.white.opacity(0.15), lineWidth: 0.5))
             }
         }
         .padding(.horizontal, 20)
@@ -211,9 +220,12 @@ struct VideoCompletionView: View {
                 }
                 .foregroundColor(.white)
                 .frame(width: 60, height: 60)
-                .background(
-                    RoundedRectangle(cornerRadius: 22)
-                        .fill(Color.white.opacity(0.15))
+                .background(.ultraThinMaterial)
+                .background(Color.white.opacity(0.03))
+                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
                 )
             }
 

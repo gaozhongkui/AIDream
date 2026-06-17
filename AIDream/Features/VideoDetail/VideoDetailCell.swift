@@ -2,11 +2,11 @@ import UIKit
 import AVFoundation
 import Kingfisher
 
-// MARK: - UIKit Accent Colors (mirrors AppTheme)
+// MARK: - UIKit Accent Colors (mirrors AppTheme purple)
 private extension UIColor {
-    static let accentPrimary   = UIColor(red: 77/255,  green: 159/255, blue: 255/255, alpha: 1)
-    static let accentSecondary = UIColor(red: 0,      green: 242/255, blue: 255/255, alpha: 1)
-    static let accentGlow      = UIColor(red: 77/255,  green: 159/255, blue: 255/255, alpha: 0.4)
+    static let accentPrimary   = UIColor(red: 111/255, green: 49/255,  blue: 213/255, alpha: 1)   // #6F31D5
+    static let accentSecondary = UIColor(red: 160/255, green: 123/255, blue: 255/255, alpha: 1)   // #A07BFF
+    static let accentGlow      = UIColor(red: 111/255, green: 49/255,  blue: 213/255, alpha: 0.4)
 }
 
 // MARK: - GradientButton（自动同步渐变背景 frame）
@@ -83,14 +83,23 @@ final class VideoDetailCell: UICollectionViewCell {
         return layer
     }()
 
-    // MARK: - Back Button
+    // MARK: - Back Button (Glassmorphism 2.0)
+    private let backButtonBlur: UIVisualEffectView = {
+        let blur = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterialDark))
+        blur.layer.cornerRadius = 18
+        blur.layer.cornerCurve = .continuous
+        blur.clipsToBounds = true
+        blur.layer.borderWidth = 0.5
+        blur.layer.borderColor = UIColor.white.withAlphaComponent(0.15).cgColor
+        return blur
+    }()
+
     private let backButton: UIButton = {
         let btn = UIButton(type: .system)
         let config = UIImage.SymbolConfiguration(pointSize: 16, weight: .bold)
         btn.setImage(UIImage(systemName: "chevron.left", withConfiguration: config), for: .normal)
         btn.tintColor = .white
-        btn.backgroundColor = UIColor.black.withAlphaComponent(0.4)
-        btn.layer.cornerRadius = 18
+        btn.backgroundColor = .clear
         return btn
     }()
 
@@ -126,20 +135,27 @@ final class VideoDetailCell: UICollectionViewCell {
         return label
     }()
 
-    // MARK: - Like Button
+    // MARK: - Like Button (Glassmorphism 2.0)
+    private let likeButtonBlur: UIVisualEffectView = {
+        let blur = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterialDark))
+        blur.layer.cornerRadius = 20
+        blur.layer.cornerCurve = .continuous
+        blur.clipsToBounds = true
+        blur.layer.borderWidth = 0.5
+        blur.layer.borderColor = UIColor.white.withAlphaComponent(0.15).cgColor
+        return blur
+    }()
+
     private let likeButton: UIButton = {
         var config = UIButton.Configuration.filled()
         config.image = UIImage(systemName: "heart")
         config.imagePlacement = .top
         config.imagePadding = 6
         config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 14, bottom: 8, trailing: 14)
-        config.baseBackgroundColor = UIColor.black.withAlphaComponent(0.35)
+        config.baseBackgroundColor = .clear
         config.baseForegroundColor = .white
         config.cornerStyle = .large
         let btn = UIButton(configuration: config)
-        btn.layer.borderWidth = 0.5
-        btn.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
-        btn.layer.cornerRadius = 16
         btn.clipsToBounds = true
         return btn
     }()
@@ -156,12 +172,13 @@ final class VideoDetailCell: UICollectionViewCell {
         btn.tintColor = .white
 
         btn.layer.cornerRadius = 20
+        btn.layer.cornerCurve = .continuous
         btn.clipsToBounds = true
 
-        btn.layer.shadowColor = UIColor.accentPrimary.withAlphaComponent(0.4).cgColor
-        btn.layer.shadowOffset = CGSize(width: 0, height: 4)
-        btn.layer.shadowOpacity = 1
-        btn.layer.shadowRadius = 12
+        btn.layer.shadowColor = UIColor.black.cgColor
+        btn.layer.shadowOffset = CGSize(width: 0, height: 5)
+        btn.layer.shadowOpacity = 0.15
+        btn.layer.shadowRadius = 10
         return btn
     }()
 
@@ -182,12 +199,14 @@ final class VideoDetailCell: UICollectionViewCell {
         contentView.addSubview(coverImageView)
         contentView.layer.addSublayer(topGradient)
         contentView.layer.addSublayer(bottomGradient)
+        contentView.addSubview(backButtonBlur)
         contentView.addSubview(backButton)
         contentView.addSubview(infoStackView)
+        contentView.addSubview(likeButtonBlur)
         contentView.addSubview(likeButton)
         contentView.addSubview(remixButton)
 
-        [playerContainer, coverImageView, backButton, infoStackView, likeButton, remixButton].forEach {
+        [playerContainer, coverImageView, backButtonBlur, backButton, infoStackView, likeButtonBlur, likeButton, remixButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -206,6 +225,11 @@ final class VideoDetailCell: UICollectionViewCell {
             coverImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             coverImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
 
+            backButtonBlur.topAnchor.constraint(equalTo: backButton.topAnchor),
+            backButtonBlur.leadingAnchor.constraint(equalTo: backButton.leadingAnchor),
+            backButtonBlur.widthAnchor.constraint(equalTo: backButton.widthAnchor),
+            backButtonBlur.heightAnchor.constraint(equalTo: backButton.heightAnchor),
+
             backButton.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 8),
             backButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             backButton.widthAnchor.constraint(equalToConstant: 36),
@@ -219,6 +243,11 @@ final class VideoDetailCell: UICollectionViewCell {
             infoStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             infoStackView.bottomAnchor.constraint(equalTo: remixButton.topAnchor, constant: -24),
             infoStackView.trailingAnchor.constraint(equalTo: likeButton.leadingAnchor, constant: -16),
+
+            likeButtonBlur.topAnchor.constraint(equalTo: likeButton.topAnchor),
+            likeButtonBlur.leadingAnchor.constraint(equalTo: likeButton.leadingAnchor),
+            likeButtonBlur.trailingAnchor.constraint(equalTo: likeButton.trailingAnchor),
+            likeButtonBlur.bottomAnchor.constraint(equalTo: likeButton.bottomAnchor),
 
             likeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             likeButton.bottomAnchor.constraint(equalTo: infoStackView.bottomAnchor),

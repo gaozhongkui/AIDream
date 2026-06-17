@@ -116,7 +116,7 @@ struct DiamondStoreView: View {
                             .foregroundColor(AppTheme.textMuted.opacity(0.6))
                     }
                     .padding(.top, 32)
-                    .padding(.bottom, 50)
+                    .padding(.bottom, 110)
                 }
             }
         }
@@ -157,8 +157,10 @@ struct DiamondStoreView: View {
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.white)
                     .frame(width: 40, height: 40)
-                    .background(Circle().fill(Color.white.opacity(0.08)))
-                    .overlay(Circle().stroke(Color.white.opacity(0.1), lineWidth: 0.5))
+                    .background(.ultraThinMaterial)
+                    .background(Color.white.opacity(0.03))
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(Color.white.opacity(0.15), lineWidth: 0.5))
             }
 
             Spacer()
@@ -177,21 +179,30 @@ struct DiamondStoreView: View {
     // MARK: - 余额展示卡片
     private var balanceHeroCard: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 24)
+            // Glassmorphism 2.0 基底
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(.ultraThinMaterial)
+            
+            // 深色渐变叠加层（保留品牌色氛围）
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .fill(
                     LinearGradient(
-                        colors: [Color(hex: "#1A1D4A"), Color(hex: "#0E1030"), Color(hex: "#1A1D4A")],
+                        colors: [Color(hex: "#1A1D4A").opacity(0.6), Color(hex: "#0E1030").opacity(0.4), Color(hex: "#1A1D4A").opacity(0.6)],
                         startPoint: .topLeading, endPoint: .bottomTrailing
                     )
                 )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 24)
-                        .stroke(
-                            LinearGradient(
-                                colors: [AppTheme.accentPrimary.opacity(0.6), AppTheme.accentSecondary.opacity(0.3)],
-                                startPoint: .topLeading, endPoint: .bottomTrailing
-                            ), lineWidth: 1.5
-                        )
+            
+            // 微透白增强
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(Color.white.opacity(0.03))
+            
+            // 微光描边
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(
+                    LinearGradient(
+                        colors: [AppTheme.accentPrimary.opacity(0.4), AppTheme.accentSecondary.opacity(0.2)],
+                        startPoint: .topLeading, endPoint: .bottomTrailing
+                    ), lineWidth: 0.5
                 )
 
             Circle()
@@ -227,7 +238,7 @@ struct DiamondStoreView: View {
             }
             .padding(24)
         }
-        .shadow(color: AppTheme.accentGlow.opacity(0.3), radius: 20, y: 10)
+        .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
     }
 
     // MARK: - 订阅会员
