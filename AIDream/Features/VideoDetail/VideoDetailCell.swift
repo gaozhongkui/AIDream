@@ -291,6 +291,11 @@ final class VideoDetailCell: UICollectionViewCell {
     @objc private func likeTapped() {
         guard let video = videoData else { return }
         FavoriteService.shared.toggleFavorite(video)
+        // 即时更新本地状态，不等通知回调，避免 SwiftUI 刷新时序问题
+        isLiked = FavoriteService.shared.isFavorited(video.id)
+        currentStarCount += isLiked ? 1 : -1
+        currentStarCount = max(0, currentStarCount)
+        updateLikeButtonStyle(animated: true)
     }
 
     private func updateLikeButtonStyle(animated: Bool) {
@@ -300,8 +305,8 @@ final class VideoDetailCell: UICollectionViewCell {
         var config = likeButton.configuration
         config?.baseForegroundColor = color
         config?.image = UIImage(systemName: isLiked ? "heart.fill" : "heart")
+        config?.title = starText
         likeButton.configuration = config
-        likeButton.setTitle(starText, for: .normal)
 
         if animated {
             let animation = CAKeyframeAnimation(keyPath: "transform.scale")
@@ -381,6 +386,8 @@ final class VideoDetailCell: UICollectionViewCell {
         coverImageView.image = nil
         coverImageView.alpha = 1
         videoData = nil
+        currentStarCount = 0
+        isLiked = false
     }
 
     private func formatCount(_ count: Int) -> String {
