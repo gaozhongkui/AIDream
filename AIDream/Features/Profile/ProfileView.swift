@@ -36,15 +36,7 @@ struct ProfileView: View {
                                 menuRowContent(icon: "video.badge.plus.fill", title: "Creative History")
                             }
 
-                            Rectangle()
-                                .fill(Color.white.opacity(0.05))
-                                .frame(height: 1)
-                                .padding(.leading, 72)
-
-                            // Diamond Store
-                            NavigationLink(destination: DiamondStoreView()) {
-                                menuRowContent(icon: "diamond.fill", title: "Diamond Store", trailing: "💎 \(userService.diamonds)")
-                            }
+                 
                         }
                         .glassStyle(cornerRadius: 22)
                         .padding(.horizontal, 20)
