@@ -131,7 +131,8 @@ final class VideoDetailCell: UICollectionViewCell {
         var config = UIButton.Configuration.filled()
         config.image = UIImage(systemName: "heart")
         config.imagePlacement = .top
-        config.imagePadding = 4
+        config.imagePadding = 6
+        config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 14, bottom: 8, trailing: 14)
         config.baseBackgroundColor = UIColor.black.withAlphaComponent(0.35)
         config.baseForegroundColor = .white
         config.cornerStyle = .large
@@ -165,6 +166,7 @@ final class VideoDetailCell: UICollectionViewCell {
     }()
 
     var onBackTapped: (() -> Void)?
+    var onRemixTapped: (() -> Void)?
 
     // MARK: - Init
     override init(frame: CGRect) {
@@ -225,6 +227,7 @@ final class VideoDetailCell: UICollectionViewCell {
 
         backButton.addTarget(self, action: #selector(backTapped), for: .touchUpInside)
         likeButton.addTarget(self, action: #selector(likeTapped), for: .touchUpInside)
+        remixButton.addTarget(self, action: #selector(remixTapped), for: .touchUpInside)
     }
 
     private func setupObservers() {
@@ -253,6 +256,8 @@ final class VideoDetailCell: UICollectionViewCell {
     }
 
     @objc private func backTapped() { onBackTapped?() }
+
+    @objc private func remixTapped() { onRemixTapped?() }
 
     @objc private func likeTapped() {
         guard let video = videoData else { return }

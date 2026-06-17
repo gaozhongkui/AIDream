@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var selectedTab: Int = 0 // 默认选中 Explore
+    @State private var customSelectedMode: GenerationMode = .imageToVideo
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -11,7 +12,7 @@ struct ContentView: View {
             Group {
                 switch selectedTab {
                 case 0:  VideoListViewWrapper()
-                case 1:  CustomView()
+                case 1:  CustomView(externalMode: $customSelectedMode)
                 default: ProfileView()
                 }
             }
@@ -20,6 +21,12 @@ struct ContentView: View {
             customTabBar
         }
         .preferredColorScheme(.dark)
+        .onReceive(NotificationCenter.default.publisher(for: .switchToReferenceMode)) { _ in
+            customSelectedMode = .reference
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                selectedTab = 1
+            }
+        }
     }
 
     // MARK: - HypeCut Style Tab Bar

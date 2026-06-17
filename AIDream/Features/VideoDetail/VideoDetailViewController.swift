@@ -1,5 +1,9 @@
 import UIKit
 
+extension Notification.Name {
+    static let switchToReferenceMode = Notification.Name("SwitchToReferenceMode")
+}
+
 final class VideoDetailViewController: UIViewController {
     private var videos: [VideoData]
     private var initialIndex: Int
@@ -72,6 +76,11 @@ extension VideoDetailViewController: UICollectionViewDataSource, UICollectionVie
         cell.configure(with: videos[indexPath.item])
         cell.onBackTapped = { [weak self] in
             self?.dismiss(animated: true)
+        }
+        cell.onRemixTapped = { [weak self] in
+            self?.dismiss(animated: true) {
+                NotificationCenter.default.post(name: .switchToReferenceMode, object: nil)
+            }
         }
         return cell
     }

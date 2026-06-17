@@ -7,8 +7,14 @@ enum GenerationMode {
 }
 
 struct CustomView: View {
+    @Binding var externalMode: GenerationMode
     @State private var selectedMode: GenerationMode = .imageToVideo
     @State private var showTip = false
+    @State private var hasSyncedExternal = false
+
+    init(externalMode: Binding<GenerationMode> = .constant(.imageToVideo)) {
+        self._externalMode = externalMode
+    }
 
     var body: some View {
         NavigationView {
@@ -32,8 +38,16 @@ struct CustomView: View {
                     .transition(.opacity.combined(with: .move(edge: .bottom)))
                 }
             }
-        .navigationBarHidden(true)
-        .alert("Generation Tips", isPresented: $showTip) {
+            .navigationBarHidden(true)
+            .onChange(of: externalMode) { newMode in
+                if !hasSyncedExternal {
+                    hasSyncedExternal = true
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
+                        selectedMode = newMode
+                    }
+                }
+            }
+            .alert("Generation Tips", isPresented: $showTip) {
             Button("Got it") {}
         } message: {
             Text("Video: Upload a start frame image, add a prompt, and AI will animate it.\nReference: Upload reference images to guide the style.\nImage: Describe your vision in words and AI will paint it.")
