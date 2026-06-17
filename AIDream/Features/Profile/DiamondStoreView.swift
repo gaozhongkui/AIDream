@@ -46,6 +46,7 @@ struct DiamondStoreView: View {
     ]
 
     @State private var purchasingID: String?
+    @State private var showPremiumSheet = false
 
     var body: some View {
         ZStack {
@@ -62,6 +63,9 @@ struct DiamondStoreView: View {
                     subscriptionSection
                         .padding(.top, 28)
                         .padding(.horizontal, 20)
+                        .onTapGesture {
+                            showPremiumSheet = true
+                        }
 
                     // 钻石充值套餐
                     VStack(alignment: .leading, spacing: 0) {
@@ -121,6 +125,9 @@ struct DiamondStoreView: View {
             }
         }
         .navigationBarHidden(true)
+        .sheet(isPresented: $showPremiumSheet) {
+            PremiumView()
+        }
         .alert("Purchase Error", isPresented: Binding(
             get: { storeKit.purchaseError != nil && purchasingID == nil },
             set: { if !$0 { storeKit.purchaseError = nil } }
@@ -243,79 +250,40 @@ struct DiamondStoreView: View {
 
     // MARK: - 订阅会员
     private var subscriptionSection: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 14) {
-                ZStack {
-                    Circle().fill(AppTheme.accentGrad.opacity(0.2)).frame(width: 52, height: 52)
-                    Image(systemName: "crown.fill")
-                        .font(.system(size: 22))
-                        .foregroundStyle(AppTheme.accentGrad)
-                }
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("PRO MEMBERSHIP")
-                        .font(.system(size: 13, weight: .bold)).foregroundColor(.white)
-                    Text(subtitleForSubscription)
-                        .font(.system(size: 12)).foregroundColor(AppTheme.textSecondary)
-                }
-
-                Spacer()
-
-                if let subProduct = storeKit.subscriptionProduct {
-                    Button {
-                        purchasingID = subProduct.id
-                        Task {
-                            let success = await storeKit.purchase(subProduct)
-                            purchasingID = nil
-                            if success {
-                                userService.setPremium(true)
-                            }
-                        }
-                    } label: {
-                        Group {
-                            if purchasingID == subProduct.id {
-                                ProgressView().tint(.white)
-                            } else {
-                                Text(userService.isPremium ? "Active" : "\(subProduct.displayPrice)/mo")
-                                    .font(.system(size: 14, weight: .bold))
-                            }
-                        }
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 18)
-                        .padding(.vertical, 10)
-                        .background(
-                            userService.isPremium
-                                ? AnyShapeStyle(Color.gray.opacity(0.3))
-                                : AnyShapeStyle(AppTheme.accentGradH)
-                        )
-                        .clipShape(Capsule())
-                    }
-                    .disabled(userService.isPremium || purchasingID != nil)
-                } else if storeKit.isLoadingProducts {
-                    ProgressView().tint(AppTheme.accentSecondary)
-                } else {
-                    Text("Coming Soon")
-                        .font(.system(size: 12)).foregroundColor(AppTheme.textMuted)
-                        .padding(.horizontal, 16).padding(.vertical, 10)
-                        .background(Capsule().fill(Color.white.opacity(0.05)))
-                }
+        HStack(spacing: 14) {
+            ZStack {
+                Circle().fill(AppTheme.accentGrad.opacity(0.2)).frame(width: 52, height: 52)
+                Image(systemName: "crown.fill")
+                    .font(.system(size: 22))
+                    .foregroundStyle(AppTheme.accentGrad)
             }
-            .padding(18)
-            .glassStyle(cornerRadius: 20)
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(AppTheme.accentPrimary.opacity(0.25), lineWidth: 1)
-            )
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("PRO MEMBERSHIP")
+                    .font(.system(size: 13, weight: .bold)).foregroundColor(.white)
+                Text(subtitleForSubscription)
+                    .font(.system(size: 12)).foregroundColor(AppTheme.textSecondary)
+            }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(AppTheme.textMuted)
         }
+        .padding(18)
+        .glassStyle(cornerRadius: 20)
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(AppTheme.accentPrimary.opacity(0.25), lineWidth: 1)
+        )
     }
 
     private var subtitleForSubscription: String {
         if userService.isPremium {
             return "You are a PRO member"
-        } else if let sub = storeKit.subscriptionProduct {
-            return "1,000 💎 monthly + unlimited HD"
         }
-        return "1,000 💎 monthly + unlimited HD"
+        return "Weekly, Monthly or Lifetime"
     }
 
     // MARK: - 套餐卡片

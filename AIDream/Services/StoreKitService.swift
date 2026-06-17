@@ -11,7 +11,9 @@ enum StoreProductID: String, CaseIterable {
     case diamonds500  = "com.aidream.diamonds.500"
     case diamonds1200 = "com.aidream.diamonds.1200"
     case diamonds3000 = "com.aidream.diamonds.3000"
+    case premiumWeekly = "com.aidream.premium.weekly"
     case premiumMonthly = "com.aidream.premium.monthly"
+    case premiumLifetime = "com.aidream.premium.lifetime"
 
     var diamondAmount: Int {
         switch self {
@@ -19,12 +21,15 @@ enum StoreProductID: String, CaseIterable {
         case .diamonds500:  return 500
         case .diamonds1200: return 1200
         case .diamonds3000: return 3000
-        case .premiumMonthly: return 0
+        case .premiumWeekly, .premiumMonthly, .premiumLifetime: return 0
         }
     }
 
     var isSubscription: Bool {
-        self == .premiumMonthly
+        switch self {
+        case .premiumWeekly, .premiumMonthly, .premiumLifetime: return true
+        default: return false
+        }
     }
 }
 
@@ -34,7 +39,7 @@ final class StoreKitService: ObservableObject {
     static let shared = StoreKitService()
 
     @Published var diamondProducts: [Product] = []
-    @Published var subscriptionProduct: Product?
+    @Published var subscriptionProducts: [Product] = []
     @Published var isLoadingProducts = false
     @Published var isPurchasing = false
     @Published var purchaseError: String?
@@ -64,12 +69,12 @@ final class StoreKitService: ObservableObject {
                 .filter { !(StoreProductID(rawValue: $0.id)?.isSubscription ?? false) }
                 .sorted { ($0.price as Decimal) < ($1.price as Decimal) }
 
-            subscriptionProduct = products.first {
-                StoreProductID(rawValue: $0.id)?.isSubscription ?? false
-            }
+            subscriptionProducts = products
+                .filter { StoreProductID(rawValue: $0.id)?.isSubscription ?? false }
+                .sorted { ($0.price as Decimal) < ($1.price as Decimal) }
 
             productsLoaded = true
-            logger.info("Loaded \(self.diamondProducts.count) diamond products, subscription: \(self.subscriptionProduct != nil)")
+            logger.info("Loaded \(self.diamondProducts.count) diamond products, \(self.subscriptionProducts.count) subscriptions")
         } catch {
             logger.error("Failed to load products: \(error.localizedDescription)")
             purchaseError = "Unable to connect to App Store"
@@ -147,9 +152,9 @@ final class StoreKitService: ObservableObject {
             userService.addDiamonds(amount)
             logger.info("Added \(amount) diamonds from purchase")
 
-        case .premiumMonthly:
+        case .premiumWeekly, .premiumMonthly, .premiumLifetime:
             userService.setPremium(true)
-            logger.info("Premium subscription activated")
+            logger.info("Premium activated: \(productID.rawValue)")
         }
     }
 

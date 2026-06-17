@@ -15,7 +15,8 @@ struct ProfileView: View {
                         profileHeader.padding(.top, 40)
                         statsRow.padding(.top, 32)
 
-                        diamondBalanceCard.padding(.top, 28)
+                        vipMembershipCard.padding(.top, 28)
+                        diamondBalanceCard.padding(.top, 16)
 
                         sectionLabel("Studio").padding(.top, 40)
 
@@ -60,7 +61,7 @@ struct ProfileView: View {
         VStack(spacing: 18) {
             ZStack {
                 Circle()
-                    .fill(AppTheme.accentGlow)
+                    .fill(userService.isPremium ? AppTheme.vipGold.opacity(0.3) : AppTheme.accentGlow)
                     .frame(width: 100, height: 100)
                     .blur(radius: 12)
 
@@ -68,12 +69,26 @@ struct ProfileView: View {
                     .fill(AppTheme.bgCard)
                     .frame(width: 94, height: 94)
                     .overlay(
-                        Circle().stroke(AppTheme.accentGradV, lineWidth: 2)
+                        Circle().stroke(userService.isPremium ? AnyShapeStyle(AppTheme.vipGold) : AnyShapeStyle(AppTheme.accentGradV), lineWidth: 2)
                     )
 
                 Image(systemName: "person.crop.circle.fill")
                     .font(.system(size: 44))
-                    .foregroundStyle(AppTheme.accentGrad)
+                    .foregroundStyle(userService.isPremium ? AnyShapeStyle(AppTheme.vipGold) : AnyShapeStyle(AppTheme.accentGrad))
+
+                if userService.isPremium {
+                    ZStack {
+                        Circle()
+                            .fill(AppTheme.vipGold)
+                            .frame(width: 28, height: 28)
+                            .shadow(color: AppTheme.vipGold.opacity(0.5), radius: 4)
+
+                        Image(systemName: "crown.fill")
+                            .font(.system(size: 14))
+                            .foregroundColor(AppTheme.vipBg)
+                    }
+                    .offset(x: 32, y: 32)
+                }
             }
 
             VStack(spacing: 8) {
@@ -82,18 +97,19 @@ struct ProfileView: View {
                     .foregroundColor(.white)
 
                 HStack(spacing: 6) {
-                    Image(systemName: "bolt.fill")
+                    Image(systemName: userService.isPremium ? "crown.fill" : "bolt.fill")
                         .font(.system(size: 10))
-                        .foregroundColor(AppTheme.accentSecondary)
+                        .foregroundColor(userService.isPremium ? AppTheme.vipGold : AppTheme.accentSecondary)
                     Text(userService.isPremium ? "PRO MEMBER" : "FREE MEMBER")
                         .font(.system(size: 10, weight: .black))
                         .tracking(1)
+                        .foregroundColor(userService.isPremium ? AppTheme.vipGold : .white)
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)
-                .background(AppTheme.accentPrimary.opacity(0.1))
+                .background(userService.isPremium ? AppTheme.vipGold.opacity(0.1) : AppTheme.accentPrimary.opacity(0.1))
                 .cornerRadius(6)
-                .overlay(RoundedRectangle(cornerRadius: 6).stroke(AppTheme.accentPrimary.opacity(0.3), lineWidth: 0.5))
+                .overlay(RoundedRectangle(cornerRadius: 6).stroke(userService.isPremium ? AppTheme.vipGold.opacity(0.3) : AppTheme.accentPrimary.opacity(0.3), lineWidth: 0.5))
             }
         }
     }
@@ -187,6 +203,50 @@ struct ProfileView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
+    }
+
+    // MARK: - VIP Membership Card
+    @State private var showPremiumSheet = false
+
+    private var vipMembershipCard: some View {
+        Button(action: { showPremiumSheet = true }) {
+            HStack(spacing: 16) {
+                ZStack {
+                    Circle()
+                        .fill(AppTheme.vipGold.opacity(0.15))
+                        .frame(width: 46, height: 46)
+
+                    Image(systemName: "crown.fill")
+                        .font(.system(size: 20))
+                        .foregroundStyle(AppTheme.vipGold)
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("PRO Membership")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(.white)
+                    Text(userService.isPremium ? "View your benefits" : "Unlock all premium features")
+                        .font(.system(size: 12))
+                        .foregroundColor(AppTheme.textMuted)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(AppTheme.textMuted)
+            }
+            .padding(18)
+            .glassStyle(cornerRadius: 20)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(AppTheme.vipGold.opacity(0.3), lineWidth: 1)
+            )
+        }
+        .padding(.horizontal, 20)
+        .sheet(isPresented: $showPremiumSheet) {
+            PremiumView()
+        }
     }
 
     // MARK: - Diamond Balance Card
