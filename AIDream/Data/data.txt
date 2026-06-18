@@ -1,0 +1,43 @@
+App Name: AnimaPic AI: Video Generator
+
+Keywords: image to video, img2video, ai animation, luma, runway, sora, ai video, animation, photo to video, ai generator
+
+=========================================
+🇨🇳 中文版描述 (Chinese Description)
+=========================================
+
+标题：AnimaPic AI - 图片变视频，AI 梦幻动画生成器
+副标题：让照片动起来，像 Sora 一样创造电影级视觉效果
+
+【产品简介】
+释放你的想象力，将静态瞬间转变为流动的艺术！AnimaPic AI 是一款顶尖的 AI 视频生成工具，利用最新的深度学习模型（类似于 Luma 和 Runway 渲染技术），只需轻轻一点，即可将您的照片转化为惊艳的高清动画或电影感短片。
+
+【核心功能】
+* 【图生视频 (Image-to-Video)】无论是风景照、人像还是二次元绘画，AnimaPic 都能为它们注入生命，生成流畅自然的动态效果。
+* 【电影级质感】采用类似 Sora 的时空一致性技术，确保视频光影自然，画质最高可达 4K 分辨率。
+* 【艺术风格变换】提供多种预设风格，从写实电影到梦幻动漫，满足你所有的创作灵感。
+* 【极速渲染】Pro 会员专享优先渲染通道，无需漫长等待，佳作立等可取。
+* 【一键分享】专为社交平台优化，让你的动态作品在 TikTok、Instagram 和小红书上脱颖而出。
+
+【为什么选择 AnimaPic AI？】
+不再需要复杂的视频剪辑技巧，不再受限于昂贵的设备。只需一张图片，AnimaPic 就是你口袋里的全能动画导演。
+
+
+=========================================
+🇺🇸 English Version (English Description)
+=========================================
+
+Title: AnimaPic AI: Video Generator
+Subtitle: Turn Photos into Motion. AI Animation like Luma & Sora.
+
+【Description】
+Transform your static world into cinematic masterpieces! AnimaPic AI is a cutting-edge video generation tool that brings your images to life using industry-leading AI models. Whether you want to create a breathtaking landscape or a magical character animation, AnimaPic makes professional-grade video creation accessible to everyone.
+
+【Key Features】
+* AI Image-to-Video: Instantly animate any photo with realistic motion and fluid transitions.
+* Cinematic 4K Quality: Experience high-definition rendering with spatial consistency inspired by Sora and Runway technologies.
+* Pro Art Styles: Choose from a wide range of artistic models—from Hyper-Realistic to Anime and Sci-Fi.
+* Priority Processing: Skip the queue with our Pro membership and generate your videos in seconds.
+* Social Ready: Perfect for creating viral content for TikTok, Reels, and YouTube Shorts.
+
+Animate your imagination with AnimaPic AI—Where your photos dream in motion.
