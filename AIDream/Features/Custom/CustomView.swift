@@ -11,6 +11,7 @@ struct CustomView: View {
     @State private var selectedMode: GenerationMode = .imageToVideo
     @State private var showTip = false
     @State private var hasSyncedExternal = false
+    @State private var showDiamondStore = false
     @ObservedObject var userService = UserService.shared
 
     init(externalMode: Binding<GenerationMode> = .constant(.imageToVideo)) {
@@ -53,6 +54,9 @@ struct CustomView: View {
             } message: {
                 Text("Video: Upload a start frame image, add a prompt, and AI will animate it.\nReference: Upload reference images to guide the style.\nImage: Describe your vision in words and AI will paint it.")
             }
+            .fullScreenCover(isPresented: $showDiamondStore) {
+                DiamondStoreView()
+            }
         }
     }
 
@@ -60,7 +64,7 @@ struct CustomView: View {
     private var customNavBar: some View {
         HStack {
             // 钻石余额快捷入口
-            NavigationLink(destination: DiamondStoreView()) {
+            Button(action: { showDiamondStore = true }) {
                 HStack(spacing: 6) {
                     Image(systemName: "diamond.fill")
                         .font(.system(size: 12))

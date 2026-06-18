@@ -307,7 +307,7 @@ struct DiamondStoreView: View {
                         .background(Capsule().fill(AppTheme.accentGradH))
                         .padding(.bottom, 8)
                 } else {
-                    Spacer().frame(height: 12)
+                    Spacer().frame(height: 25)
                 }
 
                 // 钻石数量
@@ -326,7 +326,7 @@ struct DiamondStoreView: View {
                         .foregroundColor(AppTheme.success)
                         .padding(.bottom, 12)
                 } else {
-                    Spacer().frame(height: 12)
+                    Spacer().frame(height: 25)
                 }
 
                 // 价格按钮

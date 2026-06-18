@@ -6,6 +6,7 @@ struct ProfileView: View {
     @ObservedObject var userService = UserService.shared
 
     @State private var showPremiumSheet = false
+    @State private var showDiamondStore = false
     @State private var safariURL: URL?
     @State private var showSafari = false
 
@@ -82,6 +83,9 @@ struct ProfileView: View {
                     SafariView(url: url)
                         .ignoresSafeArea()
                 }
+            }
+            .fullScreenCover(isPresented: $showDiamondStore) {
+                DiamondStoreView()
             }
         }
     }
@@ -176,7 +180,7 @@ struct ProfileView: View {
     }
 
     private var diamondBalanceCard: some View {
-        NavigationLink(destination: DiamondStoreView()) {
+        Button(action: { showDiamondStore = true }) {
             HStack(spacing: 0) {
                 HStack(spacing: 14) {
                     ZStack {

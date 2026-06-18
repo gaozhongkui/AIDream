@@ -80,7 +80,7 @@ struct TextToImageView: View {
                 )
             }
         }
-        .sheet(isPresented: $isShowingStore) {
+        .fullScreenCover(isPresented: $isShowingStore) {
             DiamondStoreView()
         }
         .alert("Insufficient Diamonds", isPresented: $showInsufficientDiamondsAlert) {

@@ -116,7 +116,7 @@ struct ReferenceVideoView: View {
             }
             .ignoresSafeArea()
         }
-        .sheet(isPresented: $isShowingStore) {
+        .fullScreenCover(isPresented: $isShowingStore) {
             DiamondStoreView()
         }
         .alert("Insufficient Diamonds", isPresented: $showInsufficientDiamondsAlert) {
