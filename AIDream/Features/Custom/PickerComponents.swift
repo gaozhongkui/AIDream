@@ -30,7 +30,7 @@ struct ImageSourcePickerView: View {
                     }
                     .buttonStyle(.plain)
 
-                    // 相册选择器 - 修复：内部不再嵌套 Button，直接使用 Label
+                    // 相册选择器
                     PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
                         tileLabel(icon: "photo.on.rectangle.angled", title: "Library")
                     }
@@ -50,18 +50,13 @@ struct ImageSourcePickerView: View {
         }
     }
 
-    // 提取纯 UI 部分，避免嵌套 Button 拦截事件
     private func tileLabel(icon: String, title: String) -> some View {
         VStack(spacing: 12) {
             Image(systemName: icon).font(.system(size: 28)).foregroundStyle(AppTheme.accentGrad)
             Text(title).font(.system(size: 15, weight: .bold)).foregroundColor(.white)
         }
         .frame(maxWidth: .infinity).frame(height: 120)
-        .background(.ultraThinMaterial)
-        .background(Color.white.opacity(0.03))
-        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).stroke(Color.white.opacity(0.15), lineWidth: 0.5))
-        .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
+        .glassStyle(cornerRadius: 22)
     }
 }
 

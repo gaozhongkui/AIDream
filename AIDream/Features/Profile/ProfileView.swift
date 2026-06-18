@@ -116,9 +116,10 @@ struct ProfileView: View {
                     .font(.system(size: 10, weight: .black))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
-                    .background(userService.isPremium ? AppTheme.vipGold.opacity(0.1) : AppTheme.accentPrimary.opacity(0.1))
+                    .background(userService.isPremium ? AppTheme.vipGold.opacity(0.2) : AppTheme.accentPrimary.opacity(0.2))
                     .cornerRadius(6)
                     .foregroundColor(userService.isPremium ? AppTheme.vipGold : .white)
+                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(userService.isPremium ? AppTheme.vipGold.opacity(0.5) : AppTheme.accentSecondary.opacity(0.5), lineWidth: 0.5))
             }
         }
     }
@@ -198,7 +199,7 @@ struct ProfileView: View {
             userService.addDiamonds(100)
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         }) {
-            Text("Reset Account Data").font(.system(size: 15, weight: .bold)).foregroundColor(AppTheme.textMuted).frame(maxWidth: .infinity).frame(height: 56).background(.ultraThinMaterial).clipShape(RoundedRectangle(cornerRadius: 20))
+            Text("Reset Account Data").font(.system(size: 15, weight: .bold)).foregroundColor(AppTheme.textMuted).frame(maxWidth: .infinity).frame(height: 56).glassStyle(cornerRadius: 20)
         }.padding(.horizontal, 20)
     }
 

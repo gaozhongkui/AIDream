@@ -23,25 +23,25 @@ struct DiamondStoreView: View {
             id: "100",
             productID: .diamonds100,
             diamonds: 100, price: "$0.99", bonus: 0, tag: nil,
-            gradient: [Color(hex: "#3A3F5C"), Color(hex: "#2A2D40")]
+            gradient: [Color(hex: "#3A3F5C").opacity(0.8), Color(hex: "#2A2D40").opacity(0.8)]
         ),
         DiamondPackage(
             id: "500",
             productID: .diamonds500,
             diamonds: 500, price: "$4.99", bonus: 50, tag: "POPULAR",
-            gradient: [Color(hex: "#2D4A7A"), Color(hex: "#1E3460")]
+            gradient: [Color(hex: "#2D4A7A").opacity(0.8), Color(hex: "#1E3460").opacity(0.8)]
         ),
         DiamondPackage(
             id: "1200",
             productID: .diamonds1200,
             diamonds: 1200, price: "$9.99", bonus: 200, tag: "BEST VALUE",
-            gradient: [Color(hex: "#4A2D7A"), Color(hex: "#2E1A5E")]
+            gradient: [Color(hex: "#4A2D7A").opacity(0.8), Color(hex: "#2E1A5E").opacity(0.8)]
         ),
         DiamondPackage(
             id: "3000",
             productID: .diamonds3000,
             diamonds: 3000, price: "$19.99", bonus: 800, tag: "WHALE",
-            gradient: [Color(hex: "#7A4A2D"), Color(hex: "#5E2E1A")]
+            gradient: [Color(hex: "#7A4A2D").opacity(0.8), Color(hex: "#5E2E1A").opacity(0.8)]
         )
     ]
 
@@ -164,10 +164,7 @@ struct DiamondStoreView: View {
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.white)
                     .frame(width: 40, height: 40)
-                    .background(.ultraThinMaterial)
-                    .background(Color.white.opacity(0.03))
-                    .clipShape(Circle())
-                    .overlay(Circle().stroke(Color.white.opacity(0.15), lineWidth: 0.5))
+                    .glassStyle(cornerRadius: 20)
             }
 
             Spacer()
@@ -186,24 +183,20 @@ struct DiamondStoreView: View {
     // MARK: - 余额展示卡片
     private var balanceHeroCard: some View {
         ZStack {
-            // Glassmorphism 2.0 基底
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .fill(.ultraThinMaterial)
             
-            // 深色渐变叠加层（保留品牌色氛围）
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .fill(
                     LinearGradient(
-                        colors: [Color(hex: "#1A1D4A").opacity(0.6), Color(hex: "#0E1030").opacity(0.4), Color(hex: "#1A1D4A").opacity(0.6)],
+                        colors: [Color(hex: "#1A1D4A").opacity(0.4), Color(hex: "#0E1030").opacity(0.2), Color(hex: "#1A1D4A").opacity(0.4)],
                         startPoint: .topLeading, endPoint: .bottomTrailing
                     )
                 )
             
-            // 微透白增强
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .fill(Color.white.opacity(0.03))
             
-            // 微光描边
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .stroke(
                     LinearGradient(
@@ -330,7 +323,6 @@ struct DiamondStoreView: View {
                     Spacer().frame(height: 10)
                 }
 
-                // Price — use StoreKit displayPrice if available
                 Group {
                     if isBuying {
                         ProgressView().tint(.white)
@@ -367,6 +359,7 @@ struct DiamondStoreView: View {
             }
             .frame(maxWidth: .infinity, minHeight: 190)
             .padding(.vertical, 20)
+            .background(.ultraThinMaterial)
             .background(
                 RoundedRectangle(cornerRadius: 20)
                     .fill(LinearGradient(
@@ -375,7 +368,7 @@ struct DiamondStoreView: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 20)
-                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                    .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
             )
         }
         .buttonStyle(.plain)

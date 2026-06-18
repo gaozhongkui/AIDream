@@ -28,7 +28,6 @@ struct ReferenceVideoView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 32) {
-                    // 统一顶部边距为 20
                     referenceImageUploadSection.padding(.top, 20)
                     promptSection
 
@@ -81,9 +80,7 @@ struct ReferenceVideoView: View {
                             .foregroundColor(AppTheme.accentSecondary)
                     }
                     .padding(16)
-                    .background(AppTheme.error.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color.white.opacity(0.15), lineWidth: 0.5))
+                    .glassStyle(cornerRadius: 16)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 200)
                 }
@@ -132,7 +129,6 @@ struct ReferenceVideoView: View {
 
     // MARK: - Components
     private var referenceImageUploadSection: some View {
-        // 统一标题间距为 16
         VStack(alignment: .leading, spacing: 16) {
             Label("Visual References", systemImage: "photo.stack.fill")
                 .font(.system(size: 14, weight: .bold))
@@ -175,7 +171,6 @@ struct ReferenceVideoView: View {
     }
 
     private var promptSection: some View {
-        // 统一标题间距为 16
         VStack(alignment: .leading, spacing: 16) {
             Label("Evolution Description", systemImage: "sparkles")
                 .font(.system(size: 14, weight: .bold))
@@ -200,7 +195,6 @@ struct ReferenceVideoView: View {
     }
 
     private func optionRow(title: String, options: [String], selection: Binding<String>, proOptions: [String]) -> some View {
-        // 统一标题间距为 16
         VStack(alignment: .leading, spacing: 16) {
             Text(title.uppercased()).font(.system(size: 11, weight: .bold)).tracking(1.5).foregroundColor(AppTheme.textMuted)
             HStack(spacing: 10) {
@@ -213,7 +207,7 @@ struct ReferenceVideoView: View {
                         .frame(maxWidth: .infinity).frame(height: 46)
                         .background(selection.wrappedValue == opt ? AppTheme.accentPrimary.opacity(0.15) : Color.white.opacity(0.05))
                         .clipShape(RoundedRectangle(cornerRadius: 14))
-                        .overlay(RoundedRectangle(cornerRadius: 14).stroke(selection.wrappedValue == opt ? AppTheme.accentPrimary : Color.clear, lineWidth: 1.5))
+                        .overlay(RoundedRectangle(cornerRadius: 14).stroke(selection.wrappedValue == opt ? AppTheme.accentPrimary : Color.white.opacity(0.1), lineWidth: selection.wrappedValue == opt ? 1.5 : 0.5))
                     }
                     .foregroundColor(selection.wrappedValue == opt ? .white : AppTheme.textSecondary)
                 }
@@ -222,7 +216,6 @@ struct ReferenceVideoView: View {
     }
 
     private var aspectRatioSection: some View {
-        // 统一标题间距为 16
         VStack(alignment: .leading, spacing: 16) {
             Text("ASPECT RATIO").font(.system(size: 11, weight: .bold)).tracking(1.5).foregroundColor(AppTheme.textMuted)
             HStack(spacing: 12) {
@@ -241,7 +234,7 @@ struct ReferenceVideoView: View {
             .frame(maxWidth: .infinity).frame(height: 56)
             .background(isSelected ? AppTheme.accentPrimary.opacity(0.1) : Color.white.opacity(0.05))
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay(RoundedRectangle(cornerRadius: 16).stroke(isSelected ? AppTheme.accentPrimary : Color.white.opacity(0.1), lineWidth: isSelected ? 1.5 : 1))
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(isSelected ? AppTheme.accentPrimary : Color.white.opacity(0.1), lineWidth: isSelected ? 1.5 : 0.5))
         }
         .foregroundColor(isSelected ? .white : AppTheme.textSecondary)
     }
@@ -266,7 +259,9 @@ struct ReferenceVideoView: View {
         }
         .padding(.horizontal, 20).padding(.top, 24)
         .padding(.bottom, 140)
-        .background(AppTheme.bgPrimary.overlay(Rectangle().fill(AppTheme.borderSubtle).frame(height: 0.5), alignment: .top))
+        .background(
+            LinearGradient(colors: [AppTheme.bgPrimary.opacity(0), AppTheme.bgPrimary], startPoint: .top, endPoint: .bottom)
+        )
     }
 
     // MARK: - Actions

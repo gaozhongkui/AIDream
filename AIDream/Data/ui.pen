@@ -1,0 +1,2800 @@
+{
+  "version": "2.13",
+  "children": [
+    {
+      "type": "frame",
+      "id": "spLnu",
+      "x": 0,
+      "y": 0,
+      "name": "AI Video App Icons",
+      "layout": "vertical",
+      "gap": 40,
+      "children": [
+        {
+          "type": "text",
+          "id": "Fb14A",
+          "name": "Title",
+          "fill": "#333333",
+          "content": "AI Image-to-Video App Icon Concepts",
+          "fontFamily": "Inter",
+          "fontSize": 32,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "uYqiG",
+          "name": "Subtitle",
+          "fill": "#666666",
+          "content": "iOS App Icon Design Explorations",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "joaZj",
+          "name": "Icons Row",
+          "gap": 80,
+          "children": [
+            {
+              "type": "frame",
+              "id": "k3gXm",
+              "name": "Concept 1 - Cosmic Lens",
+              "layout": "vertical",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "j6BXLC",
+                  "name": "Icon 1 Container",
+                  "clip": true,
+                  "width": 1024,
+                  "height": 1024,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "iAu22",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Background",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "radial",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1.4,
+                          "height": 1.4
+                        },
+                        "colors": [
+                          {
+                            "color": "#2D1B69",
+                            "position": 0
+                          },
+                          {
+                            "color": "$icon-bg-2",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 1024,
+                      "height": 1024
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "c1yym9",
+                      "x": 202,
+                      "y": 202,
+                      "name": "Outer Halo Ring",
+                      "opacity": 0.1,
+                      "width": 620,
+                      "height": 620,
+                      "stroke": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 90,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#8B5CF6",
+                            "position": 0
+                          },
+                          {
+                            "color": "#06B6D4",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "strokeWidth": 2
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "w1mzG",
+                      "x": 750,
+                      "y": 950,
+                      "name": "Particle 10",
+                      "opacity": 0.3,
+                      "fill": "#EC4899",
+                      "width": 7,
+                      "height": 7
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "cNNZg",
+                      "x": 70,
+                      "y": 350,
+                      "name": "Particle 9",
+                      "opacity": 0.45,
+                      "fill": "#F97316",
+                      "width": 5,
+                      "height": 5
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "y7HdNh",
+                      "x": 950,
+                      "y": 750,
+                      "name": "Particle 8",
+                      "opacity": 0.4,
+                      "fill": "#3B82F6",
+                      "width": 4,
+                      "height": 4
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "UQ8q2",
+                      "x": 500,
+                      "y": 30,
+                      "name": "Particle 7",
+                      "opacity": 0.35,
+                      "fill": "#8B5CF6",
+                      "width": 6,
+                      "height": 6
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "mqZI5",
+                      "x": 100,
+                      "y": 940,
+                      "name": "Particle 6",
+                      "opacity": 0.5,
+                      "fill": "#06B6D4",
+                      "width": 5,
+                      "height": 5
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "pHB5v",
+                      "x": 880,
+                      "y": 900,
+                      "name": "Particle 5",
+                      "opacity": 0.4,
+                      "fill": "#EC4899",
+                      "width": 8,
+                      "height": 8
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "AsnR6",
+                      "x": 30,
+                      "y": 500,
+                      "name": "Particle 4",
+                      "opacity": 0.3,
+                      "fill": "#F97316",
+                      "width": 4,
+                      "height": 4
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "XjP6P",
+                      "x": 960,
+                      "y": 450,
+                      "name": "Particle 3",
+                      "opacity": 0.45,
+                      "fill": "#8B5CF6",
+                      "width": 7,
+                      "height": 7
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "MJcbQ",
+                      "x": 920,
+                      "y": 60,
+                      "name": "Particle 2",
+                      "opacity": 0.35,
+                      "fill": "#06B6D4",
+                      "width": 5,
+                      "height": 5
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "du0ys",
+                      "x": 45,
+                      "y": 90,
+                      "name": "Particle 1",
+                      "opacity": 0.4,
+                      "fill": "#EC4899",
+                      "width": 6,
+                      "height": 6
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "k6sTV",
+                      "x": 100,
+                      "y": 120,
+                      "name": "Nebula Blue",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "radial",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#3B82F610",
+                            "position": 0
+                          },
+                          {
+                            "color": "#00000000",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 350,
+                      "height": 300
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "zhJCi",
+                      "x": 620,
+                      "y": 500,
+                      "name": "Nebula Purple",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "radial",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#8B5CF615",
+                            "position": 0
+                          },
+                          {
+                            "color": "#00000000",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 480,
+                      "height": 400
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "Y7dAb",
+                      "x": 550,
+                      "y": 80,
+                      "name": "Nebula Cyan",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "radial",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#06B6D415",
+                            "position": 0
+                          },
+                          {
+                            "color": "#00000000",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 400,
+                      "height": 350
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "Klnnn",
+                      "x": 50,
+                      "y": 600,
+                      "name": "Nebula Pink",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "radial",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#EC489920",
+                            "position": 0
+                          },
+                          {
+                            "color": "#00000000",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 450,
+                      "height": 380
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "ApCh7",
+                      "x": 171,
+                      "y": 171,
+                      "name": "Outer Glow",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "radial",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#8B5CF620",
+                            "position": 0
+                          },
+                          {
+                            "color": "#8B5CF600",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 683,
+                      "height": 683
+                    },
+                    {
+                      "type": "path",
+                      "id": "wvEFJ",
+                      "x": 140,
+                      "y": 310,
+                      "name": "Motion Arc 1",
+                      "geometry": "M120 0c-20 60-100 120-120 180-10 40 10 80 40 120",
+                      "viewBox": [
+                        0,
+                        0,
+                        120,
+                        300
+                      ],
+                      "fill": "#00000000",
+                      "width": 120,
+                      "height": 300,
+                      "stroke": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 180,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#8B5CF600",
+                            "position": 0
+                          },
+                          {
+                            "color": "#8B5CF640",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#8B5CF600",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "strokeWidth": 3,
+                      "strokeLinecap": "round"
+                    },
+                    {
+                      "type": "path",
+                      "id": "i8tcGy",
+                      "x": 750,
+                      "y": 280,
+                      "name": "Motion Arc 2",
+                      "geometry": "M0 0c20 50 90 110 100 170 5 40-20 80-50 110",
+                      "viewBox": [
+                        0,
+                        0,
+                        100,
+                        280
+                      ],
+                      "fill": "#00000000",
+                      "width": 100,
+                      "height": 280,
+                      "stroke": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 180,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#06B6D400",
+                            "position": 0
+                          },
+                          {
+                            "color": "#06B6D435",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#06B6D400",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "strokeWidth": 2.5,
+                      "strokeLinecap": "round"
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "GlTsw",
+                      "x": 235,
+                      "y": 235,
+                      "name": "Lens Outer Ring",
+                      "fill": "#1A0A2E",
+                      "width": 555,
+                      "height": 555,
+                      "stroke": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 135,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "$accent-purple",
+                            "position": 0
+                          },
+                          {
+                            "color": "$accent-cyan",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "strokeWidth": 12.8,
+                      "strokeAlignment": "inner"
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "VE6kA",
+                      "x": 307,
+                      "y": 307,
+                      "name": "Lens Mid Ring",
+                      "fill": "#0D0520",
+                      "width": 410,
+                      "height": 410,
+                      "stroke": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 45,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "$accent-cyan",
+                            "position": 0
+                          },
+                          {
+                            "color": "$accent-blue",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "strokeWidth": 10.7,
+                      "strokeAlignment": "inner"
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "N8Bbw",
+                      "x": 375,
+                      "y": 375,
+                      "name": "Lens Inner Ring",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "radial",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#3B82F640",
+                            "position": 0
+                          },
+                          {
+                            "color": "#8B5CF630",
+                            "position": 0.6
+                          },
+                          {
+                            "color": "#06B6D420",
+                            "position": 1
+                          }
+                        ],
+                        "center": {
+                          "x": 0.45,
+                          "y": 0.45
+                        }
+                      },
+                      "width": 273,
+                      "height": 273,
+                      "stroke": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "$accent-purple",
+                            "position": 0
+                          },
+                          {
+                            "color": "$accent-cyan",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "strokeWidth": 6.4,
+                      "strokeAlignment": "inner"
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "X4zXIu",
+                      "x": 435,
+                      "y": 435,
+                      "name": "Lens Core",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "radial",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "$accent-blue",
+                            "position": 0
+                          },
+                          {
+                            "color": "$accent-purple",
+                            "position": 1
+                          }
+                        ],
+                        "center": {
+                          "x": 0.4,
+                          "y": 0.4
+                        }
+                      },
+                      "width": 154,
+                      "height": 154
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "Zh708",
+                      "x": 445,
+                      "y": 440,
+                      "name": "Lens Highlight",
+                      "opacity": 0.35,
+                      "fill": "$white",
+                      "width": 90,
+                      "height": 70
+                    },
+                    {
+                      "type": "path",
+                      "id": "gMhhw",
+                      "x": 179,
+                      "y": 247,
+                      "name": "Sparkle",
+                      "opacity": 0.8,
+                      "geometry": "M5 0l1 4 4 1-4 1-1 4-1-4-4-1 4-1z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "fill": "$white",
+                      "width": 34,
+                      "height": 34
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "keiUN",
+                      "x": 490,
+                      "y": 480,
+                      "name": "Lens Highlight Small",
+                      "opacity": 0.5,
+                      "fill": "$white",
+                      "width": 30,
+                      "height": 20
+                    },
+                    {
+                      "type": "path",
+                      "id": "yX9eE",
+                      "x": 759,
+                      "y": 222,
+                      "name": "Sparkle",
+                      "opacity": 0.8,
+                      "geometry": "M5 0l1 4 4 1-4 1-1 4-1-4-4-1 4-1z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "fill": "$white",
+                      "width": 43,
+                      "height": 43
+                    },
+                    {
+                      "type": "path",
+                      "id": "k0OgZO",
+                      "x": 789,
+                      "y": 683,
+                      "name": "Sparkle",
+                      "opacity": 0.8,
+                      "geometry": "M5 0l1 4 4 1-4 1-1 4-1-4-4-1 4-1z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "fill": "$white",
+                      "width": 30,
+                      "height": 30
+                    },
+                    {
+                      "type": "path",
+                      "id": "Yd8jT",
+                      "x": 162,
+                      "y": 725,
+                      "name": "Sparkle",
+                      "opacity": 0.8,
+                      "geometry": "M5 0l1 4 4 1-4 1-1 4-1-4-4-1 4-1z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "fill": "$white",
+                      "width": 38,
+                      "height": 38
+                    },
+                    {
+                      "type": "path",
+                      "id": "FPWx2",
+                      "x": 405,
+                      "y": 137,
+                      "name": "Sparkle",
+                      "opacity": 0.8,
+                      "geometry": "M5 0l1 4 4 1-4 1-1 4-1-4-4-1 4-1z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "fill": "$white",
+                      "width": 26,
+                      "height": 26
+                    },
+                    {
+                      "type": "path",
+                      "id": "TbrPY",
+                      "x": 683,
+                      "y": 162,
+                      "name": "Sparkle",
+                      "opacity": 0.8,
+                      "geometry": "M5 0l1 4 4 1-4 1-1 4-1-4-4-1 4-1z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "fill": "$white",
+                      "width": 21,
+                      "height": 21
+                    },
+                    {
+                      "type": "path",
+                      "id": "fnhWA",
+                      "x": 235,
+                      "y": 555,
+                      "name": "Sparkle",
+                      "opacity": 0.8,
+                      "geometry": "M5 0l1 4 4 1-4 1-1 4-1-4-4-1 4-1z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "fill": "$white",
+                      "width": 21,
+                      "height": 21
+                    },
+                    {
+                      "type": "path",
+                      "id": "Z3LkQQ",
+                      "x": 747,
+                      "y": 469,
+                      "name": "Sparkle",
+                      "opacity": 0.8,
+                      "geometry": "M5 0l1 4 4 1-4 1-1 4-1-4-4-1 4-1z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "fill": "$white",
+                      "width": 26,
+                      "height": 26
+                    },
+                    {
+                      "type": "path",
+                      "id": "H6T9rb",
+                      "x": 290,
+                      "y": 179,
+                      "name": "Tiny Sparkle",
+                      "opacity": 0.6,
+                      "geometry": "M5 0l1 4 4 1-4 1-1 4-1-4-4-1 4-1z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "fill": "$accent-cyan",
+                      "width": 17,
+                      "height": 17
+                    },
+                    {
+                      "type": "path",
+                      "id": "hOKOz",
+                      "x": 704,
+                      "y": 320,
+                      "name": "Tiny Sparkle",
+                      "opacity": 0.6,
+                      "geometry": "M5 0l1 4 4 1-4 1-1 4-1-4-4-1 4-1z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "fill": "$accent-cyan",
+                      "width": 17,
+                      "height": 17
+                    },
+                    {
+                      "type": "path",
+                      "id": "jSZgW",
+                      "x": 299,
+                      "y": 768,
+                      "name": "Tiny Sparkle",
+                      "opacity": 0.6,
+                      "geometry": "M5 0l1 4 4 1-4 1-1 4-1-4-4-1 4-1z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "fill": "$accent-cyan",
+                      "width": 17,
+                      "height": 17
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "w3oeX",
+                      "x": 581,
+                      "y": 581,
+                      "name": "Play Button Glow",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "radial",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#8B5CF650",
+                            "position": 0
+                          },
+                          {
+                            "color": "#06B6D430",
+                            "position": 0.4
+                          },
+                          {
+                            "color": "#00000000",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 288,
+                      "height": 288
+                    },
+                    {
+                      "type": "path",
+                      "id": "KdybV",
+                      "x": 640,
+                      "y": 789,
+                      "name": "Tiny Sparkle",
+                      "opacity": 0.6,
+                      "geometry": "M5 0l1 4 4 1-4 1-1 4-1-4-4-1 4-1z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "fill": "$accent-cyan",
+                      "width": 13,
+                      "height": 13
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "UAcw5",
+                      "x": 631,
+                      "y": 631,
+                      "name": "Play Button BG",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 135,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "$accent-purple",
+                            "position": 0
+                          },
+                          {
+                            "color": "$accent-cyan",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 188,
+                      "height": 188,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#8B5CF660",
+                        "offset": {
+                          "x": 0,
+                          "y": 4
+                        },
+                        "blur": 20,
+                        "spread": 2
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "id": "SIOP2",
+                      "x": 691,
+                      "y": 683,
+                      "name": "Play Triangle",
+                      "geometry": "M0 0l18 10-18 10z",
+                      "viewBox": [
+                        0,
+                        0,
+                        18,
+                        20
+                      ],
+                      "fill": "$white",
+                      "width": 77,
+                      "height": 85
+                    },
+                    {
+                      "type": "path",
+                      "id": "s5J0V3",
+                      "x": 260,
+                      "y": 240,
+                      "name": "Lens Rim Light",
+                      "geometry": "M0 80c30-60 80-80 100-80 20 0 70 20 100 80",
+                      "viewBox": [
+                        0,
+                        0,
+                        200,
+                        80
+                      ],
+                      "fill": "#00000000",
+                      "width": 200,
+                      "height": 80,
+                      "stroke": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#06B6D400",
+                            "position": 0
+                          },
+                          {
+                            "color": "#06B6D440",
+                            "position": 0.3
+                          },
+                          {
+                            "color": "#06B6D400",
+                            "position": 0.7
+                          }
+                        ]
+                      },
+                      "strokeWidth": 2
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "C6yjB9",
+                      "x": 665,
+                      "y": 650,
+                      "name": "Play Btn Highlight",
+                      "opacity": 0.15,
+                      "fill": "$white",
+                      "width": 50,
+                      "height": 30
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "q6QxgI",
+                  "name": "Label 1",
+                  "fill": "#333333",
+                  "content": "Concept 1: Cosmic Lens",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "vq8AI",
+                  "name": "Desc 1",
+                  "fill": "#888888",
+                  "textGrowth": "fixed-width",
+                  "width": 200,
+                  "content": "AI lens with motion trails",
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "V8fMe",
+              "name": "Concept 2 - Flow Transform",
+              "layout": "vertical",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "W1Jd9",
+                  "name": "Icon 2 Container",
+                  "clip": true,
+                  "width": 1024,
+                  "height": 1024,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "O9qZI",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Background",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 135,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "$icon-bg-1",
+                            "position": 0
+                          },
+                          {
+                            "color": "#1A0A2E",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 1024,
+                      "height": 1024
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "M4kmwV",
+                      "x": 128,
+                      "y": 213,
+                      "name": "Ambient Glow",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "radial",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#8B5CF615",
+                            "position": 0
+                          },
+                          {
+                            "color": "#06B6D410",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#00000000",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 768,
+                      "height": 597
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 34,
+                      "id": "WOjpa",
+                      "x": 162,
+                      "y": 333,
+                      "name": "Photo Frame",
+                      "fill": "#0D1117",
+                      "width": 239,
+                      "height": 239,
+                      "stroke": "$light-gray",
+                      "strokeWidth": 8.5,
+                      "strokeAlignment": "inner"
+                    },
+                    {
+                      "type": "path",
+                      "id": "cmOIK",
+                      "x": 196,
+                      "y": 410,
+                      "name": "Mountain Icon",
+                      "opacity": 0.5,
+                      "geometry": "M0 24l12-18 6 8 8-12 14 22z",
+                      "viewBox": [
+                        0,
+                        0,
+                        40,
+                        24
+                      ],
+                      "fill": "$white",
+                      "width": 171,
+                      "height": 102
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "sX5xb",
+                      "x": 282,
+                      "y": 367,
+                      "name": "Sun",
+                      "opacity": 0.4,
+                      "fill": "$white",
+                      "width": 43,
+                      "height": 43
+                    },
+                    {
+                      "type": "path",
+                      "id": "lK1J2",
+                      "x": 341,
+                      "y": 307,
+                      "name": "Flow Line 1",
+                      "opacity": 0.7,
+                      "geometry": "M0 50c25-30 50-40 75-25 25 15 30 30 35 15l0 8c-5 15-10 0-35-15-25-15-50-5-75 25z",
+                      "viewBox": [
+                        0,
+                        0,
+                        110,
+                        80
+                      ],
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "$accent-cyan",
+                            "position": 0
+                          },
+                          {
+                            "color": "$accent-pink",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 469,
+                      "height": 341
+                    },
+                    {
+                      "type": "path",
+                      "id": "D1z6h",
+                      "x": 320,
+                      "y": 427,
+                      "name": "Flow Line 2",
+                      "opacity": 0.5,
+                      "geometry": "M0 30c30 20 55 25 80 10 20-12 28-20 35-10l0 8c-7-10-15-2-35 10-25 15-50 10-80-10z",
+                      "viewBox": [
+                        0,
+                        0,
+                        115,
+                        70
+                      ],
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "$accent-purple",
+                            "position": 0
+                          },
+                          {
+                            "color": "$accent-pink",
+                            "position": 0.6
+                          },
+                          {
+                            "color": "$accent-cyan",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 491,
+                      "height": 299
+                    },
+                    {
+                      "type": "path",
+                      "id": "tSpk8",
+                      "x": 299,
+                      "y": 533,
+                      "name": "Flow Line 3",
+                      "opacity": 0.35,
+                      "geometry": "M0 15c30 20 60 25 90 13 15-6 25-13 30-8l0 7c-5-5-15 2-30 8-30 12-60 7-90-13z",
+                      "viewBox": [
+                        0,
+                        0,
+                        120,
+                        50
+                      ],
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "$accent-cyan",
+                            "position": 0
+                          },
+                          {
+                            "color": "$accent-purple",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 512,
+                      "height": 213
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "k09d0F",
+                      "x": 649,
+                      "y": 375,
+                      "name": "Play Glow",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "radial",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#EC489930",
+                            "position": 0
+                          },
+                          {
+                            "color": "#EC489900",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 256,
+                      "height": 256
+                    },
+                    {
+                      "type": "path",
+                      "id": "or7Nv",
+                      "x": 700,
+                      "y": 418,
+                      "name": "Play Triangle",
+                      "geometry": "M0 0l36 20-36 20z",
+                      "viewBox": [
+                        0,
+                        0,
+                        36,
+                        40
+                      ],
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 90,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "$accent-cyan",
+                            "position": 0
+                          },
+                          {
+                            "color": "$accent-pink",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 154,
+                      "height": 171
+                    },
+                    {
+                      "type": "path",
+                      "id": "ztBiw",
+                      "x": 700,
+                      "y": 418,
+                      "name": "Play Highlight",
+                      "opacity": 0.15,
+                      "geometry": "M0 0l36 20-36 0z",
+                      "viewBox": [
+                        0,
+                        0,
+                        36,
+                        40
+                      ],
+                      "fill": "$white",
+                      "width": 154,
+                      "height": 171
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "SCTSN",
+                      "x": 469,
+                      "y": 341,
+                      "name": "Particle",
+                      "opacity": 0.6,
+                      "fill": "$white",
+                      "width": 17,
+                      "height": 17
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "oIt0K",
+                      "x": 576,
+                      "y": 405,
+                      "name": "Particle",
+                      "opacity": 0.5,
+                      "fill": "$white",
+                      "width": 13,
+                      "height": 13
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "RXVyN",
+                      "x": 533,
+                      "y": 597,
+                      "name": "Particle",
+                      "opacity": 0.4,
+                      "fill": "$white",
+                      "width": 13,
+                      "height": 13
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "ht3Yr",
+                      "x": 427,
+                      "y": 661,
+                      "name": "Particle",
+                      "opacity": 0.3,
+                      "fill": "$white",
+                      "width": 13,
+                      "height": 13
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "p4Wnif",
+                      "x": 619,
+                      "y": 619,
+                      "name": "Particle",
+                      "opacity": 0.5,
+                      "fill": "$white",
+                      "width": 17,
+                      "height": 17
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "DV5tR",
+                      "x": 491,
+                      "y": 491,
+                      "name": "Particle",
+                      "opacity": 0.4,
+                      "fill": "$white",
+                      "width": 9,
+                      "height": 9
+                    },
+                    {
+                      "type": "path",
+                      "id": "y2uW4e",
+                      "x": 213,
+                      "y": 256,
+                      "name": "Sparkle",
+                      "opacity": 0.5,
+                      "geometry": "M5 0l1 4 4 1-4 1-1 4-1-4-4-1 4-1z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "fill": "$white",
+                      "width": 26,
+                      "height": 26
+                    },
+                    {
+                      "type": "path",
+                      "id": "GlLb6",
+                      "x": 832,
+                      "y": 299,
+                      "name": "Sparkle",
+                      "opacity": 0.5,
+                      "geometry": "M5 0l1 4 4 1-4 1-1 4-1-4-4-1 4-1z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "fill": "$white",
+                      "width": 21,
+                      "height": 21
+                    },
+                    {
+                      "type": "path",
+                      "id": "U2gBeM",
+                      "x": 811,
+                      "y": 661,
+                      "name": "Sparkle",
+                      "opacity": 0.5,
+                      "geometry": "M5 0l1 4 4 1-4 1-1 4-1-4-4-1 4-1z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "fill": "$white",
+                      "width": 26,
+                      "height": 26
+                    },
+                    {
+                      "type": "path",
+                      "id": "g63At",
+                      "x": 235,
+                      "y": 704,
+                      "name": "Sparkle",
+                      "opacity": 0.5,
+                      "geometry": "M5 0l1 4 4 1-4 1-1 4-1-4-4-1 4-1z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "fill": "$white",
+                      "width": 21,
+                      "height": 21
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "v8rGI",
+                  "name": "Label 2",
+                  "fill": "#333333",
+                  "content": "Concept 2: Flow Transform",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "chDCM",
+                  "name": "Desc 2",
+                  "fill": "#888888",
+                  "textGrowth": "fixed-width",
+                  "width": 200,
+                  "content": "Photo to video flow effect",
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "r4yv7",
+              "name": "Concept 3 - Magic Frame",
+              "layout": "vertical",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "LBHb2",
+                  "name": "Icon 3 Container",
+                  "clip": true,
+                  "width": 1024,
+                  "height": 1024,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 135,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#0D0D2B",
+                        "position": 0
+                      },
+                      {
+                        "color": "#1A0A3E",
+                        "position": 0.5
+                      },
+                      {
+                        "color": "#0A1628",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "n2mHb",
+                      "x": 85,
+                      "y": 85,
+                      "name": "BG Glow Purple",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "radial",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#8B5CF640",
+                            "position": 0
+                          },
+                          {
+                            "color": "#8B5CF600",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 853,
+                      "height": 853
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "lnQdZ",
+                      "x": 341,
+                      "y": 427,
+                      "name": "BG Glow Blue",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "radial",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#3B82F630",
+                            "position": 0
+                          },
+                          {
+                            "color": "#3B82F600",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 683,
+                      "height": 597
+                    },
+                    {
+                      "type": "frame",
+                      "id": "t5Gs5",
+                      "x": 213,
+                      "y": 235,
+                      "name": "Photo Frame",
+                      "width": 384,
+                      "height": 320,
+                      "fill": "#1E1B4B",
+                      "cornerRadius": 34,
+                      "stroke": "$accent-purple",
+                      "strokeWidth": 11,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "path",
+                          "id": "Z0sm7s",
+                          "x": 51,
+                          "y": 107,
+                          "name": "Mountain",
+                          "geometry": "M0 40l18-28 12 16 8-20 28 32z",
+                          "viewBox": [
+                            0,
+                            0,
+                            66,
+                            40
+                          ],
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "linear",
+                            "enabled": true,
+                            "rotation": 0,
+                            "size": {
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#6366F1",
+                                "position": 0
+                              },
+                              {
+                                "color": "#8B5CF6",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "width": 282,
+                          "height": 171
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "MVorF",
+                          "x": 222,
+                          "y": 51,
+                          "name": "Sun",
+                          "fill": "$accent-cyan",
+                          "width": 68,
+                          "height": 68
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 26,
+                      "id": "mNx74",
+                      "x": 512,
+                      "y": 205,
+                      "name": "Film Frame 1",
+                      "fill": "#0F172A80",
+                      "width": 307,
+                      "height": 230,
+                      "stroke": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 90,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#EC4899",
+                            "position": 0
+                          },
+                          {
+                            "color": "#8B5CF6",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "strokeWidth": 9
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 26,
+                      "id": "OX60S",
+                      "x": 555,
+                      "y": 256,
+                      "name": "Film Frame 2",
+                      "fill": "#0F172A80",
+                      "width": 307,
+                      "height": 230,
+                      "stroke": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 90,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#8B5CF6",
+                            "position": 0
+                          },
+                          {
+                            "color": "#06B6D4",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "strokeWidth": 9
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 26,
+                      "id": "r4d8t",
+                      "x": 597,
+                      "y": 307,
+                      "name": "Film Frame 3",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 135,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#1E1B4B",
+                            "position": 0
+                          },
+                          {
+                            "color": "#0F172A",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 307,
+                      "height": 230,
+                      "stroke": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 90,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#06B6D4",
+                            "position": 0
+                          },
+                          {
+                            "color": "#3B82F6",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "strokeWidth": 9
+                    },
+                    {
+                      "type": "path",
+                      "id": "LTPlG",
+                      "x": 363,
+                      "y": 363,
+                      "name": "Transform Arrow",
+                      "geometry": "M0 24c10 0 15-4 25-4 10 0 15-8 27-8l-4-8 12 12-12 12 4-8c-12 0-17 8-27 8-10 0-15-4-25-4z",
+                      "viewBox": [
+                        0,
+                        0,
+                        60,
+                        32
+                      ],
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#8B5CF6",
+                            "position": 0
+                          },
+                          {
+                            "color": "#EC4899",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#06B6D4",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 256,
+                      "height": 171
+                    },
+                    {
+                      "type": "path",
+                      "id": "h3415s",
+                      "x": 149,
+                      "y": 128,
+                      "name": "Sparkle 1",
+                      "opacity": 0.9,
+                      "geometry": "M9 0l1.5 6.5 6.5 2.5-6.5 2.5-1.5 6.5-1.5-6.5-7.5-2.5 7.5-2.5z",
+                      "viewBox": [
+                        0,
+                        0,
+                        17,
+                        18
+                      ],
+                      "fill": "$white",
+                      "width": 77,
+                      "height": 77
+                    },
+                    {
+                      "type": "path",
+                      "id": "iKWNM",
+                      "x": 661,
+                      "y": 171,
+                      "name": "Sparkle 2",
+                      "opacity": 0.8,
+                      "geometry": "M7 0l1.5 5 5.5 2-5.5 2-1.5 5-1.5-5-5.5-2 5.5-2z",
+                      "viewBox": [
+                        0,
+                        0,
+                        14,
+                        14
+                      ],
+                      "fill": "$accent-cyan",
+                      "width": 60,
+                      "height": 60
+                    },
+                    {
+                      "type": "path",
+                      "id": "Su2Aj",
+                      "x": 725,
+                      "y": 597,
+                      "name": "Sparkle 3",
+                      "opacity": 0.7,
+                      "geometry": "M6 0l1 4.5 5 1.5-5 1.5-1 4.5-1-4.5-5-1.5 5-1.5z",
+                      "viewBox": [
+                        0,
+                        0,
+                        12,
+                        12
+                      ],
+                      "fill": "$accent-pink",
+                      "width": 51,
+                      "height": 51
+                    },
+                    {
+                      "type": "path",
+                      "id": "qnMEm",
+                      "x": 107,
+                      "y": 683,
+                      "name": "Sparkle 4",
+                      "opacity": 0.6,
+                      "geometry": "M5 0l1 3.5 4 1.5-4 1.5-1 3.5-1-3.5-4-1.5 4-1.5z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "fill": "$accent-purple",
+                      "width": 43,
+                      "height": 43
+                    },
+                    {
+                      "type": "path",
+                      "id": "KNKvn",
+                      "x": 448,
+                      "y": 640,
+                      "name": "Sparkle 5",
+                      "opacity": 0.5,
+                      "geometry": "M8 0l1.5 5.5 6.5 2.5-6.5 2.5-1.5 5.5-1.5-5.5-6.5-2.5 6.5-2.5z",
+                      "viewBox": [
+                        0,
+                        0,
+                        16,
+                        16
+                      ],
+                      "fill": "$white",
+                      "width": 68,
+                      "height": 68
+                    },
+                    {
+                      "type": "frame",
+                      "id": "FrnAd",
+                      "x": 640,
+                      "y": 363,
+                      "name": "Play Button",
+                      "width": 196,
+                      "height": 196,
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 135,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#8B5CF6",
+                            "position": 0
+                          },
+                          {
+                            "color": "#EC4899",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "cornerRadius": 98,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "path",
+                          "id": "TMVyR",
+                          "x": 68,
+                          "y": 51,
+                          "name": "Play Triangle",
+                          "geometry": "M0 0l18 11-18 11z",
+                          "viewBox": [
+                            0,
+                            0,
+                            18,
+                            22
+                          ],
+                          "fill": "$white",
+                          "width": 77,
+                          "height": 94
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "AXBEH",
+                      "x": 64,
+                      "y": 811,
+                      "name": "AI Badge",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#8B5CF6",
+                            "position": 0
+                          },
+                          {
+                            "color": "#06B6D4",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "content": "AI",
+                      "fontFamily": "Inter",
+                      "fontSize": 55,
+                      "fontWeight": "800",
+                      "letterSpacing": 13
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "vdmgp",
+                  "name": "Label 3",
+                  "fill": "#333333",
+                  "content": "Concept 3: Magic Frame",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "Wegv6",
+                  "name": "Desc 3",
+                  "fill": "#888888",
+                  "textGrowth": "fixed-width",
+                  "width": 200,
+                  "content": "AI sparkle transformation",
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "v7SnE",
+              "name": "Concept 4 - Neural Play",
+              "layout": "vertical",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "GrvKb",
+                  "name": "Icon 4 Container",
+                  "clip": true,
+                  "width": 1024,
+                  "height": 1024,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#1A1040",
+                        "position": 0
+                      },
+                      {
+                        "color": "#0A0A1A",
+                        "position": 0.7
+                      },
+                      {
+                        "color": "#050510",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "IxJAV",
+                      "x": 171,
+                      "y": 171,
+                      "name": "Center Glow",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "radial",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#8B5CF630",
+                            "position": 0
+                          },
+                          {
+                            "color": "#3B82F610",
+                            "position": 0.6
+                          },
+                          {
+                            "color": "#00000000",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 683,
+                      "height": 683
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "PxbOq",
+                      "x": 128,
+                      "y": 235,
+                      "name": "Neural Node 1",
+                      "opacity": 0.7,
+                      "fill": "#8B5CF6",
+                      "width": 68,
+                      "height": 68
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "omCJN",
+                      "x": 77,
+                      "y": 512,
+                      "name": "Neural Node 2",
+                      "opacity": 0.7,
+                      "fill": "#6366F1",
+                      "width": 60,
+                      "height": 60
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "R4Ndsj",
+                      "x": 235,
+                      "y": 725,
+                      "name": "Neural Node 3",
+                      "opacity": 0.7,
+                      "fill": "#3B82F6",
+                      "width": 60,
+                      "height": 60
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "Gb9g9",
+                      "x": 363,
+                      "y": 128,
+                      "name": "Neural Node 4",
+                      "opacity": 0.7,
+                      "fill": "#06B6D4",
+                      "width": 51,
+                      "height": 51
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "htxSP",
+                      "x": 640,
+                      "y": 171,
+                      "name": "Neural Node 5",
+                      "opacity": 0.7,
+                      "fill": "#EC4899",
+                      "width": 60,
+                      "height": 60
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "C6aeO9",
+                      "x": 747,
+                      "y": 427,
+                      "name": "Neural Node 6",
+                      "opacity": 0.7,
+                      "fill": "#8B5CF6",
+                      "width": 68,
+                      "height": 68
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "fLGdM",
+                      "x": 811,
+                      "y": 683,
+                      "name": "Neural Node 7",
+                      "opacity": 0.7,
+                      "fill": "#06B6D4",
+                      "width": 51,
+                      "height": 51
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "WFJ3T",
+                      "x": 512,
+                      "y": 768,
+                      "name": "Neural Node 8",
+                      "opacity": 0.7,
+                      "fill": "#3B82F6",
+                      "width": 60,
+                      "height": 60
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "H5SMG0",
+                      "x": 162,
+                      "y": 269,
+                      "name": "Connection 1",
+                      "rotation": 51.7889745744388,
+                      "fill": "#6366F140",
+                      "width": 6,
+                      "height": 255
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "D0aST",
+                      "x": 111,
+                      "y": 546,
+                      "name": "Connection 2",
+                      "rotation": 115.38790629109593,
+                      "fill": "#6366F140",
+                      "width": 6,
+                      "height": 279
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "pXE0F",
+                      "x": 269,
+                      "y": 759,
+                      "name": "Connection 3",
+                      "rotation": 164.24882633654698,
+                      "fill": "#6366F140",
+                      "width": 6,
+                      "height": 346
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "EZXdn",
+                      "x": 388,
+                      "y": 154,
+                      "name": "Connection 4",
+                      "rotation": 28.23744553816726,
+                      "fill": "#6366F140",
+                      "width": 6,
+                      "height": 262
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "f8FY9",
+                      "x": 670,
+                      "y": 201,
+                      "name": "Connection 5",
+                      "rotation": -40.71084667118098,
+                      "fill": "#6366F140",
+                      "width": 6,
+                      "height": 242
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "Kvs14",
+                      "x": 781,
+                      "y": 461,
+                      "name": "Connection 6",
+                      "rotation": -87.33699923393286,
+                      "fill": "#6366F140",
+                      "width": 6,
+                      "height": 184
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "EPGR1",
+                      "x": 836,
+                      "y": 708,
+                      "name": "Connection 7",
+                      "rotation": -122.7352262721076,
+                      "fill": "#6366F140",
+                      "width": 6,
+                      "height": 284
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "j6QX6",
+                      "x": 542,
+                      "y": 798,
+                      "name": "Connection 8",
+                      "rotation": -171.52885536698517,
+                      "fill": "#6366F140",
+                      "width": 6,
+                      "height": 203
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "WKc98",
+                      "x": 363,
+                      "y": 427,
+                      "name": "Connection 9",
+                      "rotation": 105.94539590092285,
+                      "fill": "#6366F140",
+                      "width": 6,
+                      "height": 155
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "rHnYW",
+                      "x": 512,
+                      "y": 384,
+                      "name": "Connection 10",
+                      "rotation": 45,
+                      "fill": "#6366F140",
+                      "width": 6,
+                      "height": 121
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "kzbUV",
+                      "x": 597,
+                      "y": 469,
+                      "name": "Connection 11",
+                      "rotation": -33.690067525979785,
+                      "fill": "#6366F140",
+                      "width": 6,
+                      "height": 154
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "g0Ggk",
+                      "x": 299,
+                      "y": 299,
+                      "name": "Core Ring Outer",
+                      "fill": "#00000000",
+                      "width": 427,
+                      "height": 427,
+                      "stroke": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 135,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#8B5CF6",
+                            "position": 0
+                          },
+                          {
+                            "color": "#06B6D4",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#EC4899",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "strokeWidth": 13
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "Je6Ox",
+                      "x": 341,
+                      "y": 341,
+                      "name": "Core Ring Inner",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "radial",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#1A1040",
+                            "position": 0
+                          },
+                          {
+                            "color": "#0D0D2B",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 341,
+                      "height": 341,
+                      "stroke": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 45,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#8B5CF680",
+                            "position": 0
+                          },
+                          {
+                            "color": "#3B82F680",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "strokeWidth": 6
+                    },
+                    {
+                      "type": "path",
+                      "id": "hEVCQ",
+                      "x": 427,
+                      "y": 405,
+                      "name": "Play Icon Center",
+                      "geometry": "M0 0l30 18-30 18z",
+                      "viewBox": [
+                        0,
+                        0,
+                        30,
+                        36
+                      ],
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 135,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF",
+                            "position": 0
+                          },
+                          {
+                            "color": "#E0E7FF",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 128,
+                      "height": 154
+                    },
+                    {
+                      "type": "frame",
+                      "id": "M2Pe6",
+                      "x": 235,
+                      "y": 64,
+                      "name": "Film Strip Top",
+                      "width": 555,
+                      "height": 51,
+                      "fill": "#0F172A60",
+                      "cornerRadius": 13,
+                      "stroke": "#6366F130",
+                      "strokeWidth": 1,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "gzFgI",
+                          "x": 26,
+                          "y": 13,
+                          "name": "Perf 1",
+                          "fill": "#6366F130",
+                          "width": 34,
+                          "height": 26
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "aroSP",
+                          "x": 94,
+                          "y": 13,
+                          "name": "Perf 2",
+                          "fill": "#6366F130",
+                          "width": 34,
+                          "height": 26
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "kQGOc",
+                          "x": 162,
+                          "y": 13,
+                          "name": "Perf 3",
+                          "fill": "#6366F130",
+                          "width": 34,
+                          "height": 26
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "n6PBVV",
+                          "x": 230,
+                          "y": 13,
+                          "name": "Perf 4",
+                          "fill": "#6366F130",
+                          "width": 34,
+                          "height": 26
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "y00hap",
+                          "x": 299,
+                          "y": 13,
+                          "name": "Perf 5",
+                          "fill": "#6366F130",
+                          "width": 34,
+                          "height": 26
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "UgMMd",
+                          "x": 367,
+                          "y": 13,
+                          "name": "Perf 6",
+                          "fill": "#6366F130",
+                          "width": 34,
+                          "height": 26
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "kjmFE",
+                          "x": 435,
+                          "y": 13,
+                          "name": "Perf 7",
+                          "fill": "#6366F130",
+                          "width": 34,
+                          "height": 26
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "Jh9La",
+                          "x": 503,
+                          "y": 13,
+                          "name": "Perf 8",
+                          "fill": "#6366F130",
+                          "width": 34,
+                          "height": 26
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "T5pWQ",
+                      "x": 235,
+                      "y": 909,
+                      "name": "Film Strip Bottom",
+                      "width": 555,
+                      "height": 51,
+                      "fill": "#0F172A60",
+                      "cornerRadius": 13,
+                      "stroke": "#6366F130",
+                      "strokeWidth": 1,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "ZND8o",
+                          "x": 26,
+                          "y": 13,
+                          "name": "Perf 1",
+                          "fill": "#6366F130",
+                          "width": 34,
+                          "height": 26
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "B6gzY",
+                          "x": 94,
+                          "y": 13,
+                          "name": "Perf 2",
+                          "fill": "#6366F130",
+                          "width": 34,
+                          "height": 26
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "C70QtG",
+                          "x": 162,
+                          "y": 13,
+                          "name": "Perf 3",
+                          "fill": "#6366F130",
+                          "width": 34,
+                          "height": 26
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "b43Nn",
+                          "x": 230,
+                          "y": 13,
+                          "name": "Perf 4",
+                          "fill": "#6366F130",
+                          "width": 34,
+                          "height": 26
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "em51L",
+                          "x": 299,
+                          "y": 13,
+                          "name": "Perf 5",
+                          "fill": "#6366F130",
+                          "width": 34,
+                          "height": 26
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "U30R8c",
+                          "x": 367,
+                          "y": 13,
+                          "name": "Perf 6",
+                          "fill": "#6366F130",
+                          "width": 34,
+                          "height": 26
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "AfoP3",
+                          "x": 435,
+                          "y": 13,
+                          "name": "Perf 7",
+                          "fill": "#6366F130",
+                          "width": 34,
+                          "height": 26
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "YR9dh",
+                          "x": 503,
+                          "y": 13,
+                          "name": "Perf 8",
+                          "fill": "#6366F130",
+                          "width": 34,
+                          "height": 26
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "g17if",
+                      "x": 68,
+                      "y": 789,
+                      "name": "Image Icon",
+                      "width": 137,
+                      "height": 119,
+                      "fill": "#0F172A80",
+                      "cornerRadius": 17,
+                      "stroke": "#8B5CF680",
+                      "strokeWidth": 6,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "path",
+                          "id": "YlWCv",
+                          "x": 17,
+                          "y": 43,
+                          "name": "Img Mountain",
+                          "geometry": "M0 14l8-10 6 6 4-8 6 12z",
+                          "viewBox": [
+                            0,
+                            0,
+                            24,
+                            14
+                          ],
+                          "fill": "#8B5CF680",
+                          "width": 102,
+                          "height": 60
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "KSQt3",
+                          "x": 77,
+                          "y": 17,
+                          "name": "Img Sun",
+                          "fill": "#06B6D480",
+                          "width": 34,
+                          "height": 34
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "PVvTC",
+                      "x": 789,
+                      "y": 832,
+                      "name": "AI Label",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#8B5CF6",
+                            "position": 0
+                          },
+                          {
+                            "color": "#EC4899",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "content": "AI",
+                      "fontFamily": "Inter",
+                      "fontSize": 68,
+                      "fontWeight": "900",
+                      "letterSpacing": 9
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "OG77x",
+                      "x": 495,
+                      "y": 265,
+                      "name": "Orbital Dot 1",
+                      "fill": "#06B6D4",
+                      "width": 26,
+                      "height": 26
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "V11bD",
+                      "x": 256,
+                      "y": 469,
+                      "name": "Orbital Dot 2",
+                      "fill": "#EC4899",
+                      "width": 21,
+                      "height": 21
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "Eexl3",
+                      "x": 708,
+                      "y": 503,
+                      "name": "Orbital Dot 3",
+                      "fill": "#8B5CF6",
+                      "width": 21,
+                      "height": 21
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "PrACX",
+                      "x": 478,
+                      "y": 734,
+                      "name": "Orbital Dot 4",
+                      "fill": "#3B82F6",
+                      "width": 26,
+                      "height": 26
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "OZlpo",
+                  "name": "Label 4",
+                  "fill": "#333333",
+                  "content": "Concept 4: Neural Play",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "uQUGa",
+                  "name": "Desc 4",
+                  "fill": "#888888",
+                  "textGrowth": "fixed-width",
+                  "width": 200,
+                  "content": "Neural network meets cinema",
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "accent-blue": {
+      "type": "color",
+      "value": "#3B82F6"
+    },
+    "accent-cyan": {
+      "type": "color",
+      "value": "#06B6D4"
+    },
+    "accent-orange": {
+      "type": "color",
+      "value": "#F97316"
+    },
+    "accent-pink": {
+      "type": "color",
+      "value": "#EC4899"
+    },
+    "accent-purple": {
+      "type": "color",
+      "value": "#8B5CF6"
+    },
+    "icon-bg-1": {
+      "type": "color",
+      "value": "#0A0A1A"
+    },
+    "icon-bg-2": {
+      "type": "color",
+      "value": "#1A0A2E"
+    },
+    "icon-bg-3": {
+      "type": "color",
+      "value": "#0D1117"
+    },
+    "icon-bg-4": {
+      "type": "color",
+      "value": "#F5F0FF"
+    },
+    "light-gray": {
+      "type": "color",
+      "value": "#E2E8F0"
+    },
+    "white": {
+      "type": "color",
+      "value": "#FFFFFF"
+    }
+  }
+}

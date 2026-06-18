@@ -6,8 +6,8 @@ struct AppTheme {
     // MARK: 背景色系 (Backgrounds)
     static let bgPrimary    = Color(hex: "#0C0C0C") // 主背景深黑
     static let bgSecondary  = Color(hex: "#161418") // 深紫黑
-    static let bgCard       = Color(hex: "#23252B") // 卡片背景
-    static let bgSurface    = Color(hex: "#2A2633") // 浮层
+    static let bgCard       = Color.white.opacity(0.05) // 改为半透明，适配玻璃拟态
+    static let bgSurface    = Color.white.opacity(0.08) // 浮层
     static let bgInput      = Color.white.opacity(0.04)
     static let bgButtonSec  = Color.white.opacity(0.08)
 
@@ -45,7 +45,7 @@ struct AppTheme {
     static let textMuted     = Color(hex: "#999999") // 淡灰提示文本
 
     // MARK: 边框 (Borders)
-    static let borderSubtle  = Color(hex: "#333333") // 分割线
+    static let borderSubtle  = Color.white.opacity(0.12) // 分割线改为更透的白色
     static let borderAccent  = Color(hex: "#6F31D5").opacity(0.5)
 
     // MARK: 语义色 (Semantic)
@@ -85,16 +85,8 @@ extension View {
             .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
     }
 
-    /// HypeCut 风格卡片：深色半透明 + 紫色细边框
+    /// HypeCut 风格卡片：改为玻璃拟态
     func cardStyle(cornerRadius: CGFloat = 18) -> some View {
-        self
-            .background(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(AppTheme.bgCard)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(AppTheme.borderSubtle, lineWidth: 0.5)
-            )
+        self.glassStyle(cornerRadius: cornerRadius)
     }
 }

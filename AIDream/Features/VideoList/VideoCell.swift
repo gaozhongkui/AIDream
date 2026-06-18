@@ -158,11 +158,19 @@ final class VideoCell: UICollectionViewCell {
 
     // MARK: - Layout
     override func layoutSubviews() {
+        // 1. 先确保父类及 Auto Layout 约束把视图尺寸完全计算好
         super.layoutSubviews()
+        
+        // 2. 强制让当前 cell 的子视图立即根据最新约束刷新 frame
+        self.contentView.layoutIfNeeded()
+        
         CATransaction.begin()
         CATransaction.setDisableActions(true)
+        
+        // 3. 使用此时已经绝对精准的 bounds
         gradientLayer.frame = coverImageView.bounds
         playerLayer?.frame = coverImageView.bounds
+        
         CATransaction.commit()
     }
 

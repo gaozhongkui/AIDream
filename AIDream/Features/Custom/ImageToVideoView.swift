@@ -30,7 +30,6 @@ struct ImageToVideoView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 32) {
-                    // 统一顶部边距为 20
                     imageUploadSection.padding(.top, 20)
                     promptSection
 
@@ -85,9 +84,7 @@ struct ImageToVideoView: View {
                             .foregroundColor(AppTheme.accentSecondary)
                     }
                     .padding(16)
-                    .background(AppTheme.error.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color.white.opacity(0.15), lineWidth: 0.5))
+                    .glassStyle(cornerRadius: 16)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 200)
                 }
@@ -104,7 +101,7 @@ struct ImageToVideoView: View {
                         .foregroundColor(.white)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 12)
-                        .background(BlurView(style: .systemUltraThinMaterialDark).clipShape(Capsule()))
+                        .glassStyle(cornerRadius: 25)
                         .padding(.bottom, 150)
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -154,7 +151,6 @@ struct ImageToVideoView: View {
 
     // MARK: - UI Components
     private var imageUploadSection: some View {
-        // 统一间距为 16
         VStack(alignment: .leading, spacing: 16) {
             Label("Visual Reference", systemImage: "photo.on.rectangle.angled")
                 .font(.system(size: 14, weight: .bold))
@@ -202,7 +198,6 @@ struct ImageToVideoView: View {
     }
 
     private var promptSection: some View {
-        // 统一间距为 16
         VStack(alignment: .leading, spacing: 16) {
             Label("Creative Prompt", systemImage: "sparkles")
                 .font(.system(size: 14, weight: .bold))
@@ -230,7 +225,6 @@ struct ImageToVideoView: View {
     }
 
     private func optionRow(title: String, options: [String], selection: Binding<String>, proOptions: [String]) -> some View {
-        // 统一标题间距为 16
         VStack(alignment: .leading, spacing: 16) {
             Text(title.uppercased())
                 .font(.system(size: 11, weight: .bold))
@@ -250,7 +244,7 @@ struct ImageToVideoView: View {
                         .frame(maxWidth: .infinity).frame(height: 46)
                         .background(selection.wrappedValue == opt ? AppTheme.accentPrimary.opacity(0.15) : Color.white.opacity(0.05))
                         .clipShape(RoundedRectangle(cornerRadius: 14))
-                        .overlay(RoundedRectangle(cornerRadius: 14).stroke(selection.wrappedValue == opt ? AppTheme.accentPrimary : Color.clear, lineWidth: 1.5))
+                        .overlay(RoundedRectangle(cornerRadius: 14).stroke(selection.wrappedValue == opt ? AppTheme.accentPrimary : Color.white.opacity(0.1), lineWidth: selection.wrappedValue == opt ? 1.5 : 0.5))
                     }
                     .foregroundColor(selection.wrappedValue == opt ? .white : AppTheme.textSecondary)
                 }
@@ -259,7 +253,6 @@ struct ImageToVideoView: View {
     }
 
     private var aspectRatioSection: some View {
-        // 统一间距为 16
         VStack(alignment: .leading, spacing: 16) {
             Text("ASPECT RATIO")
                 .font(.system(size: 11, weight: .bold))
@@ -282,7 +275,7 @@ struct ImageToVideoView: View {
             .frame(maxWidth: .infinity).frame(height: 56)
             .background(isSelected ? AppTheme.accentPrimary.opacity(0.1) : Color.white.opacity(0.05))
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay(RoundedRectangle(cornerRadius: 16).stroke(isSelected ? AppTheme.accentPrimary : Color.white.opacity(0.1), lineWidth: isSelected ? 1.5 : 1))
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(isSelected ? AppTheme.accentPrimary : Color.white.opacity(0.1), lineWidth: isSelected ? 1.5 : 0.5))
         }
         .foregroundColor(isSelected ? .white : AppTheme.textSecondary)
     }
@@ -344,15 +337,12 @@ struct ImageToVideoView: View {
         Task {
             do {
                 showToast(message: "Downloading video...")
-
-                // 🟢 修复：添加 Auth Header 以支持 OpenRouter 视频下载
                 var request = URLRequest(url: url)
                 if url.absoluteString.contains("openrouter.ai") {
                     request.setValue("Bearer \(AIConfig.shared.openRouterApiKey)", forHTTPHeaderField: "Authorization")
                 }
 
                 let (tempData, response) = try await URLSession.shared.data(for: request)
-
                 if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
                     throw NSError(domain: "DownloadError", code: httpResponse.statusCode)
                 }
@@ -360,7 +350,6 @@ struct ImageToVideoView: View {
                 let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".mp4")
                 try tempData.write(to: tempURL)
 
-                // 🟢 确保在主线程保存到相册
                 DispatchQueue.main.async {
                     UISaveVideoAtPathToSavedPhotosAlbum(tempURL.path, nil, nil, nil)
                     showToast(message: "Video saved to gallery")

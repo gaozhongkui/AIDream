@@ -26,7 +26,6 @@ struct CustomView: View {
                     customNavBar
                     modeSelector
 
-                    // 显式设置对齐方式为 .top，防止切换时因高度微差产生跳动
                     ZStack(alignment: .top) {
                         switch selectedMode {
                         case .imageToVideo:
@@ -50,11 +49,11 @@ struct CustomView: View {
                 }
             }
             .alert("Generation Tips", isPresented: $showTip) {
-            Button("Got it") {}
-        } message: {
-            Text("Video: Upload a start frame image, add a prompt, and AI will animate it.\nReference: Upload reference images to guide the style.\nImage: Describe your vision in words and AI will paint it.")
+                Button("Got it") {}
+            } message: {
+                Text("Video: Upload a start frame image, add a prompt, and AI will animate it.\nReference: Upload reference images to guide the style.\nImage: Describe your vision in words and AI will paint it.")
+            }
         }
-    }
     }
 
     // MARK: - Nav Bar
@@ -71,12 +70,8 @@ struct CustomView: View {
                         .foregroundColor(.white)
                 }
                 .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(.ultraThinMaterial)
-                .background(Color.white.opacity(0.03))
-                .clipShape(Capsule())
-                .overlay(Capsule().stroke(Color.white.opacity(0.15), lineWidth: 0.5))
-                .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
+                .padding(.vertical, 8)
+                .glassStyle(cornerRadius: 20)
             }
 
             Spacer()
@@ -93,11 +88,7 @@ struct CustomView: View {
                     .font(.system(size: 16))
                     .foregroundColor(AppTheme.accentSecondary)
                     .frame(width: 40, height: 40)
-                    .background(.ultraThinMaterial)
-                    .background(Color.white.opacity(0.03))
-                    .clipShape(Circle())
-                    .overlay(Circle().stroke(Color.white.opacity(0.15), lineWidth: 0.5))
-                    .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
+                    .glassStyle(cornerRadius: 20)
             }
         }
         .padding(.horizontal, 20)
@@ -129,26 +120,17 @@ struct CustomView: View {
                         .frame(height: 34)
                         .background(
                             selectedMode == mode
-                                ? RoundedRectangle(cornerRadius: 10).fill(Color(hex: "#7032D6"))
+                                ? RoundedRectangle(cornerRadius: 10).fill(AppTheme.accentPrimary)
                                 : RoundedRectangle(cornerRadius: 8).fill(Color.clear)
                         )
                 }
             }
         }
         .padding(4)
-        .background(.ultraThinMaterial)
-        .background(Color.white.opacity(0.03))
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
-        )
-        .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
+        .glassStyle(cornerRadius: 14)
         .padding(.horizontal, 16)
         .padding(.top, 12)
     }
-
-    @Namespace private var tabNamespace
 
     private func modeTitle(for mode: GenerationMode) -> String {
         switch mode {

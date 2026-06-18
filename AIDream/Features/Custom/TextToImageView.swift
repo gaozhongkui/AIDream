@@ -26,7 +26,6 @@ struct TextToImageView: View {
                         errorBanner(error)
                     }
 
-                    // 1. 统一顶部边距为 20
                     promptSection.padding(.top, 20)
                     aspectRatioSection
 
@@ -114,14 +113,11 @@ struct TextToImageView: View {
             }
         }
         .padding(16)
-        .background(AppTheme.error.opacity(0.1))
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color.white.opacity(0.15), lineWidth: 0.5))
+        .glassStyle(cornerRadius: 16)
     }
 
     // MARK: - Prompt Section
     private var promptSection: some View {
-        // 2. 统一标题与内容的间距为 16
         VStack(alignment: .leading, spacing: 16) {
             Label("Imagination Prompt", systemImage: "sparkles")
                 .font(.system(size: 14, weight: .bold))
@@ -150,7 +146,6 @@ struct TextToImageView: View {
 
     // MARK: - Aspect Ratio
     private var aspectRatioSection: some View {
-        // 3. 统一标题间距为 16
         VStack(alignment: .leading, spacing: 16) {
             Text("CANVAS RATIO")
                 .font(.system(size: 11, weight: .bold))
@@ -176,7 +171,7 @@ struct TextToImageView: View {
             .frame(maxWidth: .infinity).frame(height: 70)
             .background(selected ? AppTheme.accentPrimary.opacity(0.15) : Color.white.opacity(0.05))
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay(RoundedRectangle(cornerRadius: 16).stroke(selected ? AppTheme.accentPrimary : Color.clear, lineWidth: 1.5))
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(selected ? AppTheme.accentPrimary : Color.white.opacity(0.1), lineWidth: selected ? 1.5 : 0.5))
             .foregroundColor(selected ? .white : AppTheme.textSecondary)
         }
     }

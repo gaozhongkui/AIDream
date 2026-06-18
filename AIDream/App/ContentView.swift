@@ -39,16 +39,7 @@ struct ContentView: View {
         .frame(height: 55)
         .padding(.vertical, 6)
         .padding(.horizontal, 6)
-        // Glassmorphism 2.0 — 链式材质，逐个叠加，不嵌套 ZStack
-        .background(.ultraThinMaterial)
-        .background(Color.white.opacity(0.03))
-        .background(Color(hex: "#0C0C0C").opacity(0.35))
-        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
-        )
-        .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
+        .glassStyle(cornerRadius: 24)
         .padding(.horizontal, 20)
         .padding(.bottom, 24)
     }
@@ -62,20 +53,20 @@ struct ContentView: View {
                 ZStack {
                     // 选中态紫色背景
                     if active {
-                        RoundedRectangle(cornerRadius: 13)
-                            .fill(Color(hex: "#7032D6").opacity(0.3))
-                            .frame(width: 86, height: 34)
+                        RoundedRectangle(cornerRadius: 14)
+                            .fill(AppTheme.accentGrad.opacity(0.2))
+                            .frame(width: 86, height: 36)
                     }
                     // 图标
                     Image(systemName: icon)
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(active ? Color(hex: "#A07BFF") : AppTheme.textMuted)
+                        .foregroundColor(active ? AppTheme.accentSecondary : AppTheme.textMuted)
                 }
-                .frame(width: 86, height: 34)
+                .frame(width: 86, height: 36)
 
                 Text(label)
                     .font(.system(size: 10, weight: .medium))
-                    .foregroundColor(active ? Color(hex: "#A07BFF") : AppTheme.textMuted)
+                    .foregroundColor(active ? AppTheme.accentSecondary : AppTheme.textMuted)
             }
             .frame(maxWidth: .infinity)
         }
