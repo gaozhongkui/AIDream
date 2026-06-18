@@ -26,21 +26,21 @@ struct DiamondStoreView: View {
             gradient: [Color(hex: "#3A3F5C").opacity(0.6), Color(hex: "#2A2D40").opacity(0.6)]
         ),
         DiamondPackage(
-            id: "1000",
+            id: "900",
             productID: .diamonds1000,
-            diamonds: 1000, price: "$4.99", bonus: 100, tag: "POPULAR",
+            diamonds: 800, price: "$4.99", bonus: 100, tag: "POPULAR",
             gradient: [Color(hex: "#2D4A7A").opacity(0.6), Color(hex: "#1E3460").opacity(0.6)]
         ),
         DiamondPackage(
-            id: "2500",
+            id: "2000",
             productID: .diamonds2500,
-            diamonds: 2500, price: "$9.99", bonus: 500, tag: "BEST VALUE",
+            diamonds: 1800, price: "$9.99", bonus: 200, tag: "BEST VALUE",
             gradient: [Color(hex: "#4A2D7A").opacity(0.6), Color(hex: "#2E1A5E").opacity(0.6)]
         ),
         DiamondPackage(
-            id: "6000",
+            id: "5000",
             productID: .diamonds6000,
-            diamonds: 6000, price: "$19.99", bonus: 2000, tag: "WHALE",
+            diamonds: 4000, price: "$19.99", bonus: 1000, tag: "WHALE",
             gradient: [Color(hex: "#7A4A2D").opacity(0.6), Color(hex: "#5E2E1A").opacity(0.6)]
         )
     ]
@@ -251,7 +251,7 @@ struct DiamondStoreView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("PRO MEMBERSHIP")
                     .font(.system(size: 13, weight: .bold)).foregroundColor(.white)
-                Text(userService.isPremium ? "You are a PRO member" : "Subscribe to get 500 bonus diamonds!")
+                Text(userService.isPremium ? "You are a PRO member" : "Subscribe to get up to 10,000 diamonds!")
                     .font(.system(size: 12)).foregroundColor(AppTheme.textSecondary)
             }
 

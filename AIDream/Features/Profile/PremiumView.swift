@@ -25,7 +25,7 @@ struct PremiumView: View {
     private let features = [
         FeatureItem(icon: "bolt.fill", title: "Ultra-Fast Generation", description: "Priority server access for AI creation", color: Color(hex: "#FFD700")),
         FeatureItem(icon: "sparkles", title: "4K High Definition", description: "Export your videos in cinematic 4K resolution", color: Color(hex: "#A07BFF")),
-        FeatureItem(icon: "diamond.fill", title: "Monthly 1,000 Diamonds", description: "Exclusive monthly claim for Pro members", color: Color(hex: "#6F31D5")),
+        FeatureItem(icon: "diamond.fill", title: "Monthly 1,200 Diamonds", description: "Exclusive monthly claim for Pro members", color: Color(hex: "#6F31D5")),
         FeatureItem(icon: "crown.fill", title: "Pro Style Models", description: "Access to private artistic AI models", color: Color(hex: "#FF8C00"))
     ]
 
@@ -91,6 +91,14 @@ struct PremiumView: View {
             if let url = safariURL {
                 SafariView(url: url).ignoresSafeArea()
             }
+        }
+        .alert("Purchase Error", isPresented: Binding(
+            get: { storeKit.purchaseError != nil && purchasingID == nil },
+            set: { if !$0 { storeKit.purchaseError = nil } }
+        )) {
+            Button("OK") { storeKit.purchaseError = nil }
+        } message: {
+            Text(storeKit.purchaseError ?? "")
         }
     }
 
@@ -186,7 +194,11 @@ struct PremiumView: View {
                 fallbackPlans
             } else {
                 ForEach(storeKit.subscriptionProducts, id: \.id) { product in
-                    planCard(title: product.displayName, price: product.displayPrice, id: product.id, subTitle: product.description)
+                    let diamondAmount = StoreProductID(rawValue: product.id)?.diamondAmount ?? 0
+                    planCard(title: product.displayName,
+                             price: product.displayPrice,
+                             id: product.id,
+                             subTitle: diamondAmount > 0 ? "Includes \(diamondAmount) Diamonds" : product.description)
                 }
             }
         }
@@ -195,9 +207,9 @@ struct PremiumView: View {
 
     private var fallbackPlans: some View {
         VStack(spacing: 14) {
-            planCard(title: "Weekly", price: "$4.99", id: StoreProductID.premiumWeekly.rawValue, subTitle: "Basic Pro features")
-            planCard(title: "Monthly", price: "$12.99", id: StoreProductID.premiumMonthly.rawValue, subTitle: "Includes 1,000 Diamonds", tag: "POPULAR")
-            planCard(title: "Annual", price: "$79.99", id: "premium_annual", subTitle: "Save 48% Yearly", tag: "BEST VALUE")
+            planCard(title: "Weekly", price: "$4.99", id: StoreProductID.premiumWeekly.rawValue, subTitle: "Includes 500 Diamonds")
+            planCard(title: "Monthly", price: "$12.99", id: StoreProductID.premiumMonthly.rawValue, subTitle: "Includes 1,200 Diamonds", tag: "POPULAR")
+            planCard(title: "Lifetime", price: "$129.99", id: StoreProductID.premiumLifetime.rawValue, subTitle: "10,000 Diamonds & Permanent VIP", tag: "BEST VALUE")
         }
     }
 
@@ -265,13 +277,22 @@ struct PremiumView: View {
 
     private var purchaseButton: some View {
         Button(action: {
-            if let product = storeKit.subscriptionProducts.first(where: { $0.id == selectedProductID }) {
-                purchasingID = product.id
-                Task {
-                    let success = await storeKit.purchase(product)
-                    purchasingID = nil
-                    if success { dismiss() }
-                }
+            // 如果产品列表为空，先尝试重新加载
+            if storeKit.subscriptionProducts.isEmpty {
+                Task { await storeKit.loadProducts() }
+                return
+            }
+            
+            guard let product = storeKit.subscriptionProducts.first(where: { $0.id == selectedProductID }) else {
+                storeKit.purchaseError = "Product not found. Please try again."
+                return
+            }
+            
+            purchasingID = product.id
+            Task {
+                let success = await storeKit.purchase(product)
+                purchasingID = nil
+                if success { dismiss() }
             }
         }) {
             ZStack {
