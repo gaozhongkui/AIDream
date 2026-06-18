@@ -64,6 +64,24 @@ final class VideoDetailViewController: UIViewController {
     override var prefersStatusBarHidden: Bool {
         return true
     }
+
+    private func showFeedbackAlert() {
+        let feedbackVC = FeedbackPopupViewController()
+        feedbackVC.modalPresentationStyle = .overFullScreen
+        feedbackVC.modalTransitionStyle = .crossDissolve
+        feedbackVC.onSuccess = { [weak self] in
+            self?.showSuccessToast()
+        }
+        present(feedbackVC, animated: true)
+    }
+
+    private func showSuccessToast() {
+        let toast = UIAlertController(title: "Feedback Successful", message: "Thank you for your feedback!", preferredStyle: .alert)
+        present(toast, animated: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            toast.dismiss(animated: true)
+        }
+    }
 }
 
 extension VideoDetailViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -82,10 +100,162 @@ extension VideoDetailViewController: UICollectionViewDataSource, UICollectionVie
                 NotificationCenter.default.post(name: .switchToReferenceMode, object: nil)
             }
         }
+        cell.onFeedbackTapped = { [weak self] in
+            self?.showFeedbackAlert()
+        }
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         (cell as? VideoDetailCell)?.stopPlayback()
+    }
+}
+
+// MARK: - Custom Feedback Popup
+final class FeedbackPopupViewController: UIViewController {
+    var onSuccess: (() -> Void)?
+
+    private let containerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(red: 22/255, green: 20/255, blue: 24/255, alpha: 1) // bgSecondary
+        view.layer.cornerRadius = 24
+        view.layer.borderWidth = 1
+        view.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
+        view.clipsToBounds = true
+        return view
+    }()
+
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "FeedBack"
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 20, weight: .bold)
+        label.textAlignment = .center
+        return label
+    }()
+
+    private let subtitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "We value your feedback to improve our app. Please describe your experience below."
+        label.textColor = UIColor.white.withAlphaComponent(0.6)
+        label.font = .systemFont(ofSize: 14)
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        return label
+    }()
+
+    private let textView: UITextView = {
+        let tv = UITextView()
+        tv.backgroundColor = UIColor.white.withAlphaComponent(0.05)
+        tv.layer.cornerRadius = 12
+        tv.textColor = .white
+        tv.font = .systemFont(ofSize: 15)
+        tv.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
+        return tv
+    }()
+
+    private let placeholderLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Write your feedback here..."
+        label.textColor = UIColor.white.withAlphaComponent(0.3)
+        label.font = .systemFont(ofSize: 15)
+        return label
+    }()
+
+    private lazy var submitButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setTitle("Submit", for: .normal)
+        btn.setTitleColor(.white, for: .normal)
+        btn.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
+        btn.backgroundColor = UIColor(red: 111/255, green: 49/255, blue: 213/255, alpha: 1) // accentPrimary
+        btn.layer.cornerRadius = 14
+        btn.isEnabled = false
+        btn.alpha = 0.5
+        return btn
+    }()
+
+    private let cancelButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setTitle("Cancel", for: .normal)
+        btn.setTitleColor(UIColor.white.withAlphaComponent(0.5), for: .normal)
+        btn.titleLabel?.font = .systemFont(ofSize: 15)
+        return btn
+    }()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupUI()
+        textView.delegate = self
+        submitButton.addTarget(self, action: #selector(submitTapped), for: .touchUpInside)
+        cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
+
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tap)
+    }
+
+    private func setupUI() {
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        view.addSubview(containerView)
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+
+        [titleLabel, subtitleLabel, textView, placeholderLabel, submitButton, cancelButton].forEach {
+            containerView.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+
+        NSLayoutConstraint.activate([
+            containerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            containerView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -40),
+            containerView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.85),
+
+            titleLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 24),
+            titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 20),
+            titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -20),
+
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
+            subtitleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 24),
+            subtitleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -24),
+
+            textView.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 20),
+            textView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 20),
+            textView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -20),
+            textView.heightAnchor.constraint(equalToConstant: 120),
+
+            placeholderLabel.topAnchor.constraint(equalTo: textView.topAnchor, constant: 12),
+            placeholderLabel.leadingAnchor.constraint(equalTo: textView.leadingAnchor, constant: 16),
+
+            submitButton.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 24),
+            submitButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 20),
+            submitButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -20),
+            submitButton.heightAnchor.constraint(equalToConstant: 50),
+
+            cancelButton.topAnchor.constraint(equalTo: submitButton.bottomAnchor, constant: 8),
+            cancelButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            cancelButton.heightAnchor.constraint(equalToConstant: 44),
+            cancelButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12)
+        ])
+    }
+
+    @objc private func submitTapped() {
+        dismiss(animated: true) {
+            self.onSuccess?()
+        }
+    }
+
+    @objc private func cancelTapped() {
+        dismiss(animated: true)
+    }
+
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+}
+
+extension FeedbackPopupViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        let isEmpty = textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        placeholderLabel.isHidden = !textView.text.isEmpty
+        submitButton.isEnabled = !isEmpty
+        submitButton.alpha = isEmpty ? 0.5 : 1.0
     }
 }

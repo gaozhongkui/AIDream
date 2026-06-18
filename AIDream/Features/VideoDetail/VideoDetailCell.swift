@@ -101,10 +101,10 @@ final class VideoDetailCell: UICollectionViewCell {
         return btn
     }()
 
-    private let moreButton: UIButton = {
+    private let feedbackButton: UIButton = {
         let btn = UIButton(type: .system)
         let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .semibold)
-        btn.setImage(UIImage(systemName: "ellipsis", withConfiguration: config), for: .normal)
+        btn.setImage(UIImage(systemName: "exclamationmark.bubble", withConfiguration: config), for: .normal)
         btn.tintColor = .white
         return btn
     }()
@@ -181,6 +181,7 @@ final class VideoDetailCell: UICollectionViewCell {
 
     var onBackTapped: (() -> Void)?
     var onRemixTapped: (() -> Void)?
+    var onFeedbackTapped: (() -> Void)?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -198,14 +199,14 @@ final class VideoDetailCell: UICollectionViewCell {
 
         contentView.addSubview(backButtonBlur)
         contentView.addSubview(backButton)
-        contentView.addSubview(moreButton)
+        contentView.addSubview(feedbackButton)
 
         contentView.addSubview(infoStackView)
         contentView.addSubview(likeButtonBlur)
         contentView.addSubview(likeButton)
         contentView.addSubview(remixButton)
 
-        [playerContainer, coverImageView, backButtonBlur, backButton, moreButton, infoStackView, likeButtonBlur, likeButton, remixButton].forEach {
+        [playerContainer, coverImageView, backButtonBlur, backButton, feedbackButton, infoStackView, likeButtonBlur, likeButton, remixButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -234,10 +235,10 @@ final class VideoDetailCell: UICollectionViewCell {
             backButton.widthAnchor.constraint(equalToConstant: 36),
             backButton.heightAnchor.constraint(equalToConstant: 36),
 
-            moreButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
-            moreButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            moreButton.widthAnchor.constraint(equalToConstant: 44),
-            moreButton.heightAnchor.constraint(equalToConstant: 44),
+            feedbackButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
+            feedbackButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            feedbackButton.widthAnchor.constraint(equalToConstant: 44),
+            feedbackButton.heightAnchor.constraint(equalToConstant: 44),
 
             remixButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             remixButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
@@ -259,7 +260,7 @@ final class VideoDetailCell: UICollectionViewCell {
         ])
 
         backButton.addTarget(self, action: #selector(backTapped), for: .touchUpInside)
-        moreButton.addTarget(self, action: #selector(moreTapped), for: .touchUpInside)
+        feedbackButton.addTarget(self, action: #selector(feedbackTapped), for: .touchUpInside)
         likeButton.addTarget(self, action: #selector(likeTapped), for: .touchUpInside)
         remixButton.addTarget(self, action: #selector(remixTapped), for: .touchUpInside)
     }
@@ -292,25 +293,8 @@ final class VideoDetailCell: UICollectionViewCell {
     @objc private func backTapped() { onBackTapped?() }
     @objc private func remixTapped() { onRemixTapped?() }
 
-    @objc private func moreTapped() {
-        guard let vc = self.window?.rootViewController else { return }
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-
-        alert.addAction(UIAlertAction(title: "Report Inappropriate Content", style: .destructive) { _ in
-            self.showToast(message: "Thank you for reporting. Our team will review this content.")
-        })
-
-        alert.addAction(UIAlertAction(title: "Block User", style: .destructive) { _ in
-            self.showToast(message: "User blocked. You will no longer see content from this artist.")
-        })
-
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-
-        if let popover = alert.popoverPresentationController {
-            popover.sourceView = moreButton
-            popover.sourceRect = moreButton.bounds
-        }
-        vc.present(alert, animated: true)
+    @objc private func feedbackTapped() {
+        onFeedbackTapped?()
     }
 
     private func showToast(message: String) {
