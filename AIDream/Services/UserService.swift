@@ -35,9 +35,9 @@ class UserService: ObservableObject {
     private init() {
         self.diamonds = UserDefaults.standard.integer(forKey: diamondsKey)
         if UserDefaults.standard.object(forKey: diamondsKey) == nil {
-            self.diamonds = 500 // Initial gift
+            self.diamonds = 100 // Initial gift (Changed from 500)
             saveDiamonds()
-            logTransaction(amount: 500, reason: "Welcome gift")
+            logTransaction(amount: 100, reason: "Welcome gift")
         }
         self.isPremium = UserDefaults.standard.bool(forKey: premiumKey)
         loadTransactions()

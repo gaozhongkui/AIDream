@@ -12,9 +12,14 @@ struct TextToImageView: View {
     @State private var showCompletion: Bool = false
     @State private var showInsufficientDiamondsAlert = false
     @State private var isShowingPremium = false
+    @State private var isShowingDiamondStore = false
 
     @ObservedObject private var userService = UserService.shared
     private let generationCost = 100 // 文字生成图片 消耗100砖石
+
+    private var isInputValid: Bool {
+        !promptText.trimmingCharacters(in: .whitespaces).isEmpty
+    }
 
     var body: some View {
         ZStack {
@@ -83,11 +88,22 @@ struct TextToImageView: View {
         .fullScreenCover(isPresented: $isShowingPremium) {
             PremiumView()
         }
+        .fullScreenCover(isPresented: $isShowingDiamondStore) {
+            DiamondStoreView()
+        }
         .alert("Insufficient Diamonds", isPresented: $showInsufficientDiamondsAlert) {
-            Button("Upgrade to PRO") { isShowingPremium = true }
+            if userService.isPremium {
+                Button("Get Diamonds") { isShowingDiamondStore = true }
+            } else {
+                Button("Upgrade to PRO") { isShowingPremium = true }
+            }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("You need \(generationCost) diamonds to generate an image. Subscribe to PRO to get 500 bonus diamonds!")
+            if userService.isPremium {
+                Text("You need \(generationCost) diamonds to generate an image. Please recharge to continue.")
+            } else {
+                Text("You need \(generationCost) diamonds to generate an image. Subscribe to PRO to get bonus diamonds!")
+            }
         }
     }
 
@@ -198,13 +214,12 @@ struct TextToImageView: View {
                 }
                 .padding(.horizontal, 24)
                 .frame(maxWidth: .infinity).frame(height: 64)
-                .background(AppTheme.accentGradH)
-                .foregroundColor(.white)
+                .background(isInputValid ? AnyShapeStyle(AppTheme.accentGradH) : AnyShapeStyle(Color(hex: "#3A3A3C")))
+                .foregroundColor(isInputValid ? .white : AppTheme.textMuted)
                 .clipShape(RoundedRectangle(cornerRadius: 22))
-                .shadow(color: AppTheme.accentGlow, radius: 15, y: 8)
+                .shadow(color: isInputValid ? AppTheme.accentGlow : Color.clear, radius: 15, y: 8)
             }
-            .disabled(promptText.trimmingCharacters(in: .whitespaces).isEmpty)
-            .opacity(promptText.trimmingCharacters(in: .whitespaces).isEmpty ? 0.5 : 1.0)
+            .disabled(!isInputValid)
 
             HStack(spacing: 6) {
                 Image(systemName: "sparkles").foregroundColor(AppTheme.accentSecondary)

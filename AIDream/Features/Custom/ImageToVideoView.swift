@@ -18,11 +18,18 @@ struct ImageToVideoView: View {
     @State private var showToast = false
     @State private var showInsufficientDiamondsAlert = false
     @State private var isShowingPremium = false
+    @State private var isShowingDiamondStore = false
 
     @ObservedObject private var videoGenerator = AIVideoGenerator.shared
     @ObservedObject private var userService = UserService.shared
 
     private let generationCost = 300 // 每次以图生成视频 消耗300砖石
+
+    private var isInputValid: Bool {
+        let hasPrompt = !promptText.trimmingCharacters(in: .whitespaces).isEmpty
+        let hasImage = startImage != nil
+        return hasPrompt && hasImage
+    }
 
     var body: some View {
         ZStack {
@@ -141,11 +148,22 @@ struct ImageToVideoView: View {
         .fullScreenCover(isPresented: $isShowingPremium) {
             PremiumView()
         }
+        .fullScreenCover(isPresented: $isShowingDiamondStore) {
+            DiamondStoreView()
+        }
         .alert("Insufficient Diamonds", isPresented: $showInsufficientDiamondsAlert) {
-            Button("Upgrade to PRO") { isShowingPremium = true }
+            if userService.isPremium {
+                Button("Get Diamonds") { isShowingDiamondStore = true }
+            } else {
+                Button("Upgrade to PRO") { isShowingPremium = true }
+            }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("You need \(generationCost) diamonds to generate a video. Subscribe to PRO to get 500 bonus diamonds!")
+            if userService.isPremium {
+                Text("You need \(generationCost) diamonds to generate a video. Please recharge to continue.")
+            } else {
+                Text("You need \(generationCost) diamonds to generate a video. Subscribe to PRO to get 500 bonus diamonds!")
+            }
         }
     }
 
@@ -305,10 +323,12 @@ struct ImageToVideoView: View {
                     .background(Color.black.opacity(0.2)).clipShape(Capsule())
                 }
                 .padding(.horizontal, 24).frame(maxWidth: .infinity).frame(height: 64)
-                .background(AppTheme.accentGradH).foregroundColor(.white)
+                .background(isInputValid ? AnyShapeStyle(AppTheme.accentGradH) : AnyShapeStyle(Color(white: 0.15)))
+                .foregroundColor(isInputValid ? .white : AppTheme.textMuted)
                 .clipShape(RoundedRectangle(cornerRadius: 22))
-                .shadow(color: AppTheme.accentGlow, radius: 15, y: 8)
+                .shadow(color: isInputValid ? AppTheme.accentGlow : Color.clear, radius: 15, y: 8)
             }
+            .disabled(!isInputValid)
 
             HStack(spacing: 6) {
                 Image(systemName: "checkmark.seal.fill").foregroundColor(AppTheme.accentSecondary)
