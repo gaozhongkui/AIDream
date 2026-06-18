@@ -26,16 +26,15 @@ struct TextToImageView: View {
                         errorBanner(error)
                     }
 
+                    // 1. 统一顶部边距为 20
                     promptSection.padding(.top, 20)
                     aspectRatioSection
 
-                    // 底部留白确保不被悬浮操作栏遮挡
                     Spacer(minLength: 200)
                 }
                 .padding(.horizontal, 20)
             }
 
-            // 悬浮底部生成栏
             VStack {
                 Spacer()
                 if !isGenerating {
@@ -122,7 +121,8 @@ struct TextToImageView: View {
 
     // MARK: - Prompt Section
     private var promptSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        // 2. 统一标题与内容的间距为 16
+        VStack(alignment: .leading, spacing: 16) {
             Label("Imagination Prompt", systemImage: "sparkles")
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(AppTheme.accentSecondary)
@@ -150,7 +150,8 @@ struct TextToImageView: View {
 
     // MARK: - Aspect Ratio
     private var aspectRatioSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        // 3. 统一标题间距为 16
+        VStack(alignment: .leading, spacing: 16) {
             Text("CANVAS RATIO")
                 .font(.system(size: 11, weight: .bold))
                 .tracking(1.5)

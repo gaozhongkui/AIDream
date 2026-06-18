@@ -30,8 +30,8 @@ struct ImageToVideoView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 32) {
-                    headerSection.padding(.top, 10)
-                    imageUploadSection
+                    // 统一顶部边距为 20
+                    imageUploadSection.padding(.top, 20)
                     promptSection
 
                     VStack(spacing: 24) {
@@ -153,33 +153,17 @@ struct ImageToVideoView: View {
     }
 
     // MARK: - UI Components
-    private var headerSection: some View {
-        HStack {
-            Spacer()
-            Button(action: { isShowingStore = true }) {
-                HStack(spacing: 6) {
-                    Text("💎")
-                    Text("\(userService.diamonds)")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.white)
-                    Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 12))
-                        .foregroundColor(AppTheme.accentSecondary)
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(.ultraThinMaterial)
-                .background(Color.white.opacity(0.03))
-                .clipShape(Capsule())
-                .overlay(Capsule().stroke(Color.white.opacity(0.15), lineWidth: 0.5))
-            }
-        }
-    }
-
     private var imageUploadSection: some View {
-        HStack(spacing: 16) {
-            imageCard(title: "Start Frame", image: startImage) { openImagePicker(for: .start) }
-            imageCard(title: "End Frame", image: endImage) { openImagePicker(for: .end) }
+        // 统一间距为 16
+        VStack(alignment: .leading, spacing: 16) {
+            Label("Visual Reference", systemImage: "photo.on.rectangle.angled")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(AppTheme.accentSecondary)
+
+            HStack(spacing: 16) {
+                imageCard(title: "Start Frame", image: startImage) { openImagePicker(for: .start) }
+                imageCard(title: "End Frame", image: endImage) { openImagePicker(for: .end) }
+            }
         }
     }
 
@@ -218,7 +202,8 @@ struct ImageToVideoView: View {
     }
 
     private var promptSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        // 统一间距为 16
+        VStack(alignment: .leading, spacing: 16) {
             Label("Creative Prompt", systemImage: "sparkles")
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(AppTheme.accentSecondary)
@@ -245,7 +230,8 @@ struct ImageToVideoView: View {
     }
 
     private func optionRow(title: String, options: [String], selection: Binding<String>, proOptions: [String]) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        // 统一标题间距为 16
+        VStack(alignment: .leading, spacing: 16) {
             Text(title.uppercased())
                 .font(.system(size: 11, weight: .bold))
                 .tracking(1.5)
@@ -273,7 +259,8 @@ struct ImageToVideoView: View {
     }
 
     private var aspectRatioSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        // 统一间距为 16
+        VStack(alignment: .leading, spacing: 16) {
             Text("ASPECT RATIO")
                 .font(.system(size: 11, weight: .bold))
                 .tracking(1.5)

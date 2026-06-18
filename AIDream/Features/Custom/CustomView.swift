@@ -11,6 +11,7 @@ struct CustomView: View {
     @State private var selectedMode: GenerationMode = .imageToVideo
     @State private var showTip = false
     @State private var hasSyncedExternal = false
+    @ObservedObject var userService = UserService.shared
 
     init(externalMode: Binding<GenerationMode> = .constant(.imageToVideo)) {
         self._externalMode = externalMode
@@ -25,7 +26,8 @@ struct CustomView: View {
                     customNavBar
                     modeSelector
 
-                    ZStack {
+                    // 显式设置对齐方式为 .top，防止切换时因高度微差产生跳动
+                    ZStack(alignment: .top) {
                         switch selectedMode {
                         case .imageToVideo:
                             ImageToVideoView()
@@ -59,21 +61,23 @@ struct CustomView: View {
     private var customNavBar: some View {
         HStack {
             // 钻石余额快捷入口
-            HStack(spacing: 6) {
-                Image(systemName: "diamond.fill")
-                    .font(.system(size: 12))
-                    .foregroundStyle(AppTheme.accentGrad)
-                Text("\(UserService.shared.diamonds)")
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundColor(.white)
+            NavigationLink(destination: DiamondStoreView()) {
+                HStack(spacing: 6) {
+                    Image(systemName: "diamond.fill")
+                        .font(.system(size: 12))
+                        .foregroundStyle(AppTheme.accentGrad)
+                    Text("\(userService.diamonds)")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(.white)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(.ultraThinMaterial)
+                .background(Color.white.opacity(0.03))
+                .clipShape(Capsule())
+                .overlay(Capsule().stroke(Color.white.opacity(0.15), lineWidth: 0.5))
+                .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(.ultraThinMaterial)
-            .background(Color.white.opacity(0.03))
-            .clipShape(Capsule())
-            .overlay(Capsule().stroke(Color.white.opacity(0.15), lineWidth: 0.5))
-            .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
 
             Spacer()
 

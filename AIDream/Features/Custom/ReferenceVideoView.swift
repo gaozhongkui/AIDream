@@ -28,7 +28,8 @@ struct ReferenceVideoView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 32) {
-                    referenceImageUploadSection.padding(.top, 24)
+                    // 统一顶部边距为 20
+                    referenceImageUploadSection.padding(.top, 20)
                     promptSection
 
                     VStack(spacing: 24) {
@@ -131,6 +132,7 @@ struct ReferenceVideoView: View {
 
     // MARK: - Components
     private var referenceImageUploadSection: some View {
+        // 统一标题间距为 16
         VStack(alignment: .leading, spacing: 16) {
             Label("Visual References", systemImage: "photo.stack.fill")
                 .font(.system(size: 14, weight: .bold))
@@ -173,7 +175,8 @@ struct ReferenceVideoView: View {
     }
 
     private var promptSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        // 统一标题间距为 16
+        VStack(alignment: .leading, spacing: 16) {
             Label("Evolution Description", systemImage: "sparkles")
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(AppTheme.accentSecondary)
@@ -197,7 +200,8 @@ struct ReferenceVideoView: View {
     }
 
     private func optionRow(title: String, options: [String], selection: Binding<String>, proOptions: [String]) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        // 统一标题间距为 16
+        VStack(alignment: .leading, spacing: 16) {
             Text(title.uppercased()).font(.system(size: 11, weight: .bold)).tracking(1.5).foregroundColor(AppTheme.textMuted)
             HStack(spacing: 10) {
                 ForEach(options, id: \.self) { opt in
@@ -218,7 +222,8 @@ struct ReferenceVideoView: View {
     }
 
     private var aspectRatioSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        // 统一标题间距为 16
+        VStack(alignment: .leading, spacing: 16) {
             Text("ASPECT RATIO").font(.system(size: 11, weight: .bold)).tracking(1.5).foregroundColor(AppTheme.textMuted)
             HStack(spacing: 12) {
                 ratioButton(label: "9:16", icon: "iphone.gen3", isSelected: selectedRatio == "9:16") { selectedRatio = "9:16" }
