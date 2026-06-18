@@ -11,10 +11,11 @@ struct DiamondStoreView: View {
         let id: String
         let productID: StoreProductID
         let diamonds: Int
-        let price: String      // 降级显示
+        let price: String
         let bonus: Int
         let tag: String?
-        let gradient: [Color]
+        let icon: String
+        let color: Color
         var totalDiamonds: Int { diamonds + bonus }
     }
 
@@ -23,153 +24,83 @@ struct DiamondStoreView: View {
             id: "300",
             productID: .diamonds300,
             diamonds: 300, price: "$1.99", bonus: 0, tag: nil,
-            gradient: [Color(hex: "#3A3F5C").opacity(0.6), Color(hex: "#2A2D40").opacity(0.6)]
+            icon: "sparkles", color: Color(hex: "#A0AEC0")
         ),
         DiamondPackage(
             id: "900",
             productID: .diamonds1000,
             diamonds: 800, price: "$4.99", bonus: 100, tag: "POPULAR",
-            gradient: [Color(hex: "#2D4A7A").opacity(0.6), Color(hex: "#1E3460").opacity(0.6)]
+            icon: "bolt.fill", color: Color(hex: "#4FD1C5")
         ),
         DiamondPackage(
             id: "2000",
             productID: .diamonds2500,
             diamonds: 1800, price: "$9.99", bonus: 200, tag: "BEST VALUE",
-            gradient: [Color(hex: "#4A2D7A").opacity(0.6), Color(hex: "#2E1A5E").opacity(0.6)]
+            icon: "flame.fill", color: Color(hex: "#F6AD55")
         ),
         DiamondPackage(
             id: "5000",
             productID: .diamonds6000,
             diamonds: 4000, price: "$19.99", bonus: 1000, tag: "WHALE",
-            gradient: [Color(hex: "#7A4A2D").opacity(0.6), Color(hex: "#5E2E1A").opacity(0.6)]
+            icon: "crown.fill", color: Color(hex: "#F687B3")
         )
     ]
 
     @State private var purchasingID: String?
     @State private var showPremiumSheet = false
+    @State private var appearAnimation = false
 
     var body: some View {
-        GeometryReader { proxy in
-            let topInset = proxy.safeAreaInsets.top > 0 ? proxy.safeAreaInsets.top : 20
-            let toolbarHeight: CGFloat = 56
+        ZStack(alignment: .top) {
+            // 背景
+            AppTheme.bgPrimary.ignoresSafeArea()
 
-            ZStack(alignment: .top) {
-                AppTheme.bgPrimary.ignoresSafeArea()
+            // 装饰性光晕
+            Circle()
+                .fill(AppTheme.accentPrimary.opacity(0.1))
+                .frame(width: 400, height: 400)
+                .blur(radius: 80)
+                .offset(y: -150)
+
+            VStack(spacing: 0) {
+                headerView
 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        Spacer().frame(height: topInset + toolbarHeight + 10)
+                    VStack(spacing: 28) {
+                        balanceHeroSection
+                            .padding(.top, 10)
 
-                        balanceHeroCard
-                            .padding(.horizontal, 20)
+                        subscriptionBanner
 
-                        subscriptionSection
-                            .padding(.top, 24)
-                            .padding(.horizontal, 20)
-                            .onTapGesture {
-                                showPremiumSheet = true
-                            }
+                        VStack(alignment: .leading, spacing: 16) {
+                            sectionHeader(title: "DIAMOND PACKS", subtitle: "Select a package to recharge")
 
-                        VStack(alignment: .leading, spacing: 0) {
-                            sectionTitle("RECHARGE DIAMONDS")
-                                .padding(.horizontal, 24)
-                                .padding(.top, 32)
-                                .padding(.bottom, 16)
-
-                            if storeKit.isLoadingProducts && storeKit.diamondProducts.isEmpty {
-                                loadingPlaceholder
-                            } else {
-                                LazyVGrid(
-                                    columns: [GridItem(.flexible(), spacing: 14), GridItem(.flexible(), spacing: 14)],
-                                    spacing: 14
-                                ) {
-                                    ForEach(packages) { pkg in
-                                        packageCard(pkg)
-                                    }
+                            VStack(spacing: 12) {
+                                ForEach(packages) { pkg in
+                                    packageRow(pkg)
                                 }
-                                .padding(.horizontal, 20)
                             }
                         }
+                        .padding(.horizontal, 20)
 
-                        if let error = storeKit.purchaseError {
-                            Text(error)
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(AppTheme.error)
-                                .padding(.top, 16)
-                        }
-
-                        Button(action: { Task { await storeKit.restorePurchases() } }) {
-                            Text("Restore Purchases")
-                                .font(.system(size: 12))
-                                .foregroundColor(AppTheme.textMuted)
-                        }
-                        .padding(.top, 24)
-
-                        VStack(spacing: 8) {
-                            HStack(spacing: 6) {
-                                Image(systemName: "checkmark.shield.fill")
-                                    .foregroundColor(AppTheme.success)
-                                    .font(.system(size: 12))
-                                Text("Secure Payment · Instant Delivery")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(AppTheme.textMuted)
-                            }
-                            Text("Diamonds never expire. Use them anytime for AI generation.")
-                                .font(.system(size: 11))
-                                .foregroundColor(AppTheme.textMuted.opacity(0.6))
-                        }
-                        .padding(.top, 32)
-                        .padding(.bottom, 110)
+                        footerSection
                     }
+                    .padding(.bottom, 40)
                 }
-
-                VStack(spacing: 0) {
-                    headerView
-                        .padding(.top, topInset)
-                        .padding(.bottom, 8)
-                        .background(.ultraThinMaterial)
-                        .overlay(
-                            Rectangle()
-                                .fill(Color.white.opacity(0.12))
-                                .frame(height: 0.5),
-                            alignment: .bottom
-                        )
-                    Spacer()
-                }
-                .ignoresSafeArea(edges: .top)
-                .zIndex(10)
             }
         }
         .navigationBarHidden(true)
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.8)) {
+                appearAnimation = true
+            }
+        }
         .sheet(isPresented: $showPremiumSheet) {
             PremiumView()
         }
-        .alert("Purchase Error", isPresented: Binding(
-            get: { storeKit.purchaseError != nil && purchasingID == nil },
-            set: { if !$0 { storeKit.purchaseError = nil } }
-        )) {
-            Button("OK") { storeKit.purchaseError = nil }
-        } message: {
-            Text(storeKit.purchaseError ?? "")
-        }
     }
 
-    private var loadingPlaceholder: some View {
-        LazyVGrid(
-            columns: [GridItem(.flexible(), spacing: 14), GridItem(.flexible(), spacing: 14)],
-            spacing: 14
-        ) {
-            ForEach(0..<4) { _ in
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(Color.white.opacity(0.05))
-                    .frame(height: 180)
-                    .overlay(
-                        ProgressView().tint(AppTheme.accentSecondary)
-                    )
-            }
-        }
-        .padding(.horizontal, 20)
-    }
+    // MARK: - Components
 
     private var headerView: some View {
         HStack {
@@ -178,98 +109,105 @@ struct DiamondStoreView: View {
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.white)
                     .frame(width: 40, height: 40)
-                    .glassStyle(cornerRadius: 20)
+                    .background(Circle().fill(Color.white.opacity(0.1)))
             }
-
             Spacer()
-
-            Text("Diamond Store")
+            Text("Recharge")
                 .font(.system(size: 18, weight: .bold))
                 .foregroundColor(.white)
-
             Spacer()
-
-            Color.clear.frame(width: 40, height: 40)
+            Button(action: { Task { await storeKit.restorePurchases() } }) {
+                Text("Restore")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(AppTheme.textSecondary)
+            }
         }
         .padding(.horizontal, 20)
-        .frame(height: 44)
+        .padding(.top, 10)
+        .frame(height: 54)
     }
 
-    private var balanceHeroCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("YOUR BALANCE")
-                .font(.system(size: 11, weight: .bold))
-                .tracking(2)
+    private var balanceHeroSection: some View {
+        VStack(spacing: 12) {
+            Text("CURRENT BALANCE")
+                .font(.system(size: 12, weight: .bold))
+                .tracking(1.5)
                 .foregroundColor(AppTheme.textMuted)
             
-            HStack(alignment: .firstTextBaseline, spacing: 12) {
+            HStack(spacing: 12) {
                 Text("💎")
-                    .font(.system(size: 28))
-
+                    .font(.system(size: 32))
                 Text("\(userService.diamonds)")
-                    .font(.system(size: 38, weight: .black, design: .rounded))
-                    .foregroundStyle(AppTheme.accentGrad)
-
-                Spacer()
-
-                ZStack {
-                    Circle()
-                        .fill(AppTheme.accentGrad.opacity(0.15))
-                        .frame(width: 56, height: 56)
-                    Image(systemName: "diamond.fill")
-                        .font(.system(size: 24))
-                        .foregroundStyle(AppTheme.accentGrad)
-                }
+                    .font(.system(size: 48, weight: .black, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(colors: [.white, .white.opacity(0.8)], startPoint: .top, endPoint: .bottom)
+                    )
             }
+            .scaleEffect(appearAnimation ? 1.0 : 0.9)
 
-            Text("Available for generating masterpieces")
+            Text("Use diamonds to generate AI masterpieces")
                 .font(.system(size: 13))
                 .foregroundColor(AppTheme.textSecondary)
         }
-        .padding(24)
-        .background(
-            ZStack {
-                AppTheme.bgSecondary.opacity(0.3)
-                LinearGradient(
-                    colors: [AppTheme.accentPrimary.opacity(0.1), .clear],
-                    startPoint: .topLeading, endPoint: .bottomTrailing
-                )
-            }
-        )
-        .glassStyle(cornerRadius: 24)
+        .padding(.vertical, 20)
     }
 
-    private var subscriptionSection: some View {
-        HStack(spacing: 14) {
-            ZStack {
-                Circle().fill(AppTheme.accentGrad.opacity(0.2)).frame(width: 52, height: 52)
-                Image(systemName: "crown.fill")
-                    .font(.system(size: 22))
-                    .foregroundStyle(AppTheme.accentGrad)
+    private var subscriptionBanner: some View {
+        Button {
+            showPremiumSheet = true
+        } label: {
+            HStack(spacing: 16) {
+                ZStack {
+                    Circle()
+                        .fill(AppTheme.vipGrad.opacity(0.2))
+                        .frame(width: 48, height: 48)
+                    Image(systemName: "crown.fill")
+                        .font(.system(size: 20))
+                        .foregroundStyle(AppTheme.vipGrad)
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("PRO MEMBERSHIP")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.white)
+                    Text("Up to 10,000 bonus diamonds!")
+                        .font(.system(size: 12))
+                        .foregroundColor(AppTheme.textSecondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(AppTheme.textMuted)
             }
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text("PRO MEMBERSHIP")
-                    .font(.system(size: 13, weight: .bold)).foregroundColor(.white)
-                Text(userService.isPremium ? "You are a PRO member" : "Subscribe to get up to 10,000 diamonds!")
-                    .font(.system(size: 12)).foregroundColor(AppTheme.textSecondary)
-            }
-
-            Spacer()
-
-            Image(systemName: "chevron.right")
-                .font(.system(size: 14, weight: .bold))
-                .foregroundColor(AppTheme.textMuted)
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color.white.opacity(0.05))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(AppTheme.vipGrad.opacity(0.3), lineWidth: 1)
+                    )
+            )
+            .padding(.horizontal, 20)
         }
-        .padding(18)
-        .glassStyle(cornerRadius: 20)
-        .overlay(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(AppTheme.accentPrimary.opacity(0.3), lineWidth: 1.2)
-        )
+        .buttonStyle(.plain)
     }
 
-    private func packageCard(_ pkg: DiamondPackage) -> some View {
+    private func sectionHeader(title: String, subtitle: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.system(size: 12, weight: .bold))
+                .tracking(1.5)
+                .foregroundColor(AppTheme.textMuted)
+            Text(subtitle)
+                .font(.system(size: 14))
+                .foregroundColor(AppTheme.textSecondary)
+        }
+    }
+
+    private func packageRow(_ pkg: DiamondPackage) -> some View {
         let skProduct = storeKit.diamondProducts.first { $0.id == pkg.productID.rawValue }
         let isBuying = purchasingID == pkg.productID.rawValue
 
@@ -282,82 +220,101 @@ struct DiamondStoreView: View {
                 }
             }
         } label: {
-            VStack(spacing: 0) {
-                if let tag = pkg.tag {
-                    Text(tag)
-                        .font(.system(size: 9, weight: .black))
-                        .tracking(1.2)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 10).padding(.vertical, 4)
-                        .background(Capsule().fill(AppTheme.accentGradH))
-                        .padding(.bottom, 8)
-                } else {
-                    Spacer().frame(height: 25)
+            HStack(spacing: 16) {
+                // Icon Tier
+                ZStack {
+                    RoundedRectangle(cornerRadius: 14)
+                        .fill(pkg.color.opacity(0.15))
+                        .frame(width: 52, height: 52)
+                    Image(systemName: pkg.icon)
+                        .font(.system(size: 20))
+                        .foregroundColor(pkg.color)
                 }
 
-                HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    Text("💎").font(.system(size: 14))
-                    Text("\(pkg.totalDiamonds)")
-                        .font(.system(size: 26, weight: .black, design: .rounded))
-                        .foregroundColor(.white)
-                }
-                .padding(.bottom, 2)
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 6) {
+                        Text("\(pkg.totalDiamonds)")
+                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                        Text("Diamonds")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(AppTheme.textSecondary)
+                    }
 
-                if pkg.bonus > 0 {
-                    Text("+\(pkg.bonus) bonus")
-                        .font(.system(size: 11, weight: .bold))
-                        .foregroundColor(AppTheme.success)
-                        .padding(.bottom, 12)
-                } else {
-                    Spacer().frame(height: 25)
+                    if pkg.bonus > 0 {
+                        Text("Includes \(pkg.bonus) bonus")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(AppTheme.success)
+                    }
                 }
 
-                Group {
+                Spacer()
+
+                // Price Button
+                ZStack {
                     if isBuying {
                         ProgressView().tint(.white)
                     } else {
                         Text(skProduct?.displayPrice ?? pkg.price)
-                            .font(.system(size: 20, weight: .bold))
+                            .font(.system(size: 15, weight: .bold))
+                            .foregroundColor(.white)
                     }
                 }
-                .frame(maxWidth: .infinity)
-                .frame(height: 40)
-                .background(Color.white.opacity(0.08))
+                .frame(width: 80, height: 36)
+                .background(pkg.tag != nil ? AppTheme.accentPrimary : Color.white.opacity(0.1))
                 .clipShape(Capsule())
-                .padding(.horizontal, 12)
-                .padding(.bottom, 14)
-
-                Rectangle()
-                    .fill(Color.white.opacity(0.1))
-                    .frame(height: 0.5)
-                    .padding(.horizontal, 16)
-
-                let priceValue = skProduct.map { NSDecimalNumber(decimal: $0.price).doubleValue } ?? (Double(pkg.price.replacingOccurrences(of: "$", with: "")) ?? 0)
-                let perDiamond = priceValue / Double(pkg.totalDiamonds)
-                Text("~$\(String(format: "%.3f", perDiamond))/💎")
-                    .font(.system(size: 10))
-                    .foregroundColor(AppTheme.textMuted.opacity(0.6))
-                    .padding(.top, 10)
+                .overlay(
+                    Group {
+                        if let tag = pkg.tag {
+                            Text(tag)
+                                .font(.system(size: 8, weight: .black))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.yellow)
+                                .foregroundColor(.black)
+                                .clipShape(Capsule())
+                                .offset(y: -22)
+                        }
+                    }
+                )
             }
-            .padding(.vertical, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(LinearGradient(colors: pkg.gradient, startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .opacity(0.4)
+            .padding(16)
+            .background(Color.white.opacity(0.04))
+            .cornerRadius(20)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(pkg.tag != nil ? AppTheme.accentPrimary.opacity(0.3) : Color.white.opacity(0.05), lineWidth: 1)
             )
-            .glassStyle(cornerRadius: 20)
         }
         .buttonStyle(.plain)
         .disabled(isBuying || purchasingID != nil)
     }
 
-    private func sectionTitle(_ text: String) -> some View {
-        HStack {
-            Text(text)
-                .font(.system(size: 11, weight: .bold))
+    private var footerSection: some View {
+        VStack(spacing: 20) {
+            HStack(spacing: 24) {
+                footerIconItem(icon: "shield.fill", text: "Secure")
+                footerIconItem(icon: "bolt.fill", text: "Instant")
+                footerIconItem(icon: "clock.fill", text: "No Expiry")
+            }
+
+            Text("Diamonds are used for AI generation services. All purchases are final and non-refundable.")
+                .font(.system(size: 11))
                 .foregroundColor(AppTheme.textMuted)
-                .tracking(1.5)
-            Spacer()
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
+        }
+        .padding(.top, 20)
+    }
+
+    private func footerIconItem(icon: String, text: String) -> some View {
+        VStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.system(size: 14))
+                .foregroundColor(AppTheme.textMuted)
+            Text(text)
+                .font(.system(size: 10, weight: .bold))
+                .foregroundColor(AppTheme.textMuted)
         }
     }
 }

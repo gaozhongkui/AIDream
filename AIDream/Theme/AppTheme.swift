@@ -57,6 +57,13 @@ struct AppTheme {
     static let vipBg         = Color(hex: "#2E1C02")
     static let svipPurple    = Color(hex: "#A07BFF")
     static let svipBg        = Color(hex: "#1A1529")
+
+    static var vipGrad: LinearGradient {
+        LinearGradient(
+            colors: [Color(hex: "#FFD700"), Color(hex: "#FFECB3")],
+            startPoint: .topLeading, endPoint: .bottomTrailing
+        )
+    }
 }
 
 // MARK: - 通用视图修饰符
