@@ -1,6 +1,6 @@
 .claude
-.idea
-deviceStreaming.xml
+.idea/
+.deepseek/
 
 AGENTS.md
 AIDream.xcodeproj/xcuserdata/gaozhongkui.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist
