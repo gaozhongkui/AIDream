@@ -88,8 +88,9 @@ struct PremiumView: View {
     private var heroSection: some View {
         VStack(spacing: 16) {
             ZStack {
-                Circle().fill(AppTheme.accentGrad.opacity(0.15)).frame(width: 80, height: 80).blur(radius: 10)
-                Image(systemName: "crown.fill").font(.system(size: 40)).foregroundStyle(AppTheme.accentGrad)
+                // 已修改：皇冠颜色统一为 AppTheme.vipGold
+                Circle().fill(AppTheme.vipGold.opacity(0.15)).frame(width: 80, height: 80).blur(radius: 10)
+                Image(systemName: "crown.fill").font(.system(size: 40)).foregroundColor(AppTheme.vipGold)
             }
             VStack(spacing: 8) {
                 Text("Upgrade to PRO").font(.system(size: 32, weight: .black)).foregroundColor(.white)

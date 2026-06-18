@@ -1,5 +1,6 @@
 import AVKit
 import UIKit
+import SwiftUI
 
 final class VideoListViewController: UIViewController {
     private let pageSize = 20
@@ -31,6 +32,21 @@ final class VideoListViewController: UIViewController {
         label.font = .systemFont(ofSize: 13, weight: .medium)
         label.textColor = UIColor.white.withAlphaComponent(0.4)
         return label
+    }()
+
+    private lazy var vipButton: UIButton = {
+        let button = UIButton(type: .system)
+        let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .bold)
+        let image = UIImage(systemName: "crown.fill", withConfiguration: config)
+        button.setImage(image, for: .normal)
+        // 使用 AppTheme 中的 vipGold 色值 #C8A768
+        button.tintColor = UIColor(red: 200/255, green: 167/255, blue: 104/255, alpha: 1)
+        button.backgroundColor = UIColor.white.withAlphaComponent(0.08)
+        button.layer.cornerRadius = 20
+        button.layer.borderWidth = 0.5
+        button.layer.borderColor = UIColor.white.withAlphaComponent(0.15).cgColor
+        button.addTarget(self, action: #selector(vipButtonTapped), for: .touchUpInside)
+        return button
     }()
 
     // MARK: - Collection View
@@ -135,8 +151,9 @@ final class VideoListViewController: UIViewController {
         view.addSubview(headerContainer)
         headerContainer.addSubview(headerTitleLabel)
         headerContainer.addSubview(headerSubtitleLabel)
+        headerContainer.addSubview(vipButton)
 
-        [headerContainer, headerTitleLabel, headerSubtitleLabel].forEach {
+        [headerContainer, headerTitleLabel, headerSubtitleLabel, vipButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -150,7 +167,12 @@ final class VideoListViewController: UIViewController {
 
             headerSubtitleLabel.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor, constant: 24),
             headerSubtitleLabel.topAnchor.constraint(equalTo: headerTitleLabel.bottomAnchor, constant: 4),
-            headerSubtitleLabel.bottomAnchor.constraint(equalTo: headerContainer.bottomAnchor, constant: -8)
+            headerSubtitleLabel.bottomAnchor.constraint(equalTo: headerContainer.bottomAnchor, constant: -8),
+
+            vipButton.trailingAnchor.constraint(equalTo: headerContainer.trailingAnchor, constant: -20),
+            vipButton.centerYAnchor.constraint(equalTo: headerTitleLabel.centerYAnchor, constant: 4),
+            vipButton.widthAnchor.constraint(equalToConstant: 40),
+            vipButton.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
 
@@ -205,6 +227,12 @@ final class VideoListViewController: UIViewController {
     @objc private func handleRefresh() {
         errorBanner.isHidden = true
         loadPage(reset: true)
+    }
+
+    @objc private func vipButtonTapped() {
+        let premiumVC = UIHostingController(rootView: PremiumView())
+        premiumVC.modalPresentationStyle = .fullScreen
+        present(premiumVC, animated: true)
     }
 
     private func showErrorBanner(_ message: String) {
