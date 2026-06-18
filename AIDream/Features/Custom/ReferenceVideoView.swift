@@ -16,11 +16,11 @@ struct ReferenceVideoView: View {
     @State private var isShowingCamera = false
     @State private var imageSelectionError: String?
     @State private var showInsufficientDiamondsAlert = false
-    @State private var isShowingStore = false
+    @State private var isShowingPremium = false
 
     @ObservedObject private var videoGenerator = AIVideoGenerator.shared
     @ObservedObject private var userService = UserService.shared
-    private let generationCost = 200
+    private let generationCost = 300 // 每次以图生成视频 消耗300砖石 (Reference Video also counts as video generation)
 
     var body: some View {
         ZStack {
@@ -116,14 +116,14 @@ struct ReferenceVideoView: View {
             }
             .ignoresSafeArea()
         }
-        .fullScreenCover(isPresented: $isShowingStore) {
-            DiamondStoreView()
+        .fullScreenCover(isPresented: $isShowingPremium) {
+            PremiumView()
         }
         .alert("Insufficient Diamonds", isPresented: $showInsufficientDiamondsAlert) {
-            Button("Go to Store") { isShowingStore = true }
+            Button("Upgrade to PRO") { isShowingPremium = true }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("You need \(generationCost) diamonds to generate a video. Your current balance is \(userService.diamonds) diamonds.")
+            Text("You need \(generationCost) diamonds to generate a video. Subscribe to PRO to get 500 bonus diamonds!")
         }
     }
 
@@ -199,10 +199,19 @@ struct ReferenceVideoView: View {
             Text(title.uppercased()).font(.system(size: 11, weight: .bold)).tracking(1.5).foregroundColor(AppTheme.textMuted)
             HStack(spacing: 10) {
                 ForEach(options, id: \.self) { opt in
-                    Button { selection.wrappedValue = opt } label: {
+                    Button {
+                        if proOptions.contains(opt) && !userService.isPremium {
+                            isShowingPremium = true
+                        } else {
+                            selection.wrappedValue = opt
+                        }
+                    } label: {
                         HStack(spacing: 4) {
                             Text(opt).font(.system(size: 14, weight: selection.wrappedValue == opt ? .bold : .medium))
-                            if proOptions.contains(opt) { Image(systemName: "crown.fill").font(.system(size: 10)) }
+                            if proOptions.contains(opt) {
+                                Image(systemName: "crown.fill").font(.system(size: 10))
+                                    .foregroundColor(userService.isPremium ? AppTheme.vipGold : AppTheme.textMuted)
+                            }
                         }
                         .frame(maxWidth: .infinity).frame(height: 46)
                         .background(selection.wrappedValue == opt ? AppTheme.accentPrimary.opacity(0.15) : Color.white.opacity(0.05))
@@ -248,7 +257,7 @@ struct ReferenceVideoView: View {
                     Image(systemName: "film.fill").font(.system(size: 20, weight: .bold))
                     Text("Sync & Generate").font(.system(size: 17, weight: .bold))
                     Spacer()
-                    HStack(spacing: 4) { Image(systemName: "bolt.fill"); Text("200") }
+                    HStack(spacing: 4) { Image(systemName: "bolt.fill"); Text("\(generationCost)") }
                     .font(.system(size: 14, weight: .bold)).padding(.horizontal, 10).padding(.vertical, 4)
                     .background(Color.black.opacity(0.5)).clipShape(Capsule())
                 }
@@ -268,7 +277,14 @@ struct ReferenceVideoView: View {
     private func handleGenerate() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
 
-        if userService.consumeDiamonds(generationCost) {
+        // VIP Check for Pro Options
+        let proOptionsInEffect = (["10s"].contains(selectedDuration)) || (["High", "Ultra HD"].contains(selectedQuality))
+        if proOptionsInEffect && !userService.isPremium {
+            isShowingPremium = true
+            return
+        }
+
+        if userService.consumeDiamonds(generationCost, reason: "Reference Video") {
             videoGenerator.generateVideo(
                 prompt: promptText,
                 image: referenceImages.compactMap { $0 }.first,

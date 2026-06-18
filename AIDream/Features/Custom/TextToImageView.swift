@@ -11,10 +11,10 @@ struct TextToImageView: View {
     @State private var errorMessage: String? = nil
     @State private var showCompletion: Bool = false
     @State private var showInsufficientDiamondsAlert = false
-    @State private var isShowingStore = false
+    @State private var isShowingPremium = false
 
     @ObservedObject private var userService = UserService.shared
-    private let generationCost = 40
+    private let generationCost = 100 // 文字生成图片 消耗100砖石
 
     var body: some View {
         ZStack {
@@ -80,14 +80,14 @@ struct TextToImageView: View {
                 )
             }
         }
-        .fullScreenCover(isPresented: $isShowingStore) {
-            DiamondStoreView()
+        .fullScreenCover(isPresented: $isShowingPremium) {
+            PremiumView()
         }
         .alert("Insufficient Diamonds", isPresented: $showInsufficientDiamondsAlert) {
-            Button("Go to Store") { isShowingStore = true }
+            Button("Upgrade to PRO") { isShowingPremium = true }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("You need \(generationCost) diamonds to generate an image. Your current balance is \(userService.diamonds) diamonds.")
+            Text("You need \(generationCost) diamonds to generate an image. Subscribe to PRO to get 500 bonus diamonds!")
         }
     }
 
@@ -229,7 +229,7 @@ struct TextToImageView: View {
         let trimmed = promptText.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }
 
-        guard userService.consumeDiamonds(generationCost) else {
+        guard userService.consumeDiamonds(generationCost, reason: "Text to Image") else {
             showInsufficientDiamondsAlert = true
             return
         }

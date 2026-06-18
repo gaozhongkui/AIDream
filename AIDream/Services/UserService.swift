@@ -35,7 +35,7 @@ class UserService: ObservableObject {
     private init() {
         self.diamonds = UserDefaults.standard.integer(forKey: diamondsKey)
         if UserDefaults.standard.object(forKey: diamondsKey) == nil {
-            self.diamonds = 500
+            self.diamonds = 500 // Initial gift
             saveDiamonds()
             logTransaction(amount: 500, reason: "Welcome gift")
         }
@@ -43,17 +43,17 @@ class UserService: ObservableObject {
         loadTransactions()
     }
 
-    func addDiamonds(_ amount: Int) {
+    func addDiamonds(_ amount: Int, reason: String = "Purchase") {
         diamonds += amount
         saveDiamonds()
-        logTransaction(amount: amount, reason: "Purchase")
+        logTransaction(amount: amount, reason: reason)
     }
 
-    func consumeDiamonds(_ amount: Int) -> Bool {
+    func consumeDiamonds(_ amount: Int, reason: String = "AI Generation") -> Bool {
         if diamonds >= amount {
             diamonds -= amount
             saveDiamonds()
-            logTransaction(amount: -amount, reason: "AI Generation")
+            logTransaction(amount: -amount, reason: reason)
             return true
         }
         return false
@@ -62,9 +62,7 @@ class UserService: ObservableObject {
     func setPremium(_ status: Bool) {
         isPremium = status
         UserDefaults.standard.set(status, forKey: premiumKey)
-        if status {
-            addDiamonds(1000)
-        }
+        // Note: Diamond gifts are handled in StoreKitService based on product type
     }
 
     // MARK: - Transaction Log

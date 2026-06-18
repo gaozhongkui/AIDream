@@ -7,21 +7,22 @@ private let logger = Logger(subsystem: "com.aidream", category: "StoreKit")
 
 // MARK: - Product ID Constants
 enum StoreProductID: String, CaseIterable {
-    case diamonds100  = "com.aidream.diamonds.100"
-    case diamonds500  = "com.aidream.diamonds.500"
-    case diamonds1200 = "com.aidream.diamonds.1200"
-    case diamonds3000 = "com.aidream.diamonds.3000"
+    case diamonds300  = "com.aidream.diamonds.100"  // 对应最低 $1.99 给 300 钻
+    case diamonds1000 = "com.aidream.diamonds.500"
+    case diamonds2500 = "com.aidream.diamonds.1200"
+    case diamonds6000 = "com.aidream.diamonds.3000"
     case premiumWeekly = "com.aidream.premium.weekly"
     case premiumMonthly = "com.aidream.premium.monthly"
     case premiumLifetime = "com.aidream.premium.lifetime"
 
     var diamondAmount: Int {
         switch self {
-        case .diamonds100:  return 100
-        case .diamonds500:  return 500
-        case .diamonds1200: return 1200
-        case .diamonds3000: return 3000
-        case .premiumWeekly, .premiumMonthly, .premiumLifetime: return 0
+        case .diamonds300:  return 300
+        case .diamonds1000: return 1000
+        case .diamonds2500: return 2500
+        case .diamonds6000: return 6000
+        case .premiumWeekly: return 500 // 周订阅每次给 500
+        default: return 0
         }
     }
 
@@ -56,7 +57,6 @@ final class StoreKitService: ObservableObject {
         transactionListener?.cancel()
     }
 
-    // MARK: - Load Products
     func loadProducts() async {
         isLoadingProducts = true
         defer { isLoadingProducts = false }
@@ -74,14 +74,12 @@ final class StoreKitService: ObservableObject {
                 .sorted { ($0.price as Decimal) < ($1.price as Decimal) }
 
             productsLoaded = true
-            logger.info("Loaded \(self.diamondProducts.count) diamond products, \(self.subscriptionProducts.count) subscriptions")
         } catch {
             logger.error("Failed to load products: \(error.localizedDescription)")
             purchaseError = "Unable to connect to App Store"
         }
     }
 
-    // MARK: - Purchase
     func purchase(_ product: Product) async -> Bool {
         isPurchasing = true
         purchaseError = nil
@@ -89,36 +87,24 @@ final class StoreKitService: ObservableObject {
 
         do {
             let result = try await product.purchase()
-
             switch result {
             case .success(let verification):
                 let transaction = try checkVerified(verification)
                 await handleTransaction(transaction)
                 await transaction.finish()
-                logger.info("Purchase succeeded: \(product.id)")
                 return true
-
-            case .userCancelled:
-                logger.info("User cancelled purchase: \(product.id)")
-                return false
-
+            case .userCancelled: return false
             case .pending:
-                logger.info("Purchase pending: \(product.id)")
-                purchaseError = "Payment pending — will complete shortly"
+                purchaseError = "Payment pending"
                 return false
-
-            @unknown default:
-                purchaseError = "Unknown purchase result"
-                return false
+            @unknown default: return false
             }
         } catch {
-            logger.error("Purchase failed: \(error.localizedDescription)")
             purchaseError = error.localizedDescription
             return false
         }
     }
 
-    // MARK: - Restore
     func restorePurchases() async {
         isPurchasing = true
         purchaseError = nil
@@ -130,31 +116,25 @@ final class StoreKitService: ObservableObject {
                     await handleTransaction(transaction)
                 }
             }
-            logger.info("Purchases restored")
         } catch {
-            logger.error("Restore failed: \(error.localizedDescription)")
             purchaseError = "Restore failed"
         }
     }
 
-    // MARK: - Transaction Handling
     private func handleTransaction(_ transaction: Transaction) async {
-        guard let productID = StoreProductID(rawValue: transaction.productID) else {
-            logger.warning("Unknown product ID: \(transaction.productID)")
-            return
-        }
+        guard let productID = StoreProductID(rawValue: transaction.productID) else { return }
 
         let userService = UserService.shared
 
-        switch productID {
-        case .diamonds100, .diamonds500, .diamonds1200, .diamonds3000:
-            let amount = productID.diamondAmount
-            userService.addDiamonds(amount)
-            logger.info("Added \(amount) diamonds from purchase")
-
-        case .premiumWeekly, .premiumMonthly, .premiumLifetime:
+        if productID.isSubscription {
             userService.setPremium(true)
-            logger.info("Premium activated: \(productID.rawValue)")
+            // 如果是周订阅，给 500 钻（包含首次和续订）
+            if productID == .premiumWeekly {
+                userService.addDiamonds(500, reason: "Weekly Subscription Bonus")
+            }
+        } else {
+            // 普通钻石充值
+            userService.addDiamonds(productID.diamondAmount, reason: "Purchase")
         }
     }
 
@@ -176,8 +156,5 @@ final class StoreKitService: ObservableObject {
         }
     }
 
-    enum StoreError: LocalizedError {
-        case unverified
-        var errorDescription: String? { "Transaction could not be verified" }
-    }
+    enum StoreError: Error { case unverified }
 }

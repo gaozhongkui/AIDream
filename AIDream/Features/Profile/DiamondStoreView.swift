@@ -20,27 +20,27 @@ struct DiamondStoreView: View {
 
     private let packages: [DiamondPackage] = [
         DiamondPackage(
-            id: "100",
-            productID: .diamonds100,
-            diamonds: 100, price: "$0.99", bonus: 0, tag: nil,
+            id: "300",
+            productID: .diamonds300,
+            diamonds: 300, price: "$1.99", bonus: 0, tag: nil,
             gradient: [Color(hex: "#3A3F5C").opacity(0.6), Color(hex: "#2A2D40").opacity(0.6)]
         ),
         DiamondPackage(
-            id: "500",
-            productID: .diamonds500,
-            diamonds: 500, price: "$4.99", bonus: 50, tag: "POPULAR",
+            id: "1000",
+            productID: .diamonds1000,
+            diamonds: 1000, price: "$4.99", bonus: 100, tag: "POPULAR",
             gradient: [Color(hex: "#2D4A7A").opacity(0.6), Color(hex: "#1E3460").opacity(0.6)]
         ),
         DiamondPackage(
-            id: "1200",
-            productID: .diamonds1200,
-            diamonds: 1200, price: "$9.99", bonus: 200, tag: "BEST VALUE",
+            id: "2500",
+            productID: .diamonds2500,
+            diamonds: 2500, price: "$9.99", bonus: 500, tag: "BEST VALUE",
             gradient: [Color(hex: "#4A2D7A").opacity(0.6), Color(hex: "#2E1A5E").opacity(0.6)]
         ),
         DiamondPackage(
-            id: "3000",
-            productID: .diamonds3000,
-            diamonds: 3000, price: "$19.99", bonus: 800, tag: "WHALE",
+            id: "6000",
+            productID: .diamonds6000,
+            diamonds: 6000, price: "$19.99", bonus: 2000, tag: "WHALE",
             gradient: [Color(hex: "#7A4A2D").opacity(0.6), Color(hex: "#5E2E1A").opacity(0.6)]
         )
     ]
@@ -50,17 +50,14 @@ struct DiamondStoreView: View {
 
     var body: some View {
         GeometryReader { proxy in
-            // 获取安全区域，如果是 Sheet 模式可能为 0，给个兜底
             let topInset = proxy.safeAreaInsets.top > 0 ? proxy.safeAreaInsets.top : 20
             let toolbarHeight: CGFloat = 56
 
             ZStack(alignment: .top) {
                 AppTheme.bgPrimary.ignoresSafeArea()
 
-                // 1. 内容滚动区域
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
-                        // 顶部占位，留出 Toolbar 的高度
                         Spacer().frame(height: topInset + toolbarHeight + 10)
 
                         balanceHeroCard
@@ -73,7 +70,6 @@ struct DiamondStoreView: View {
                                 showPremiumSheet = true
                             }
 
-                        // 钻石充值套餐
                         VStack(alignment: .leading, spacing: 0) {
                             sectionTitle("RECHARGE DIAMONDS")
                                 .padding(.horizontal, 24)
@@ -95,7 +91,6 @@ struct DiamondStoreView: View {
                             }
                         }
 
-                        // 购买提示
                         if let error = storeKit.purchaseError {
                             Text(error)
                                 .font(.system(size: 12, weight: .medium))
@@ -103,7 +98,6 @@ struct DiamondStoreView: View {
                                 .padding(.top, 16)
                         }
 
-                        // 恢复购买
                         Button(action: { Task { await storeKit.restorePurchases() } }) {
                             Text("Restore Purchases")
                                 .font(.system(size: 12))
@@ -111,7 +105,6 @@ struct DiamondStoreView: View {
                         }
                         .padding(.top, 24)
 
-                        // 底部说明
                         VStack(spacing: 8) {
                             HStack(spacing: 6) {
                                 Image(systemName: "checkmark.shield.fill")
@@ -130,9 +123,7 @@ struct DiamondStoreView: View {
                     }
                 }
 
-                // 2. 悬浮顶部 Toolbar (强制置顶并适配玻璃拟态)
                 VStack(spacing: 0) {
-                    // 背景延伸到刘海区
                     headerView
                         .padding(.top, topInset)
                         .padding(.bottom, 8)
@@ -146,7 +137,7 @@ struct DiamondStoreView: View {
                     Spacer()
                 }
                 .ignoresSafeArea(edges: .top)
-                .zIndex(10) // 确保在最上层
+                .zIndex(10)
             }
         }
         .navigationBarHidden(true)
@@ -163,7 +154,6 @@ struct DiamondStoreView: View {
         }
     }
 
-    // MARK: - Loading Placeholder
     private var loadingPlaceholder: some View {
         LazyVGrid(
             columns: [GridItem(.flexible(), spacing: 14), GridItem(.flexible(), spacing: 14)],
@@ -181,7 +171,6 @@ struct DiamondStoreView: View {
         .padding(.horizontal, 20)
     }
 
-    // MARK: - Header View
     private var headerView: some View {
         HStack {
             Button(action: { dismiss() }) {
@@ -203,10 +192,9 @@ struct DiamondStoreView: View {
             Color.clear.frame(width: 40, height: 40)
         }
         .padding(.horizontal, 20)
-        .frame(height: 44) // 标准 Bar 高度
+        .frame(height: 44)
     }
 
-    // MARK: - 余额展示卡片
     private var balanceHeroCard: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("YOUR BALANCE")
@@ -251,7 +239,6 @@ struct DiamondStoreView: View {
         .glassStyle(cornerRadius: 24)
     }
 
-    // MARK: - 订阅会员卡片
     private var subscriptionSection: some View {
         HStack(spacing: 14) {
             ZStack {
@@ -264,7 +251,7 @@ struct DiamondStoreView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("PRO MEMBERSHIP")
                     .font(.system(size: 13, weight: .bold)).foregroundColor(.white)
-                Text(userService.isPremium ? "You are a PRO member" : "Weekly, Monthly or Lifetime")
+                Text(userService.isPremium ? "You are a PRO member" : "Subscribe to get 500 bonus diamonds!")
                     .font(.system(size: 12)).foregroundColor(AppTheme.textSecondary)
             }
 
@@ -282,7 +269,6 @@ struct DiamondStoreView: View {
         )
     }
 
-    // MARK: - 套餐卡片 (修正圆角与模糊)
     private func packageCard(_ pkg: DiamondPackage) -> some View {
         let skProduct = storeKit.diamondProducts.first { $0.id == pkg.productID.rawValue }
         let isBuying = purchasingID == pkg.productID.rawValue
@@ -297,7 +283,6 @@ struct DiamondStoreView: View {
             }
         } label: {
             VStack(spacing: 0) {
-                // 顶部标签
                 if let tag = pkg.tag {
                     Text(tag)
                         .font(.system(size: 9, weight: .black))
@@ -310,7 +295,6 @@ struct DiamondStoreView: View {
                     Spacer().frame(height: 25)
                 }
 
-                // 钻石数量
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text("💎").font(.system(size: 14))
                     Text("\(pkg.totalDiamonds)")
@@ -319,7 +303,6 @@ struct DiamondStoreView: View {
                 }
                 .padding(.bottom, 2)
 
-                // 赠送说明
                 if pkg.bonus > 0 {
                     Text("+\(pkg.bonus) bonus")
                         .font(.system(size: 11, weight: .bold))
@@ -329,7 +312,6 @@ struct DiamondStoreView: View {
                     Spacer().frame(height: 25)
                 }
 
-                // 价格按钮
                 Group {
                     if isBuying {
                         ProgressView().tint(.white)
@@ -345,13 +327,11 @@ struct DiamondStoreView: View {
                 .padding(.horizontal, 12)
                 .padding(.bottom, 14)
 
-                // 分割线
                 Rectangle()
                     .fill(Color.white.opacity(0.1))
                     .frame(height: 0.5)
                     .padding(.horizontal, 16)
 
-                // 单价
                 let priceValue = skProduct.map { NSDecimalNumber(decimal: $0.price).doubleValue } ?? (Double(pkg.price.replacingOccurrences(of: "$", with: "")) ?? 0)
                 let perDiamond = priceValue / Double(pkg.totalDiamonds)
                 Text("~$\(String(format: "%.3f", perDiamond))/💎")
