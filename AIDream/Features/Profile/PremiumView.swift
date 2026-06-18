@@ -23,10 +23,10 @@ struct PremiumView: View {
     }
 
     private let features = [
-        FeatureItem(icon: "bolt.fill", title: "Ultra-Fast Generation", description: "Priority server access for AI creation", color: Color(hex: "#FFD700")),
-        FeatureItem(icon: "sparkles", title: "4K High Definition", description: "Export your videos in cinematic 4K resolution", color: Color(hex: "#A07BFF")),
-        FeatureItem(icon: "diamond.fill", title: "Monthly 1,200 Diamonds", description: "Exclusive monthly claim for Pro members", color: Color(hex: "#6F31D5")),
-        FeatureItem(icon: "crown.fill", title: "Pro Style Models", description: "Access to private artistic AI models", color: Color(hex: "#FF8C00"))
+        FeatureItem(icon: "bolt.fill", title: "Ultra-Fast", description: "Priority access", color: Color(hex: "#FFD700")),
+        FeatureItem(icon: "sparkles", title: "4K Video", description: "Cinematic quality", color: Color(hex: "#A07BFF")),
+        FeatureItem(icon: "diamond.fill", title: "1,200 Bonus", description: "Monthly claim", color: Color(hex: "#6F31D5")),
+        FeatureItem(icon: "crown.fill", title: "Pro Models", description: "Private artistic AI", color: Color(hex: "#FF8C00"))
     ]
 
     var body: some View {
@@ -47,16 +47,6 @@ struct PremiumView: View {
                     .frame(width: 350, height: 350)
                     .blur(radius: 90)
                     .offset(x: appearAnimation ? -150 : 150, y: 150)
-
-                // 飘浮的星光
-                ForEach(0..<6) { i in
-                    Circle()
-                        .fill(Color.white.opacity(0.1))
-                        .frame(width: CGFloat.random(in: 2...4))
-                        .offset(x: CGFloat.random(in: -150...150), y: CGFloat.random(in: -300...300))
-                        .opacity(appearAnimation ? 1 : 0)
-                        .animation(.easeInOut(duration: Double.random(in: 2...4)).repeatForever(), value: appearAnimation)
-                }
             }
             .animation(.easeInOut(duration: 6).repeatForever(autoreverses: true), value: appearAnimation)
 
@@ -65,13 +55,14 @@ struct PremiumView: View {
                 headerView
 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 45) {
-                        // 增加了顶部的 padding，防止皇冠光晕被裁切
+                    VStack(spacing: 30) { // 减小整体间距
                         heroSection
-                            .padding(.top, 30)
+                            .padding(.top, 10)
 
-                        featuresList
+                        featuresGrid
+
                         plansSection
+
                         VStack(spacing: 20) {
                             purchaseButton
                             footerLinks
@@ -127,69 +118,70 @@ struct PremiumView: View {
     }
 
     private var heroSection: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 16) { // 减小间距
             ZStack {
-                // 核心徽章光晕
                 Circle()
-                    .fill(AppTheme.vipGold.opacity(0.25))
-                    .frame(width: 110, height: 110)
-                    .blur(radius: 25)
+                    .fill(AppTheme.vipGold.opacity(0.2))
+                    .frame(width: 90, height: 90)
+                    .blur(radius: 20)
 
                 Image(systemName: "crown.fill")
-                    .font(.system(size: 56))
+                    .font(.system(size: 44)) // 缩小图标
                     .foregroundStyle(
                         LinearGradient(
                             colors: [AppTheme.vipGold, Color(hex: "#FFECB3"), AppTheme.vipGold],
                             startPoint: .topLeading, endPoint: .bottomTrailing
                         )
                     )
-                    .shadow(color: AppTheme.vipGold.opacity(0.6), radius: 15, x: 0, y: 8)
+                    .shadow(color: AppTheme.vipGold.opacity(0.6), radius: 10, x: 0, y: 5)
             }
             .scaleEffect(appearAnimation ? 1.0 : 0.8)
-            .rotationEffect(.degrees(appearAnimation ? 0 : -15))
 
-            VStack(spacing: 10) {
-                Text("Join AIDream Pro")
-                    .font(.system(size: 36, weight: .black))
+            VStack(spacing: 6) {
+                Text("AIDream Pro")
+                    .font(.system(size: 28, weight: .black))
                     .foregroundColor(.white)
 
-                Text("Unleash the full power of Visionary AI")
-                    .font(.system(size: 17))
+                Text("Unlock the full potential of AI")
+                    .font(.system(size: 15))
                     .foregroundColor(AppTheme.textSecondary)
-                    .multilineTextAlignment(.center)
             }
         }
     }
 
-    private var featuresList: some View {
-        VStack(alignment: .leading, spacing: 22) {
+    private var featuresGrid: some View {
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
             ForEach(features) { feature in
-                HStack(spacing: 20) {
+                HStack(spacing: 12) {
                     ZStack {
                         Circle()
-                            .fill(feature.color.opacity(0.15))
-                            .frame(width: 44, height: 44)
+                            .fill(feature.color.opacity(0.12))
+                            .frame(width: 36, height: 36)
                         Image(systemName: feature.icon)
-                            .font(.system(size: 18, weight: .bold))
+                            .font(.system(size: 14, weight: .bold))
                             .foregroundColor(feature.color)
                     }
 
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: 2) {
                         Text(feature.title)
-                            .font(.system(size: 16, weight: .bold))
+                            .font(.system(size: 13, weight: .bold))
                             .foregroundColor(.white)
                         Text(feature.description)
-                            .font(.system(size: 13))
+                            .font(.system(size: 10))
                             .foregroundColor(AppTheme.textMuted)
                     }
+                    Spacer(minLength: 0)
                 }
+                .padding(12)
+                .background(Color.white.opacity(0.03))
+                .cornerRadius(16)
             }
         }
-        .padding(.horizontal, 28)
+        .padding(.horizontal, 24)
     }
 
     private var plansSection: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 12) {
             if storeKit.subscriptionProducts.isEmpty {
                 fallbackPlans
             } else {
@@ -206,9 +198,9 @@ struct PremiumView: View {
     }
 
     private var fallbackPlans: some View {
-        VStack(spacing: 14) {
-            planCard(title: "Weekly", price: "$4.99", id: StoreProductID.premiumWeekly.rawValue, subTitle: "Includes 500 Diamonds")
-            planCard(title: "Monthly", price: "$12.99", id: StoreProductID.premiumMonthly.rawValue, subTitle: "Includes 1,200 Diamonds", tag: "POPULAR")
+        VStack(spacing: 10) {
+            planCard(title: "Weekly", price: "$4.99", id: StoreProductID.premiumWeekly.rawValue, subTitle: "500 Diamonds")
+            planCard(title: "Monthly", price: "$12.99", id: StoreProductID.premiumMonthly.rawValue, subTitle: "1,200 Diamonds", tag: "POPULAR")
             planCard(title: "Lifetime", price: "$129.99", id: StoreProductID.premiumLifetime.rawValue, subTitle: "10,000 Diamonds & Permanent VIP", tag: "BEST VALUE")
         }
     }
@@ -222,53 +214,51 @@ struct PremiumView: View {
             }
         } label: {
             ZStack(alignment: .topTrailing) {
-                HStack(spacing: 16) {
-                    VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 12) {
+                    VStack(alignment: .leading, spacing: 2) {
                         Text(title)
-                            .font(.system(size: 18, weight: .black))
+                            .font(.system(size: 16, weight: .black))
                             .foregroundColor(isSelected ? .white : .white.opacity(0.9))
                         Text(subTitle)
-                            .font(.system(size: 13))
+                            .font(.system(size: 12))
                             .foregroundColor(isSelected ? .white.opacity(0.7) : AppTheme.textMuted)
                     }
 
                     Spacer()
 
                     Text(price)
-                        .font(.system(size: 22, weight: .black, design: .rounded))
+                        .font(.system(size: 18, weight: .black, design: .rounded))
                         .foregroundColor(isSelected ? AppTheme.vipGold : .white)
                 }
-                .padding(.horizontal, 24)
-                .padding(.vertical, 22)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
                 .background(
                     ZStack {
                         if isSelected {
-                            // 选中时的背景高亮
-                            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
                                 .fill(Color.white.opacity(0.08))
-                            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
                                 .fill(AppTheme.vipGold.opacity(0.05))
                         } else {
-                            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
                                 .fill(Color.white.opacity(0.04))
                         }
                     }
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
                         .stroke(isSelected ? AppTheme.vipGold : Color.white.opacity(0.1), lineWidth: isSelected ? 2 : 1)
                 )
-                .scaleEffect(isSelected ? 1.02 : 1.0)
 
                 if let tag = tag {
                     Text(tag)
-                        .font(.system(size: 10, weight: .black))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
+                        .font(.system(size: 8, weight: .black))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
                         .background(isSelected ? AppTheme.vipGold : AppTheme.accentPrimary)
                         .foregroundColor(isSelected ? AppTheme.vipBg : .white)
                         .clipShape(Capsule())
-                        .offset(x: -12, y: -10)
+                        .offset(x: -10, y: -8)
                 }
             }
         }
@@ -277,7 +267,6 @@ struct PremiumView: View {
 
     private var purchaseButton: some View {
         Button(action: {
-            // 如果产品列表为空，先尝试重新加载
             if storeKit.subscriptionProducts.isEmpty {
                 Task { await storeKit.loadProducts() }
                 return
@@ -299,12 +288,12 @@ struct PremiumView: View {
                 if purchasingID != nil {
                     ProgressView().tint(AppTheme.vipBg)
                 } else {
-                    Text(userService.isPremium ? "Active Subscription" : "Unlock My Potential")
-                        .font(.system(size: 20, weight: .bold))
+                    Text(userService.isPremium ? "Active Subscription" : "Unlock Pro Features")
+                        .font(.system(size: 18, weight: .bold))
                 }
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 66)
+            .frame(height: 56)
             .background(
                 LinearGradient(
                     colors: [AppTheme.vipGold, Color(hex: "#FFD700")],
@@ -313,34 +302,33 @@ struct PremiumView: View {
             )
             .foregroundColor(AppTheme.vipBg)
             .clipShape(Capsule())
-            .shadow(color: AppTheme.vipGold.opacity(0.4), radius: 20, x: 0, y: 10)
             .padding(.horizontal, 30)
         }
         .disabled(userService.isPremium || purchasingID != nil)
     }
 
     private var footerLinks: some View {
-        VStack(spacing: 12) {
-            Text("Cancel anytime in App Store. No hidden fees.")
-                .font(.system(size: 13))
+        VStack(spacing: 8) {
+            Text("Cancel anytime. Instant activation.")
+                .font(.system(size: 12))
                 .foregroundColor(AppTheme.textMuted)
 
-            HStack(spacing: 20) {
+            HStack(spacing: 16) {
                 Button("Terms") {
                     safariURL = URL(string: AIConfig.shared.termsOfServiceURL)
                     showSafari = true
                 }
-                Circle().fill(AppTheme.textMuted).frame(width: 3, height: 3)
+                Text("•")
                 Button("Privacy") {
                     safariURL = URL(string: AIConfig.shared.privacyPolicyURL)
                     showSafari = true
                 }
-                Circle().fill(AppTheme.textMuted).frame(width: 3, height: 3)
+                Text("•")
                 Button("Restore") {
                     Task { await storeKit.restorePurchases() }
                 }
             }
-            .font(.system(size: 12, weight: .medium))
+            .font(.system(size: 11, weight: .medium))
             .foregroundColor(AppTheme.textMuted)
         }
     }
