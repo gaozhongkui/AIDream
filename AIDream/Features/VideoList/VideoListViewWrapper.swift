@@ -2,13 +2,11 @@ import SwiftUI
 import UIKit
 
 struct VideoListViewWrapper: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> UINavigationController {
-        let videoListVC = VideoListViewController()
-        let navController = UINavigationController(rootViewController: videoListVC)
-        return navController
+    func makeUIViewController(context: Context) -> VideoListViewController {
+        VideoListViewController()
     }
 
-    func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {
+    func updateUIViewController(_ uiViewController: VideoListViewController, context: Context) {
         // No update needed
     }
 }

@@ -11,7 +11,7 @@ struct ContentView: View {
             // Page content
             Group {
                 switch selectedTab {
-                case 0:  VideoListViewWrapper()
+                case 0:  VideoListViewWrapper().ignoresSafeArea(edges: .top)
                 case 1:  CustomView(externalMode: $customSelectedMode)
                 default: ProfileView()
                 }
