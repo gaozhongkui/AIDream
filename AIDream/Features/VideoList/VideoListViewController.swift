@@ -18,6 +18,11 @@ final class VideoListViewController: UIViewController {
         return view
     }()
 
+    private let headerBlurView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .systemMaterialDark)
+        return UIVisualEffectView(effect: blurEffect)
+    }()
+
     private let headerTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "Explore"
@@ -39,7 +44,6 @@ final class VideoListViewController: UIViewController {
         let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .bold)
         let image = UIImage(systemName: "crown.fill", withConfiguration: config)
         button.setImage(image, for: .normal)
-        // 使用 AppTheme 中的 vipGold 色值 #C8A768
         button.tintColor = UIColor(red: 200/255, green: 167/255, blue: 104/255, alpha: 1)
         button.backgroundColor = UIColor.white.withAlphaComponent(0.08)
         button.layer.cornerRadius = 20
@@ -56,13 +60,15 @@ final class VideoListViewController: UIViewController {
 
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
+        // Disable automatic inset adjustment so we have full control over the layout
+        collectionView.contentInsetAdjustmentBehavior = .never
+
         collectionView.register(VideoCell.self, forCellWithReuseIdentifier: VideoCell.identifier)
         collectionView.register(LoadingFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: LoadingFooterView.identifier)
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.alwaysBounceVertical = true
         collectionView.refreshControl = refreshControl
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 30, right: 10)
         return collectionView
     }()
 
@@ -128,12 +134,34 @@ final class VideoListViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor(red: 5/255, green: 5/255, blue: 5/255, alpha: 1)
 
-        setupHeader()
+        // Setup order: background content first, then overlay header
         setupUI()
+        setupHeader()
         setupRefreshControl()
 
         loadCachedData()
         loadPage(reset: true)
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        // Ensure header stays on top
+        view.bringSubviewToFront(headerContainer)
+
+        // Calculate header height including safe area to set the collection view's top inset
+        let headerHeight = headerContainer.frame.height
+        let bottomPadding = view.safeAreaInsets.bottom + 20
+
+        if headerHeight > 0 && collectionView.contentInset.top != headerHeight {
+            collectionView.contentInset = UIEdgeInsets(top: headerHeight, left: 10, bottom: bottomPadding, right: 10)
+            collectionView.scrollIndicatorInsets = UIEdgeInsets(top: headerHeight, left: 0, bottom: view.safeAreaInsets.bottom, right: 0)
+
+            // Adjust initial offset
+            if collectionView.contentOffset.y == 0 {
+                collectionView.contentOffset = CGPoint(x: 0, y: -headerHeight)
+            }
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -149,28 +177,37 @@ final class VideoListViewController: UIViewController {
     // MARK: - Header Setup
     private func setupHeader() {
         view.addSubview(headerContainer)
+        headerContainer.addSubview(headerBlurView)
         headerContainer.addSubview(headerTitleLabel)
         headerContainer.addSubview(headerSubtitleLabel)
         headerContainer.addSubview(vipButton)
 
-        [headerContainer, headerTitleLabel, headerSubtitleLabel, vipButton].forEach {
+        [headerContainer, headerBlurView, headerTitleLabel, headerSubtitleLabel, vipButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
         NSLayoutConstraint.activate([
-            headerContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            // Header container pins to the very top of the screen (ignoring safe area)
+            headerContainer.topAnchor.constraint(equalTo: view.topAnchor),
             headerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             headerContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
+            // Blur view fills the entire container
+            headerBlurView.topAnchor.constraint(equalTo: headerContainer.topAnchor),
+            headerBlurView.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor),
+            headerBlurView.trailingAnchor.constraint(equalTo: headerContainer.trailingAnchor),
+            headerBlurView.bottomAnchor.constraint(equalTo: headerContainer.bottomAnchor),
+
+            // Text content inside header uses safeAreaLayoutGuide for top positioning
             headerTitleLabel.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor, constant: 24),
-            headerTitleLabel.topAnchor.constraint(equalTo: headerContainer.topAnchor, constant: 8),
+            headerTitleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
 
             headerSubtitleLabel.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor, constant: 24),
             headerSubtitleLabel.topAnchor.constraint(equalTo: headerTitleLabel.bottomAnchor, constant: 4),
-            headerSubtitleLabel.bottomAnchor.constraint(equalTo: headerContainer.bottomAnchor, constant: -8),
+            headerSubtitleLabel.bottomAnchor.constraint(equalTo: headerContainer.bottomAnchor, constant: -16),
 
             vipButton.trailingAnchor.constraint(equalTo: headerContainer.trailingAnchor, constant: -20),
-            vipButton.centerYAnchor.constraint(equalTo: headerTitleLabel.centerYAnchor, constant: 4),
+            vipButton.centerYAnchor.constraint(equalTo: headerTitleLabel.centerYAnchor),
             vipButton.widthAnchor.constraint(equalToConstant: 40),
             vipButton.heightAnchor.constraint(equalToConstant: 40)
         ])
@@ -191,7 +228,8 @@ final class VideoListViewController: UIViewController {
         }
 
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: headerContainer.bottomAnchor),
+            // CollectionView covers the whole screen
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -212,7 +250,7 @@ final class VideoListViewController: UIViewController {
 
             errorBanner.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             errorBanner.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            errorBanner.topAnchor.constraint(equalTo: headerContainer.bottomAnchor, constant: 8),
+            errorBanner.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
             errorBanner.heightAnchor.constraint(equalToConstant: 44),
 
             errorLabel.centerXAnchor.constraint(equalTo: errorBanner.centerXAnchor),
@@ -381,7 +419,6 @@ extension VideoListViewController: WaterfallLayoutDelegate {
         let video = allVideos[indexPath.item]
         let aspect = video.aspectRatio
         let photoHeight: CGFloat = aspect > 0 ? max(160, min(width * aspect, 340)) : 220
-        // 底部留 40pt 给标题说明文字，避免和图片重叠
         return photoHeight + 40
     }
 
