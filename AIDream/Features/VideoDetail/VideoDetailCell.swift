@@ -9,7 +9,7 @@ private extension UIColor {
     static let accentGlow      = UIColor(red: 111/255, green: 49/255,  blue: 213/255, alpha: 0.4)
 }
 
-// MARK: - GradientButton（自动同步渐变背景 frame）
+// MARK: - GradientButton
 private final class GradientButton: UIButton {
     private let accentGradient: CAGradientLayer = {
         let layer = CAGradientLayer()
@@ -60,7 +60,7 @@ final class VideoDetailCell: UICollectionViewCell {
         return iv
     }()
 
-    // MARK: - Bottom Gradient (text readability)
+    // MARK: - Gradients
     private let bottomGradient: CAGradientLayer = {
         let layer = CAGradientLayer()
         layer.colors = [
@@ -72,7 +72,6 @@ final class VideoDetailCell: UICollectionViewCell {
         return layer
     }()
 
-    // MARK: - Top Gradient (status bar area)
     private let topGradient: CAGradientLayer = {
         let layer = CAGradientLayer()
         layer.colors = [
@@ -83,7 +82,7 @@ final class VideoDetailCell: UICollectionViewCell {
         return layer
     }()
 
-    // MARK: - Back Button (Glassmorphism 2.0)
+    // MARK: - Buttons
     private let backButtonBlur: UIVisualEffectView = {
         let blur = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterialDark))
         blur.layer.cornerRadius = 18
@@ -99,7 +98,14 @@ final class VideoDetailCell: UICollectionViewCell {
         let config = UIImage.SymbolConfiguration(pointSize: 16, weight: .bold)
         btn.setImage(UIImage(systemName: "chevron.left", withConfiguration: config), for: .normal)
         btn.tintColor = .white
-        btn.backgroundColor = .clear
+        return btn
+    }()
+
+    private let moreButton: UIButton = {
+        let btn = UIButton(type: .system)
+        let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .semibold)
+        btn.setImage(UIImage(systemName: "ellipsis", withConfiguration: config), for: .normal)
+        btn.tintColor = .white
         return btn
     }()
 
@@ -135,7 +141,7 @@ final class VideoDetailCell: UICollectionViewCell {
         return label
     }()
 
-    // MARK: - Like Button (Glassmorphism 2.0)
+    // MARK: - Bottom Actions
     private let likeButtonBlur: UIVisualEffectView = {
         let blur = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterialDark))
         blur.layer.cornerRadius = 20
@@ -156,36 +162,26 @@ final class VideoDetailCell: UICollectionViewCell {
         config.baseForegroundColor = .white
         config.cornerStyle = .large
         let btn = UIButton(configuration: config)
-        btn.clipsToBounds = true
         return btn
     }()
 
-    // MARK: - Remix Button
     private let remixButton: GradientButton = {
         let btn = GradientButton(type: .system)
         btn.setTitle("  Remix This Style", for: .normal)
         btn.setTitleColor(.white, for: .normal)
         btn.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
-
         let config = UIImage.SymbolConfiguration(pointSize: 14, weight: .bold)
         btn.setImage(UIImage(systemName: "wand.and.stars", withConfiguration: config), for: .normal)
         btn.tintColor = .white
-
         btn.layer.cornerRadius = 20
         btn.layer.cornerCurve = .continuous
         btn.clipsToBounds = true
-
-        btn.layer.shadowColor = UIColor.black.cgColor
-        btn.layer.shadowOffset = CGSize(width: 0, height: 5)
-        btn.layer.shadowOpacity = 0.15
-        btn.layer.shadowRadius = 10
         return btn
     }()
 
     var onBackTapped: (() -> Void)?
     var onRemixTapped: (() -> Void)?
 
-    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -199,14 +195,17 @@ final class VideoDetailCell: UICollectionViewCell {
         contentView.addSubview(coverImageView)
         contentView.layer.addSublayer(topGradient)
         contentView.layer.addSublayer(bottomGradient)
+
         contentView.addSubview(backButtonBlur)
         contentView.addSubview(backButton)
+        contentView.addSubview(moreButton)
+
         contentView.addSubview(infoStackView)
         contentView.addSubview(likeButtonBlur)
         contentView.addSubview(likeButton)
         contentView.addSubview(remixButton)
 
-        [playerContainer, coverImageView, backButtonBlur, backButton, infoStackView, likeButtonBlur, likeButton, remixButton].forEach {
+        [playerContainer, coverImageView, backButtonBlur, backButton, moreButton, infoStackView, likeButtonBlur, likeButton, remixButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -225,15 +224,20 @@ final class VideoDetailCell: UICollectionViewCell {
             coverImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             coverImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
 
-            backButtonBlur.topAnchor.constraint(equalTo: backButton.topAnchor),
-            backButtonBlur.leadingAnchor.constraint(equalTo: backButton.leadingAnchor),
-            backButtonBlur.widthAnchor.constraint(equalTo: backButton.widthAnchor),
-            backButtonBlur.heightAnchor.constraint(equalTo: backButton.heightAnchor),
+            backButtonBlur.centerXAnchor.constraint(equalTo: backButton.centerXAnchor),
+            backButtonBlur.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
+            backButtonBlur.widthAnchor.constraint(equalToConstant: 36),
+            backButtonBlur.heightAnchor.constraint(equalToConstant: 36),
 
             backButton.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 8),
             backButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             backButton.widthAnchor.constraint(equalToConstant: 36),
             backButton.heightAnchor.constraint(equalToConstant: 36),
+
+            moreButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
+            moreButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            moreButton.widthAnchor.constraint(equalToConstant: 44),
+            moreButton.heightAnchor.constraint(equalToConstant: 44),
 
             remixButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             remixButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
@@ -255,6 +259,7 @@ final class VideoDetailCell: UICollectionViewCell {
         ])
 
         backButton.addTarget(self, action: #selector(backTapped), for: .touchUpInside)
+        moreButton.addTarget(self, action: #selector(moreTapped), for: .touchUpInside)
         likeButton.addTarget(self, action: #selector(likeTapped), for: .touchUpInside)
         remixButton.addTarget(self, action: #selector(remixTapped), for: .touchUpInside)
     }
@@ -285,13 +290,40 @@ final class VideoDetailCell: UICollectionViewCell {
     }
 
     @objc private func backTapped() { onBackTapped?() }
-
     @objc private func remixTapped() { onRemixTapped?() }
+
+    @objc private func moreTapped() {
+        guard let vc = self.window?.rootViewController else { return }
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+        alert.addAction(UIAlertAction(title: "Report Inappropriate Content", style: .destructive) { _ in
+            self.showToast(message: "Thank you for reporting. Our team will review this content.")
+        })
+
+        alert.addAction(UIAlertAction(title: "Block User", style: .destructive) { _ in
+            self.showToast(message: "User blocked. You will no longer see content from this artist.")
+        })
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        if let popover = alert.popoverPresentationController {
+            popover.sourceView = moreButton
+            popover.sourceRect = moreButton.bounds
+        }
+        vc.present(alert, animated: true)
+    }
+
+    private func showToast(message: String) {
+        let toast = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        self.window?.rootViewController?.present(toast, animated: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            toast.dismiss(animated: true)
+        }
+    }
 
     @objc private func likeTapped() {
         guard let video = videoData else { return }
         FavoriteService.shared.toggleFavorite(video)
-        // 即时更新本地状态，不等通知回调，避免 SwiftUI 刷新时序问题
         isLiked = FavoriteService.shared.isFavorited(video.id)
         currentStarCount += isLiked ? 1 : -1
         currentStarCount = max(0, currentStarCount)
@@ -301,7 +333,6 @@ final class VideoDetailCell: UICollectionViewCell {
     private func updateLikeButtonStyle(animated: Bool) {
         let color: UIColor = isLiked ? .systemRed : .white
         let starText = formatCount(currentStarCount)
-
         var config = likeButton.configuration
         config?.baseForegroundColor = color
         config?.image = UIImage(systemName: isLiked ? "heart.fill" : "heart")
@@ -320,29 +351,19 @@ final class VideoDetailCell: UICollectionViewCell {
     func configure(with video: VideoData) {
         self.videoData = video
         self.videoURL = video.videoURL
-
         nameLabel.text = "@\(video.userName)"
         titleLabel.text = video.title.lowercased() == "untitled" ? video.introduction : video.title
         introLabel.text = video.introduction
-
         self.currentStarCount = video.starCount
         self.isLiked = FavoriteService.shared.isFavorited(video.id)
         updateLikeButtonStyle(animated: false)
-
-        coverImageView.isHidden = false
-        coverImageView.alpha = 1
-        coverImageView.kf.setImage(
-            with: video.coverURL,
-            options: [.keepCurrentImageWhileLoading]
-        )
-
+        coverImageView.kf.setImage(with: video.coverURL, options: [.keepCurrentImageWhileLoading])
         setupPlayer()
     }
 
     private func setupPlayer() {
         guard let url = videoURL else { return }
         stopPlayback()
-
         let item = AVPlayerItem(url: url)
         player = AVPlayer(playerItem: item)
         let layer = AVPlayerLayer(player: player)
@@ -383,17 +404,12 @@ final class VideoDetailCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         stopPlayback()
-        coverImageView.image = nil
         coverImageView.alpha = 1
         videoData = nil
-        currentStarCount = 0
-        isLiked = false
     }
 
     private func formatCount(_ count: Int) -> String {
-        if count >= 1000 {
-            return String(format: "%.1fk", Double(count) / 1000.0)
-        }
+        if count >= 1000 { return String(format: "%.1fk", Double(count) / 1000.0) }
         return "\(count)"
     }
 }

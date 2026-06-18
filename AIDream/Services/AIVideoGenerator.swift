@@ -18,7 +18,7 @@ class AIVideoGenerator: ObservableObject {
 
         var description: String {
             switch self {
-            case .idle:               return "Ready"
+            case .idle:               return "Ready to Create"
             case .uploading:          return "Connecting to AI..."
             case .generating(let p):  return "Generating... \(Int(p * 100))%"
             case .completed(_):       return "Video Ready"
@@ -61,13 +61,25 @@ class AIVideoGenerator: ObservableObject {
                 
                 // 2. 轮询专属媒体任务状态
                 let videoURL = try await pollVideoJob(jobId: jobId)
+
+                // 验证 URL 合法性
+                guard videoURL.scheme == "https" else {
+                    logger.error("Security Risk: AI returned a non-https URL: \(videoURL.absoluteString)")
+                    throw VideoError.serverError("Insecure video source returned.")
+                }
+
                 state = .completed(videoURL)
-                
+                logger.info("Generation successful: \(videoURL.absoluteString)")
+
             } catch is CancellationError {
+                logger.info("Generation task was cancelled.")
                 state = .idle
-            } catch {
-                logger.error("Final Failure: \(error.localizedDescription)")
+            } catch let error as VideoError {
+                logger.error("Video Generation Error: \(error.localizedDescription)")
                 state = .failed(error.localizedDescription)
+            } catch {
+                logger.error("Unknown Failure: \(error.localizedDescription)")
+                state = .failed("An unexpected error occurred.")
             }
         }
     }
@@ -107,7 +119,7 @@ class AIVideoGenerator: ObservableObject {
             "aspect_ratio": ratio
         ]
 
-        // 时长
+        // 时长转换
         let durationVal = Int(duration.replacingOccurrences(of: "s", with: "")) ?? 5
         body["duration"] = durationVal
 
@@ -122,7 +134,7 @@ class AIVideoGenerator: ObservableObject {
         var frameImages: [[String: Any]] = []
 
         // 处理起始帧 (first_frame)
-        if let img = image, let b64 = processAndEncodeImage(img, maxDim: 720) {
+        if let img = image, let b64 = processAndEncodeImage(img, maxDim: 1024) { // 稍微提升分辨率到 1024
             frameImages.append([
                 "type": "image_url",
                 "image_url": [
@@ -133,7 +145,7 @@ class AIVideoGenerator: ObservableObject {
         }
 
         // 处理结束帧 (last_frame)
-        if let endImg = endImage, let b64End = processAndEncodeImage(endImg, maxDim: 720) {
+        if let endImg = endImage, let b64End = processAndEncodeImage(endImg, maxDim: 1024) {
             frameImages.append([
                 "type": "image_url",
                 "image_url": [
@@ -151,14 +163,19 @@ class AIVideoGenerator: ObservableObject {
         request.httpBody = bodyData
 
         logger.debug("Request Payload Size: \(bodyData.count / 1024) KB")
+
         let (data, response) = try await URLSession.shared.data(for: request)
 
         guard let http = response as? HTTPURLResponse else { throw VideoError.invalidResponse }
 
-        if http.statusCode >= 400 {
-            let rawBody = String(data: data, encoding: .utf8) ?? "No body"
+        if http.statusCode == 401 {
+            throw VideoError.serverError("Invalid API Key. Please check your settings.")
+        } else if http.statusCode == 402 {
+            throw VideoError.serverError("Insufficient credits on OpenRouter.")
+        } else if http.statusCode >= 400 {
+            let rawBody = String(data: data, encoding: .utf8) ?? "Unknown Error"
             logger.error("HTTP \(http.statusCode) Error Response: \(rawBody)")
-            throw VideoError.serverError("HTTP \(http.statusCode): \(rawBody)")
+            throw VideoError.serverError("Service Error (\(http.statusCode))")
         }
 
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
@@ -182,43 +199,64 @@ class AIVideoGenerator: ObservableObject {
         var request = URLRequest(url: url, timeoutInterval: 30)
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
-        // 视频生成通常 15-120 秒，最多轮询 60 次 × 5 秒 = 5 分钟
-        let maxPollAttempts = 60
+        // 视频生成通常 15-120 秒，最多轮询 100 次 × 3 秒 = 5 分钟 (缩短间隔提高响应度)
+        let maxPollAttempts = 100
+        let pollInterval: UInt64 = 3_000_000_000
+
         for attempt in 1...maxPollAttempts {
             try Task.checkCancellation()
-            try await Task.sleep(nanoseconds: 5_000_000_000) // 间隔 5 秒
+
+            // 第一次轮询前也等待，给服务器处理时间
+            try await Task.sleep(nanoseconds: pollInterval)
             try Task.checkCancellation()
 
             logger.debug("Polling attempt \(attempt)/\(maxPollAttempts)")
-            let (data, response) = try await URLSession.shared.data(for: request)
-            
-            guard let http = response as? HTTPURLResponse, http.statusCode == 200 else { continue }
-            guard let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else { continue }
 
-            let jobInfo = json["data"] as? [String: Any] ?? json
-            let status = (jobInfo["status"] as? String)?.lowercased() ?? "pending"
-            logger.debug("Current Status: \(status)")
+            do {
+                let (data, response) = try await URLSession.shared.data(for: request)
 
-            state = .generating(min(0.05 + Double(attempt) / Double(maxPollAttempts) * 0.94, 0.99))
-
-            switch status {
-            case "completed", "succeeded", "success":
-                // 兼容解析不同的结果承载字段
-                let urlStr = (jobInfo["unsigned_urls"] as? [String])?.first ??
-                             (jobInfo["results"] as? [[String: Any]])?.first?["url"] as? String ??
-                             (jobInfo["url"] as? String)
-                
-                if let urlStr = urlStr, let finalURL = URL(string: urlStr) {
-                    return finalURL
+                guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+                    logger.warning("Polling error: Invalid response code")
+                    continue
                 }
-                throw VideoError.urlNotFound
 
-            case "failed", "error", "cancelled", "expired":
-                let msg = jobInfo["error"] as? String ?? (jobInfo["data"] as? [String: Any])?["error"] as? String ?? "Generation failed"
-                throw VideoError.serverError(msg)
+                guard let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else {
+                    continue
+                }
 
-            default:
-                continue
+                let jobInfo = json["data"] as? [String: Any] ?? json
+                let status = (jobInfo["status"] as? String)?.lowercased() ?? "pending"
+                logger.debug("Current Status: \(status)")
+
+                // 进度反馈：前 80% 随时间增加，最后 20% 等待完成
+                let progress = min(0.1 + (Double(attempt) / Double(maxPollAttempts) * 0.8), 0.95)
+                state = .generating(progress)
+
+                switch status {
+                case "completed", "succeeded", "success":
+                    let urlStr = (jobInfo["unsigned_urls"] as? [String])?.first ??
+                                 (jobInfo["results"] as? [[String: Any]])?.first?["url"] as? String ??
+                                 (jobInfo["url"] as? String)
+
+                    if let urlStr = urlStr, let finalURL = URL(string: urlStr) {
+                        return finalURL
+                    }
+                    throw VideoError.urlNotFound
+
+                case "failed", "error", "cancelled", "expired":
+                    let msg = jobInfo["error"] as? String ??
+                              (jobInfo["data"] as? [String: Any])?["error"] as? String ??
+                              "Generation failed"
+                    throw VideoError.serverError(msg)
+
+                default:
+                    continue
+                }
+            } catch let error as VideoError {
+                throw error
+            } catch {
+                logger.warning("Polling request failed: \(error.localizedDescription). Retrying...")
+                continue // 网络波动则重试
             }
         }
         throw VideoError.timeout
@@ -235,7 +273,7 @@ class AIVideoGenerator: ObservableObject {
         let resized = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-        return resized?.jpegData(compressionQuality: 0.5)?.base64EncodedString()
+        return resized?.jpegData(compressionQuality: 0.7)?.base64EncodedString() // 提升压缩质量到 0.7
     }
 
     enum VideoError: LocalizedError {
@@ -243,8 +281,9 @@ class AIVideoGenerator: ObservableObject {
         var errorDescription: String? {
             switch self {
             case .missingApiKey: return "API Key Missing"
-            case .serverError(let s): return "Server: \(s)"
-            case .timeout: return "Timeout"
+            case .serverError(let s): return s
+            case .timeout: return "Generation took too long. Please check back later."
+            case .urlNotFound: return "Video generated but link was not found."
             default: return "Video creation failed."
             }
         }

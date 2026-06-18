@@ -13,8 +13,11 @@ struct AIConfig {
     let openRouterApiKey = "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"
     let openRouterImageModel = "google/gemini-2.5-flash-image"
 
-    // 视频生成模型（OpenRouter 上 MiniMax 的正确 ID）
     let openRouterVideoModel = "minimax/hailuo-2.3"
+    
+    // MARK: - Legal URLs
+    let privacyPolicyURL = "https://aidream.app/privacy" // 请替换为实际地址
+    let termsOfServiceURL = "https://aidream.app/terms"   // 请替换为实际地址
 
     private init() {}
 }

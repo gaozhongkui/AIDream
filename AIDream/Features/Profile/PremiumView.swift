@@ -9,6 +9,9 @@ struct PremiumView: View {
     @State private var selectedProductID: String = StoreProductID.premiumMonthly.rawValue
     @State private var purchasingID: String?
 
+    @State private var safariURL: URL?
+    @State private var showSafari = false
+
     // MARK: - 特权项
     struct FeatureItem: Identifiable {
         let id = UUID()
@@ -25,51 +28,43 @@ struct PremiumView: View {
     ]
 
     var body: some View {
-        ZStack {
-            AppTheme.bgPrimary.ignoresSafeArea()
+        NavigationView {
+            ZStack {
+                AppTheme.bgPrimary.ignoresSafeArea()
 
-            // 背景光晕
-            Circle()
-                .fill(AppTheme.accentPrimary.opacity(0.15))
-                .frame(width: 300, height: 300)
-                .blur(radius: 80)
-                .offset(x: -100, y: -200)
+                // 背景光晕
+                Circle()
+                    .fill(AppTheme.accentPrimary.opacity(0.15))
+                    .frame(width: 300, height: 300)
+                    .blur(radius: 80)
+                    .offset(x: -100, y: -200)
 
-            Circle()
-                .fill(AppTheme.accentSecondary.opacity(0.1))
-                .frame(width: 250, height: 250)
-                .blur(radius: 70)
-                .offset(x: 150, y: 100)
+                VStack(spacing: 0) {
+                    headerView
 
-            VStack(spacing: 0) {
-                headerView
-
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 32) {
-                        heroSection
-
-                        featuresGrid
-
-                        plansSection
-
-                        purchaseButton
-
-                        footerLinks
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 32) {
+                            heroSection
+                            featuresGrid
+                            plansSection
+                            purchaseButton
+                            footerLinks
+                        }
+                        .padding(.bottom, 50)
                     }
-                    .padding(.bottom, 50)
                 }
             }
-        }
-        .navigationBarHidden(true)
-        .onAppear {
-            // 默认选中第一个可用的订阅或月度
-            if let first = storeKit.subscriptionProducts.first {
-                selectedProductID = first.id
+            .navigationBarHidden(true)
+            .sheet(isPresented: $showSafari) {
+                if let url = safariURL {
+                    SafariView(url: url)
+                        .ignoresSafeArea()
+                }
             }
         }
     }
 
-    // MARK: - Header
+    // MARK: - UI Components
     private var headerView: some View {
         HStack {
             Button(action: { dismiss() }) {
@@ -80,7 +75,6 @@ struct PremiumView: View {
                     .background(Circle().fill(Color.white.opacity(0.08)))
             }
             Spacer()
-
             Button(action: { Task { await storeKit.restorePurchases() } }) {
                 Text("Restore")
                     .font(.system(size: 14, weight: .medium))
@@ -91,56 +85,31 @@ struct PremiumView: View {
         .padding(.top, 10)
     }
 
-    // MARK: - Hero Section
     private var heroSection: some View {
         VStack(spacing: 16) {
             ZStack {
-                Circle()
-                    .fill(AppTheme.accentGrad.opacity(0.15))
-                    .frame(width: 80, height: 80)
-                    .blur(radius: 10)
-
-                Image(systemName: "crown.fill")
-                    .font(.system(size: 40))
-                    .foregroundStyle(AppTheme.accentGrad)
-                    .shadow(color: AppTheme.accentPrimary.opacity(0.5), radius: 10)
+                Circle().fill(AppTheme.accentGrad.opacity(0.15)).frame(width: 80, height: 80).blur(radius: 10)
+                Image(systemName: "crown.fill").font(.system(size: 40)).foregroundStyle(AppTheme.accentGrad)
             }
-
             VStack(spacing: 8) {
-                Text("Upgrade to PRO")
-                    .font(.system(size: 32, weight: .black))
-                    .foregroundColor(.white)
-
-                Text("Unlock the full potential of AI Dream")
-                    .font(.system(size: 16))
-                    .foregroundColor(AppTheme.textSecondary)
+                Text("Upgrade to PRO").font(.system(size: 32, weight: .black)).foregroundColor(.white)
+                Text("Unlock the full potential of AI Dream").font(.system(size: 16)).foregroundColor(AppTheme.textSecondary)
             }
         }
         .padding(.top, 20)
     }
 
-    // MARK: - Features Grid
     private var featuresGrid: some View {
         VStack(alignment: .leading, spacing: 20) {
             ForEach(features) { feature in
                 HStack(spacing: 16) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(AppTheme.accentGrad.opacity(0.1))
-                            .frame(width: 44, height: 44)
-
-                        Image(systemName: feature.icon)
-                            .font(.system(size: 18))
-                            .foregroundStyle(AppTheme.accentGrad)
+                        RoundedRectangle(cornerRadius: 12).fill(AppTheme.accentGrad.opacity(0.1)).frame(width: 44, height: 44)
+                        Image(systemName: feature.icon).font(.system(size: 18)).foregroundStyle(AppTheme.accentGrad)
                     }
-
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(feature.title)
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.white)
-                        Text(feature.description)
-                            .font(.system(size: 13))
-                            .foregroundColor(AppTheme.textMuted)
+                        Text(feature.title).font(.system(size: 16, weight: .bold)).foregroundColor(.white)
+                        Text(feature.description).font(.system(size: 13)).foregroundColor(AppTheme.textMuted)
                     }
                 }
             }
@@ -148,19 +117,13 @@ struct PremiumView: View {
         .padding(.horizontal, 24)
     }
 
-    // MARK: - Plans Section
     private var plansSection: some View {
         VStack(spacing: 16) {
-            if storeKit.isLoadingProducts && storeKit.subscriptionProducts.isEmpty {
-                ProgressView().tint(AppTheme.accentSecondary)
+            if storeKit.subscriptionProducts.isEmpty {
+                fallbackPlans
             } else {
                 ForEach(storeKit.subscriptionProducts, id: \.id) { product in
                     planCard(product)
-                }
-
-                // Fallback UI if products aren't loaded yet
-                if storeKit.subscriptionProducts.isEmpty {
-                    fallbackPlans
                 }
             }
         }
@@ -169,97 +132,40 @@ struct PremiumView: View {
 
     private func planCard(_ product: Product) -> some View {
         let isSelected = selectedProductID == product.id
-        let productType = StoreProductID(rawValue: product.id)
-
-        return Button {
-            selectedProductID = product.id
-        } label: {
+        return Button { selectedProductID = product.id } label: {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    HStack(spacing: 8) {
-                        Text(planTitle(for: product.id))
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundColor(.white)
-
-                        if productType == .premiumMonthly {
-                            Text("POPULAR")
-                                .font(.system(size: 10, weight: .black))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 2)
-                                .background(AppTheme.accentGradH)
-                                .cornerRadius(4)
-                        } else if productType == .premiumLifetime {
-                            Text("BEST VALUE")
-                                .font(.system(size: 10, weight: .black))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 2)
-                                .background(AppTheme.success.opacity(0.8))
-                                .cornerRadius(4)
-                        }
-                    }
-
-                    Text(planSubtitle(for: product.id))
-                        .font(.system(size: 13))
-                        .foregroundColor(AppTheme.textMuted)
+                    Text(product.displayName).font(.system(size: 18, weight: .bold)).foregroundColor(.white)
+                    Text(product.description).font(.system(size: 13)).foregroundColor(AppTheme.textMuted)
                 }
-
                 Spacer()
-
-                VStack(alignment: .trailing, spacing: 4) {
-                    Text(product.displayPrice)
-                        .font(.system(size: 20, weight: .black))
-                        .foregroundColor(.white)
-
-                    if productType != .premiumLifetime {
-                        Text("per " + (productType == .premiumWeekly ? "week" : "month"))
-                            .font(.system(size: 11))
-                            .foregroundColor(AppTheme.textMuted)
-                    }
-                }
+                Text(product.displayPrice).font(.system(size: 20, weight: .black)).foregroundColor(.white)
             }
-            .padding(.all, 20)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(isSelected ? Color.white.opacity(0.1) : Color.white.opacity(0.04))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(isSelected ? AppTheme.accentPrimary : Color.white.opacity(0.1), lineWidth: isSelected ? 2 : 1)
-            )
-        }
-        .buttonStyle(.plain)
+            .padding(20)
+            .background(RoundedRectangle(cornerRadius: 20).fill(isSelected ? Color.white.opacity(0.1) : Color.white.opacity(0.04)))
+            .overlay(RoundedRectangle(cornerRadius: 20).stroke(isSelected ? AppTheme.accentPrimary : Color.white.opacity(0.1), lineWidth: isSelected ? 2 : 1))
+        }.buttonStyle(.plain)
     }
 
     private var fallbackPlans: some View {
         VStack(spacing: 12) {
-            fakePlanCard(title: "Weekly", subtitle: "Try for 7 days", price: "$4.99", type: .premiumWeekly)
-            fakePlanCard(title: "Monthly", subtitle: "1,000 bonus diamonds", price: "$12.99", type: .premiumMonthly, tag: "POPULAR")
-            fakePlanCard(title: "Lifetime", subtitle: "One-time payment", price: "$59.99", type: .premiumLifetime, tag: "BEST VALUE")
+            fakePlanCard(title: "Weekly", price: "$4.99", id: StoreProductID.premiumWeekly.rawValue)
+            fakePlanCard(title: "Monthly", price: "$12.99", id: StoreProductID.premiumMonthly.rawValue, tag: "POPULAR")
         }
     }
 
-    private func fakePlanCard(title: String, subtitle: String, price: String, type: StoreProductID, tag: String? = nil) -> some View {
-        let isSelected = selectedProductID == type.rawValue
-        return Button {
-            selectedProductID = type.rawValue
-        } label: {
+    private func fakePlanCard(title: String, price: String, id: String, tag: String? = nil) -> some View {
+        let isSelected = selectedProductID == id
+        return Button { selectedProductID = id } label: {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    HStack(spacing: 8) {
-                        Text(title)
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundColor(.white)
+                    HStack {
+                        Text(title).font(.system(size: 18, weight: .bold)).foregroundColor(.white)
                         if let tag = tag {
-                            Text(tag)
-                                .font(.system(size: 10, weight: .black))
-                                .padding(.horizontal, 8).padding(.vertical, 2)
-                                .background(tag == "POPULAR" ? AnyShapeStyle(AppTheme.accentGradH) : AnyShapeStyle(AppTheme.success.opacity(0.8)))
-                                .cornerRadius(4)
+                            Text(tag).font(.system(size: 10, weight: .black)).padding(.horizontal, 8).padding(.vertical, 2).background(AppTheme.accentGradH).cornerRadius(4)
                         }
                     }
-                    Text(subtitle)
-                        .font(.system(size: 13))
-                        .foregroundColor(AppTheme.textMuted)
+                    Text("Unlock all features").font(.system(size: 13)).foregroundColor(AppTheme.textMuted)
                 }
                 Spacer()
                 Text(price).font(.system(size: 20, weight: .black)).foregroundColor(.white)
@@ -270,25 +176,6 @@ struct PremiumView: View {
         }.buttonStyle(.plain)
     }
 
-    private func planTitle(for id: String) -> String {
-        switch StoreProductID(rawValue: id) {
-        case .premiumWeekly: return "Weekly"
-        case .premiumMonthly: return "Monthly"
-        case .premiumLifetime: return "Lifetime"
-        default: return "Subscription"
-        }
-    }
-
-    private func planSubtitle(for id: String) -> String {
-        switch StoreProductID(rawValue: id) {
-        case .premiumWeekly: return "Cancel anytime"
-        case .premiumMonthly: return "1,000 bonus diamonds"
-        case .premiumLifetime: return "Pay once, enjoy forever"
-        default: return ""
-        }
-    }
-
-    // MARK: - Purchase Button
     private var purchaseButton: some View {
         VStack(spacing: 12) {
             Button(action: {
@@ -301,51 +188,31 @@ struct PremiumView: View {
                     }
                 }
             }) {
-                HStack {
-                    if purchasingID != nil {
-                        ProgressView().tint(AppTheme.vipBg)
-                    } else {
-                        Text(userService.isPremium ? "Already Subscribed" : "Get Premium Access")
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundColor(AppTheme.vipBg)
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: 60)
-                .background(
-                    LinearGradient(
-                        colors: [Color(hex: "#FFE1A8"), Color(hex: "#C8A768"), Color(hex: "#FFE1A8")],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .cornerRadius(30)
-                .shadow(color: AppTheme.vipGold.opacity(0.4), radius: 15, y: 8)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 30)
-                        .stroke(Color.white.opacity(0.5), lineWidth: 1)
-                )
+                Text(purchasingID != nil ? "Processing..." : (userService.isPremium ? "Already Subscribed" : "Start My Journey"))
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(AppTheme.vipBg)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 60)
+                    .background(AppTheme.vipGold)
+                    .cornerRadius(30)
             }
             .disabled(userService.isPremium || purchasingID != nil)
             .padding(.horizontal, 24)
-
-            Text("Auto-renews for the same price until cancelled.")
-                .font(.system(size: 11))
-                .foregroundColor(AppTheme.textMuted)
         }
     }
 
-    // MARK: - Footer Links
     private var footerLinks: some View {
         HStack(spacing: 24) {
-            Button("Terms of Service") {}
-            Button("Privacy Policy") {}
+            Button("Terms of Service") {
+                safariURL = URL(string: AIConfig.shared.termsOfServiceURL)
+                showSafari = true
+            }
+            Button("Privacy Policy") {
+                safariURL = URL(string: AIConfig.shared.privacyPolicyURL)
+                showSafari = true
+            }
         }
         .font(.system(size: 12))
         .foregroundColor(AppTheme.textMuted)
     }
-}
-
-#Preview {
-    PremiumView()
 }
