@@ -182,13 +182,14 @@ class AIVideoGenerator: ObservableObject {
         var request = URLRequest(url: url, timeoutInterval: 30)
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
-        // 视频生成时间通常在 15s - 120s 之间，保持 200 次轮询
-        for attempt in 1...200 {
+        // 视频生成通常 15-120 秒，最多轮询 60 次 × 5 秒 = 5 分钟
+        let maxPollAttempts = 60
+        for attempt in 1...maxPollAttempts {
             try Task.checkCancellation()
             try await Task.sleep(nanoseconds: 5_000_000_000) // 间隔 5 秒
             try Task.checkCancellation()
 
-            logger.debug("Polling attempt \(attempt)")
+            logger.debug("Polling attempt \(attempt)/\(maxPollAttempts)")
             let (data, response) = try await URLSession.shared.data(for: request)
             
             guard let http = response as? HTTPURLResponse, http.statusCode == 200 else { continue }
@@ -198,7 +199,7 @@ class AIVideoGenerator: ObservableObject {
             let status = (jobInfo["status"] as? String)?.lowercased() ?? "pending"
             logger.debug("Current Status: \(status)")
 
-            state = .generating(min(0.05 + Double(attempt) * 0.005, 0.99))
+            state = .generating(min(0.05 + Double(attempt) / Double(maxPollAttempts) * 0.94, 0.99))
 
             switch status {
             case "completed", "succeeded", "success":

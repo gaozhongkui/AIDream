@@ -8,6 +8,8 @@ final class VideoListViewController: UIViewController {
     private var isLoadingPage = false
     private var hasMorePages = true
 
+    private var hideBannerWorkItem: DispatchWorkItem?
+
     // MARK: - Custom Header
     private let headerContainer: UIView = {
         let view = UIView()
@@ -208,10 +210,13 @@ final class VideoListViewController: UIViewController {
     private func showErrorBanner(_ message: String) {
         errorLabel.text = message
         errorBanner.isHidden = false
+        hideBannerWorkItem?.cancel()
         UIView.animate(withDuration: 0.3) { self.view.layoutIfNeeded() }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
-            UIView.animate(withDuration: 0.3) { self.errorBanner.isHidden = true }
+        let workItem = DispatchWorkItem { [weak self] in
+            UIView.animate(withDuration: 0.3) { self?.errorBanner.isHidden = true }
         }
+        hideBannerWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4, execute: workItem)
     }
 
     // MARK: - Data Loading
@@ -260,7 +265,8 @@ final class VideoListViewController: UIViewController {
 
                     self.append(videos: videos)
                     let newVideoCount = self.allVideos.count
-                    self.currentOffset += self.pageSize
+                    let fetchedCount = videos.count
+                    self.currentOffset += fetchedCount
                     self.hasMorePages = !videos.isEmpty
 
                     self.emptyStateView.isHidden = !self.allVideos.isEmpty
@@ -337,15 +343,7 @@ extension VideoListViewController: UICollectionViewDataSource, UICollectionViewD
         (cell as? VideoCell)?.stopPlayback()
     }
 
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offsetY = scrollView.contentOffset.y
-        let contentHeight = scrollView.contentSize.height
-        let frameHeight = scrollView.frame.height
 
-        if offsetY > contentHeight - frameHeight - 300 {
-            loadPage(reset: false)
-        }
-    }
 }
 
 // MARK: - WaterfallLayoutDelegate

@@ -30,4 +30,8 @@ struct LottieView: UIViewRepresentable {
     func updateUIView(_ uiView: UIView, context: Context) {
         // Handle updates if needed
     }
+
+    func dismantleUIView(_ uiView: UIView, coordinator: ()) {
+        (uiView.subviews.first as? LottieAnimationView)?.stop()
+    }
 }

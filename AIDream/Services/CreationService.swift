@@ -55,7 +55,8 @@ final class CreationService: ObservableObject {
                 } else {
                     // Download from remote to permanent Documents
                     logger.info("Downloading remote video for history: \(url)")
-                    let (data, _) = try await URLSession.shared.data(from: url)
+                    var request = URLRequest(url: url, timeoutInterval: 60)
+                    let (data, _) = try await URLSession.shared.data(for: request)
                     try data.write(to: destinationURL)
                 }
 
