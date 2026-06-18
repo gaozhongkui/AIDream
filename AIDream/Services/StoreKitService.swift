@@ -24,7 +24,6 @@ enum StoreProductID: String, CaseIterable {
         case .premiumWeekly: return 500  // 周订阅送 500
         case .premiumMonthly: return 1200 // 月度订阅送 1200
         case .premiumLifetime: return 10000 // 永久订阅送 10,000
-        default: return 0
         }
     }
 
@@ -43,6 +42,7 @@ final class StoreKitService: ObservableObject {
 
     @Published var diamondProducts: [Product] = []
     @Published var subscriptionProducts: [Product] = []
+    @Published var purchasedIdentifiers = Set<String>()
     @Published var isLoadingProducts = false
     @Published var isPurchasing = false
     @Published var purchaseError: String?
@@ -52,11 +52,29 @@ final class StoreKitService: ObservableObject {
 
     private init() {
         transactionListener = listenForTransactions()
-        Task { await loadProducts() }
+        Task {
+            await loadProducts()
+            await updateCustomerProductStatus()
+        }
     }
 
     deinit {
         transactionListener?.cancel()
+    }
+
+    func updateCustomerProductStatus() async {
+        var purchasedIds = Set<String>()
+
+        for await result in Transaction.currentEntitlements {
+            if case .verified(let transaction) = result {
+                if transaction.revocationDate == nil {
+                    purchasedIds.insert(transaction.productID)
+                }
+            }
+        }
+
+        self.purchasedIdentifiers = purchasedIds
+        UserService.shared.setPremium(!purchasedIds.isEmpty)
     }
 
     func loadProducts() async {
@@ -113,11 +131,8 @@ final class StoreKitService: ObservableObject {
         defer { isPurchasing = false }
 
         do {
-            for await result in Transaction.currentEntitlements {
-                if case .verified(let transaction) = result {
-                    await handleTransaction(transaction)
-                }
-            }
+            try await AppStore.sync()
+            await updateCustomerProductStatus()
         } catch {
             purchaseError = "Restore failed"
         }
@@ -129,8 +144,9 @@ final class StoreKitService: ObservableObject {
         let userService = UserService.shared
 
         if productID.isSubscription {
-            userService.setPremium(true)
-            // 订阅发放赠送钻石
+            // 订阅发放赠送钻石 (仅在首次购买或续订时，StoreKit 2 会通过 updates 监听到)
+            // 注意：实际生产中钻石赠送逻辑通常由后端校验 receipt 后发放，
+            // 纯前端实现需防重。这里简单处理。
             let amount = productID.diamondAmount
             if amount > 0 {
                 userService.addDiamonds(amount, reason: "\(productID.rawValue) Subscription Bonus")
@@ -139,6 +155,8 @@ final class StoreKitService: ObservableObject {
             // 普通钻石充值
             userService.addDiamonds(productID.diamondAmount, reason: "Purchase")
         }
+
+        await updateCustomerProductStatus()
     }
 
     private func listenForTransactions() -> Task<Void, Error> {

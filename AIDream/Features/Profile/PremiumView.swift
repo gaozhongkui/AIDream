@@ -77,6 +77,8 @@ struct PremiumView: View {
             withAnimation(.easeOut(duration: 1.0)) {
                 appearAnimation = true
             }
+            // 确保进入页面时同步一次状态
+            Task { await storeKit.updateCustomerProductStatus() }
         }
         .sheet(isPresented: $showSafari) {
             if let url = safariURL {
@@ -207,6 +209,8 @@ struct PremiumView: View {
 
     private func planCard(title: String, price: String, id: String, subTitle: String, tag: String? = nil) -> some View {
         let isSelected = selectedProductID == id
+        let isActive = storeKit.purchasedIdentifiers.contains(id)
+
         return Button {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
@@ -216,9 +220,22 @@ struct PremiumView: View {
             ZStack(alignment: .topTrailing) {
                 HStack(spacing: 12) {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(title)
-                            .font(.system(size: 16, weight: .black))
-                            .foregroundColor(isSelected ? .white : .white.opacity(0.9))
+                        HStack(spacing: 8) {
+                            Text(title)
+                                .font(.system(size: 16, weight: .black))
+                                .foregroundColor(isSelected ? .white : .white.opacity(0.9))
+
+                            if isActive {
+                                Text("ACTIVE")
+                                    .font(.system(size: 10, weight: .bold))
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.green.opacity(0.2))
+                                    .foregroundColor(.green)
+                                    .cornerRadius(4)
+                            }
+                        }
+
                         Text(subTitle)
                             .font(.system(size: 12))
                             .foregroundColor(isSelected ? .white.opacity(0.7) : AppTheme.textMuted)
@@ -247,10 +264,10 @@ struct PremiumView: View {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .stroke(isSelected ? AppTheme.vipGold : Color.white.opacity(0.1), lineWidth: isSelected ? 2 : 1)
+                        .stroke(isActive ? Color.green.opacity(0.5) : (isSelected ? AppTheme.vipGold : Color.white.opacity(0.1)), lineWidth: (isActive || isSelected) ? 2 : 1)
                 )
 
-                if let tag = tag {
+                if let tag = tag, !isActive {
                     Text(tag)
                         .font(.system(size: 8, weight: .black))
                         .padding(.horizontal, 8)
@@ -266,7 +283,9 @@ struct PremiumView: View {
     }
 
     private var purchaseButton: some View {
-        Button(action: {
+        let isCurrentProductActive = storeKit.purchasedIdentifiers.contains(selectedProductID)
+
+        return Button(action: {
             if storeKit.subscriptionProducts.isEmpty {
                 Task { await storeKit.loadProducts() }
                 return
@@ -281,30 +300,34 @@ struct PremiumView: View {
             Task {
                 let success = await storeKit.purchase(product)
                 purchasingID = nil
-                if success { dismiss() }
+                // 购买成功后不需要立即 dismiss，让用户看到“已激活”状态
+                if success {
+                    await storeKit.updateCustomerProductStatus()
+                }
             }
         }) {
             ZStack {
                 if purchasingID != nil {
                     ProgressView().tint(AppTheme.vipBg)
                 } else {
-                    Text(userService.isPremium ? "Active Subscription" : "Unlock Pro Features")
+                    Text(isCurrentProductActive ? "Current Plan Active" : (userService.isPremium ? "Switch Plan" : "Unlock Pro Features"))
                         .font(.system(size: 18, weight: .bold))
                 }
             }
             .frame(maxWidth: .infinity)
             .frame(height: 56)
             .background(
-                LinearGradient(
+                isCurrentProductActive ? AnyShapeStyle(Color.gray.opacity(0.3)) :
+                AnyShapeStyle(LinearGradient(
                     colors: [AppTheme.vipGold, Color(hex: "#FFD700")],
                     startPoint: .leading, endPoint: .trailing
-                )
+                ))
             )
-            .foregroundColor(AppTheme.vipBg)
+            .foregroundColor(isCurrentProductActive ? .white.opacity(0.5) : AppTheme.vipBg)
             .clipShape(Capsule())
             .padding(.horizontal, 30)
         }
-        .disabled(userService.isPremium || purchasingID != nil)
+        .disabled(isCurrentProductActive || purchasingID != nil)
     }
 
     private var footerLinks: some View {

@@ -1,0 +1,189 @@
+{
+  "identifier" : "AIDreamStoreKit",
+  "nonRenewingSubscriptions" : [ ],
+  "products" : [
+    {
+      "displayPrice" : "1.99",
+      "familyShareable" : false,
+      "internalID" : "CONSUMABLE_1",
+      "localizations" : [
+        {
+          "description" : "300 Diamonds for AI Generation",
+          "displayName" : "300 Diamonds",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.aidream.diamonds.100",
+      "referenceName" : "300 Diamonds",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "CONSUMABLE_2",
+      "localizations" : [
+        {
+          "description" : "1000 Diamonds Pack",
+          "displayName" : "1000 Diamonds",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.aidream.diamonds.500",
+      "referenceName" : "1000 Diamonds",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "9.99",
+      "familyShareable" : false,
+      "internalID" : "CONSUMABLE_3",
+      "localizations" : [
+        {
+          "description" : "2500 Diamonds Mega Pack",
+          "displayName" : "2500 Diamonds",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.aidream.diamonds.1200",
+      "referenceName" : "2500 Diamonds",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "19.99",
+      "familyShareable" : false,
+      "internalID" : "CONSUMABLE_4",
+      "localizations" : [
+        {
+          "description" : "6000 Diamonds Whale Pack",
+          "displayName" : "6000 Diamonds",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.aidream.diamonds.3000",
+      "referenceName" : "6000 Diamonds",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "129.99",
+      "familyShareable" : true,
+      "internalID" : "NON_CONSUMABLE_1",
+      "localizations" : [
+        {
+          "description" : "Full access forever",
+          "displayName" : "Lifetime Pro",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.aidream.premium.lifetime",
+      "referenceName" : "Lifetime Pro",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : false,
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "SUBS_GROUP_1",
+      "localizations" : [ ],
+      "name" : "Pro Subscriptions",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [ ],
+          "codeOffers" : [ ],
+          "displayPrice" : "4.99",
+          "familyShareable" : true,
+          "groupNumber" : 1,
+          "internalID" : "SUB_WEEKLY",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlock all Pro features weekly",
+              "displayName" : "Weekly Pro",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.aidream.premium.weekly",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "Weekly Pro",
+          "subscriptionGroupID" : "SUBS_GROUP_1",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [ ],
+          "codeOffers" : [ ],
+          "displayPrice" : "12.99",
+          "familyShareable" : true,
+          "groupNumber" : 1,
+          "internalID" : "SUB_MONTHLY",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlock all Pro features monthly",
+              "displayName" : "Monthly Pro",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.aidream.premium.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Monthly Pro",
+          "subscriptionGroupID" : "SUBS_GROUP_1",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}
