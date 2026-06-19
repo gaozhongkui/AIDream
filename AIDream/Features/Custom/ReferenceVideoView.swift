@@ -321,11 +321,18 @@ struct ReferenceVideoView: View {
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "film.fill").font(.system(size: 20, weight: .bold))
-                    Text("Sync & Generate").font(.system(size: 17, weight: .bold))
+                    Text("Sync & Generate")
+                        .font(.system(size: 17, weight: .bold))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
                     Spacer()
-                    HStack(spacing: 4) { Image(systemName: "bolt.fill"); Text("\(generationCost)") }
-                    .font(.system(size: 14, weight: .bold)).padding(.horizontal, 10).padding(.vertical, 4)
-                    .background(Color.black.opacity(0.5)).clipShape(Capsule())
+                    HStack(spacing: 4) {
+                        Text("💎")
+                        Text("\(generationCost)")
+                    }
+                    .font(.system(size: 14, weight: .bold))
+                    .padding(.horizontal, 10).padding(.vertical, 4)
+                    .background(Color.black.opacity(0.2)).clipShape(Capsule())
                 }
                 .padding(.horizontal, 24).frame(maxWidth: .infinity).frame(height: 64)
                 .background(isInputValid ? AnyShapeStyle(AppTheme.accentGradH) : AnyShapeStyle(Color(white: 0.15)))

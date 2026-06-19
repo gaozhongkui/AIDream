@@ -357,7 +357,10 @@ struct ImageToVideoView: View {
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "wand.and.rays").font(.system(size: 20, weight: .bold))
-                    Text("Generate Creation").font(.system(size: 17, weight: .bold))
+                    Text("Generate Creation")
+                        .font(.system(size: 17, weight: .bold))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
                     Spacer()
                     HStack(spacing: 4) {
                         Text("💎")
