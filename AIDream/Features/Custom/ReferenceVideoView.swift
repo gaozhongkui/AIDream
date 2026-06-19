@@ -104,7 +104,13 @@ struct ReferenceVideoView: View {
                 .zIndex(5)
             }
         }
-        .fullScreenCover(item: $activeSheet) { sheet in
+        .fullScreenCover(item: Binding(
+            get: {
+                if case .imagePicker = activeSheet { return nil }
+                return activeSheet
+            },
+            set: { activeSheet = $0 }
+        )) { sheet in
             switch sheet {
             case .generating:
                 GeneratingView(
@@ -127,6 +133,17 @@ struct ReferenceVideoView: View {
             case .diamondStore:
                 DiamondStoreView()
             case .imagePicker:
+                EmptyView() // 移至 .sheet 处理
+            }
+        }
+        .sheet(item: Binding(
+            get: {
+                if case .imagePicker = activeSheet { return activeSheet }
+                return nil
+            },
+            set: { activeSheet = $0 }
+        )) { sheet in
+            if case .imagePicker = sheet {
                 ImageSourcePickerView(
                     onClose: { activeSheet = nil },
                     onPickCamera: { openCamera() },
@@ -136,6 +153,7 @@ struct ReferenceVideoView: View {
                     }
                 )
                 .presentationDetents([.height(280)])
+                .presentationDragIndicator(.visible)
             }
         }
         .onChange(of: videoGenerator.state) { newState in
