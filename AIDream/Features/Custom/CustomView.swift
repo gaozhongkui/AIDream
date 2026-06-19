@@ -70,9 +70,7 @@ struct CustomView: View {
             // 钻石余额快捷入口
             Button(action: { showDiamondStore = true }) {
                 HStack(spacing: 6) {
-                    Image(systemName: "diamond.fill")
-                        .font(.system(size: 12))
-                        .foregroundStyle(AppTheme.accentGrad)
+                    Text("💎")
                     Text("\(userService.diamonds)")
                         .font(.system(size: 13, weight: .bold))
                         .foregroundColor(.white)
