@@ -73,7 +73,7 @@ struct LaunchView: View {
 
                 // 品牌文本
                 VStack(spacing: 16) {
-                    Text("AI DREAM")
+                    Text("AnimaPic AI")
                         .font(.system(size: 40, weight: .black))
                         .tracking(8)
                         .foregroundColor(.white)

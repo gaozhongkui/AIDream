@@ -148,7 +148,7 @@ struct PremiumView: View {
             .scaleEffect(appearAnimation ? 1.0 : 0.8)
 
             VStack(spacing: 6) {
-                Text("AIDream Pro")
+                Text("AnimaPic AI Pro")
                     .font(.system(size: 28, weight: .black))
                     .foregroundColor(.white)
 

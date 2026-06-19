@@ -212,7 +212,7 @@ struct ProfileView: View {
 
     private var versionInfo: some View {
         VStack(spacing: 4) {
-            Text("AIDream v1.0.0")
+            Text("AnimaPic AI v1.0.0")
             Text("Designed for Visionary Artists")
         }
         .font(.system(size: 11, weight: .medium))
