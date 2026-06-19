@@ -93,23 +93,26 @@ struct ProfileView: View {
     // MARK: - Components
     private var profileHeader: some View {
         VStack(spacing: 18) {
-            ZStack {
-                Circle()
-                    .fill(userService.isPremium ? AppTheme.vipGold.opacity(0.3) : AppTheme.accentGlow)
-                    .frame(width: 100, height: 100)
-                    .blur(radius: 12)
+            Button(action: { showPremiumSheet = true }) {
+                ZStack {
+                    Circle()
+                        .fill(userService.isPremium ? AppTheme.vipGold.opacity(0.3) : AppTheme.accentGlow)
+                        .frame(width: 100, height: 100)
+                        .blur(radius: 12)
 
-                Circle()
-                    .fill(AppTheme.bgCard)
-                    .frame(width: 94, height: 94)
-                    .overlay(
-                        Circle().stroke(userService.isPremium ? AnyShapeStyle(AppTheme.vipGold) : AnyShapeStyle(AppTheme.accentGradV), lineWidth: 2)
-                    )
+                    Circle()
+                        .fill(AppTheme.bgCard)
+                        .frame(width: 94, height: 94)
+                        .overlay(
+                            Circle().stroke(userService.isPremium ? AnyShapeStyle(AppTheme.vipGold) : AnyShapeStyle(AppTheme.accentGradV), lineWidth: 2)
+                        )
 
-                Image(systemName: "person.crop.circle.fill")
-                    .font(.system(size: 44))
-                    .foregroundStyle(userService.isPremium ? AnyShapeStyle(AppTheme.vipGold) : AnyShapeStyle(AppTheme.accentGrad))
+                    Image(systemName: "person.crop.circle.fill")
+                        .font(.system(size: 44))
+                        .foregroundStyle(userService.isPremium ? AnyShapeStyle(AppTheme.vipGold) : AnyShapeStyle(AppTheme.accentGrad))
+                }
             }
+            .buttonStyle(PlainButtonStyle())
 
             VStack(spacing: 8) {
                 Text("Vision Artist")

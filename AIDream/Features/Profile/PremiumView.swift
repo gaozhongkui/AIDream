@@ -35,29 +35,31 @@ struct PremiumView: View {
             AppTheme.bgPrimary.ignoresSafeArea()
 
             // 背景装饰光晕
-            ZStack {
-                Circle()
-                    .fill(AppTheme.accentPrimary.opacity(0.15))
-                    .frame(width: 450, height: 450)
-                    .blur(radius: 100)
-                    .offset(x: appearAnimation ? 120 : -120, y: -250)
+            GeometryReader { proxy in
+                ZStack {
+                    Circle()
+                        .fill(AppTheme.accentPrimary.opacity(0.15))
+                        .frame(width: proxy.size.width * 1.2)
+                        .blur(radius: proxy.size.width * 0.2)
+                        .offset(x: appearAnimation ? proxy.size.width * 0.3 : -proxy.size.width * 0.3, y: -proxy.size.height * 0.3)
 
-                Circle()
-                    .fill(AppTheme.vipGold.opacity(0.08))
-                    .frame(width: 350, height: 350)
-                    .blur(radius: 90)
-                    .offset(x: appearAnimation ? -150 : 150, y: 150)
+                    Circle()
+                        .fill(AppTheme.vipGold.opacity(0.08))
+                        .frame(width: proxy.size.width * 0.9)
+                        .blur(radius: proxy.size.width * 0.2)
+                        .offset(x: appearAnimation ? -proxy.size.width * 0.4 : proxy.size.width * 0.4, y: proxy.size.height * 0.2)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
             }
+            .allowsHitTesting(false)
             .animation(.easeInOut(duration: 6).repeatForever(autoreverses: true), value: appearAnimation)
 
-            VStack(spacing: 0) {
-                // 顶部工具栏
-                headerView
-
+            ZStack(alignment: .top) {
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 30) { // 减小整体间距
+                    VStack(spacing: 30) {
                         heroSection
-                            .padding(.top, 10)
+                            .padding(.top, 100) // 增加顶部间距，适配渐变 Header
 
                         featuresGrid
 
@@ -70,6 +72,10 @@ struct PremiumView: View {
                     }
                     .padding(.bottom, 60)
                 }
+                .ignoresSafeArea(edges: .top) // 让 ScrollView 内容可以穿透到顶部
+
+                // 顶部工具栏
+                headerView
             }
         }
         .navigationBarHidden(true)
@@ -116,7 +122,9 @@ struct PremiumView: View {
             }
         }
         .padding(.horizontal, 24)
-        .padding(.top, 12)
+        .padding(.top, 50) // 涵盖状态栏区域
+        .padding(.bottom, 20)
+
     }
 
     private var heroSection: some View {
@@ -168,9 +176,13 @@ struct PremiumView: View {
                         Text(feature.title)
                             .font(.system(size: 13, weight: .bold))
                             .foregroundColor(.white)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
                         Text(feature.description)
                             .font(.system(size: 10))
                             .foregroundColor(AppTheme.textMuted)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
                     }
                     Spacer(minLength: 0)
                 }
@@ -224,6 +236,8 @@ struct PremiumView: View {
                             Text(title)
                                 .font(.system(size: 16, weight: .black))
                                 .foregroundColor(isSelected ? .white : .white.opacity(0.9))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
 
                             if isActive {
                                 Text("ACTIVE")
@@ -239,6 +253,8 @@ struct PremiumView: View {
                         Text(subTitle)
                             .font(.system(size: 12))
                             .foregroundColor(isSelected ? .white.opacity(0.7) : AppTheme.textMuted)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
                     }
 
                     Spacer()
@@ -336,7 +352,7 @@ struct PremiumView: View {
                 .font(.system(size: 12))
                 .foregroundColor(AppTheme.textMuted)
 
-            HStack(spacing: 16) {
+            HStack(spacing: 12) {
                 Button("Terms") {
                     safariURL = URL(string: AIConfig.shared.termsOfServiceURL)
                     showSafari = true
