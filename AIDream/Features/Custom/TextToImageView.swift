@@ -8,11 +8,26 @@ struct TextToImageView: View {
     @State private var isGenerating: Bool = false
     @State private var generationProgress: Double = 0
     @State private var completedImage: UIImage? = nil
-    @State private var errorMessage: String? = nil
-    @State private var showCompletion: Bool = false
     @State private var showInsufficientDiamondsAlert = false
-    @State private var isShowingPremium = false
-    @State private var isShowingDiamondStore = false
+    @State private var errorMessage: String? = nil
+
+    // 统一弹窗管理
+    enum ActiveSheet: Identifiable {
+        case generating
+        case completion(UIImage)
+        case premium
+        case diamondStore
+
+        var id: String {
+            switch self {
+            case .generating: return "generating"
+            case .completion: return "completion"
+            case .premium: return "premium"
+            case .diamondStore: return "diamondStore"
+            }
+        }
+    }
+    @State private var activeSheet: ActiveSheet? = nil
 
     @ObservedObject private var userService = UserService.shared
     private let generationCost = 100 // 文字生成图片 消耗100砖石
@@ -47,55 +62,40 @@ struct TextToImageView: View {
             }
             .ignoresSafeArea(.keyboard)
 
-            if isGenerating {
+        }
+        .fullScreenCover(item: $activeSheet) { sheet in
+            switch sheet {
+            case .generating:
                 GeneratingView(
                     progress: generationProgress,
                     onBackToHome: {
                         AIImageGenerator.shared.cancelGeneration()
-                        isGenerating = false
+                        activeSheet = nil
                         generationProgress = 0
                     }
                 )
-                .transition(.opacity)
-                .zIndex(10)
-            }
-        }
-        .fullScreenCover(isPresented: $showCompletion) {
-            if let image = completedImage {
+            case .completion(let image):
                 VideoCompletionView(
                     media: .image(image),
-                    onClose: {
-                        showCompletion = false
-                        completedImage = nil
-                    },
-                    onRetake: {
-                        showCompletion = false
-                        completedImage = nil
-                    },
-                    onDownload: {
-                        if let img = completedImage {
-                            saveImage(img)
-                        }
-                    },
-                    onShare: {
-                        if let img = completedImage {
-                            shareImage(img)
-                        }
-                    }
+                    onClose: { activeSheet = nil },
+                    onRetake: { activeSheet = nil },
+                    onDownload: { saveImage(image) },
+                    onShare: { shareImage(image) }
                 )
+            case .premium:
+                PremiumView()
+            case .diamondStore:
+                DiamondStoreView()
             }
         }
-        .fullScreenCover(isPresented: $isShowingPremium) {
-            PremiumView()
-        }
-        .fullScreenCover(isPresented: $isShowingDiamondStore) {
-            DiamondStoreView()
-        }
-        .alert("Insufficient Diamonds", isPresented: $showInsufficientDiamondsAlert) {
+        .alert("Insufficient Diamonds", isPresented: Binding(
+            get: { showInsufficientDiamondsAlert },
+            set: { showInsufficientDiamondsAlert = $0 }
+        )) {
             if userService.isPremium {
-                Button("Get Diamonds") { isShowingDiamondStore = true }
+                Button("Get Diamonds") { activeSheet = .diamondStore }
             } else {
-                Button("Upgrade to PRO") { isShowingPremium = true }
+                Button("Upgrade to PRO") { activeSheet = .premium }
             }
             Button("Cancel", role: .cancel) {}
         } message: {
@@ -255,6 +255,7 @@ struct TextToImageView: View {
             return
         }
 
+        activeSheet = .generating
         isGenerating = true
         errorMessage = nil
         generationProgress = 0.05
@@ -289,10 +290,15 @@ struct TextToImageView: View {
             case .success(let res):
                 completedImage = res.image
                 generationProgress = 1.0
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { showCompletion = true }
+                // 先关闭生成页，再打开结果页，确保 SwiftUI 状态平滑过渡
+                activeSheet = nil
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    activeSheet = .completion(res.image)
+                }
             case .failure(let err):
                 errorMessage = err.localizedDescription
                 generationProgress = 0
+                activeSheet = nil
             }
         }
     }

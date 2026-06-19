@@ -425,6 +425,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "AnimaPic AI";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Take a photo to use as a video frame.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save generated images and videos to your gallery.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Select photos from your gallery to use as AI generation references.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -460,6 +462,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "AnimaPic AI";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Take a photo to use as a video frame.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save generated images and videos to your gallery.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Select photos from your gallery to use as AI generation references.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

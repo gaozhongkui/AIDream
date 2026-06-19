@@ -16,8 +16,26 @@ struct ReferenceVideoView: View {
     @State private var isShowingCamera = false
     @State private var imageSelectionError: String?
     @State private var showInsufficientDiamondsAlert = false
-    @State private var isShowingPremium = false
-    @State private var isShowingDiamondStore = false
+
+    // 统一弹窗管理
+    enum ActiveSheet: Identifiable {
+        case generating
+        case completion(URL)
+        case premium
+        case diamondStore
+        case imagePicker(index: Int)
+
+        var id: String {
+            switch self {
+            case .generating: return "generating"
+            case .completion: return "completion"
+            case .premium: return "premium"
+            case .diamondStore: return "diamondStore"
+            case .imagePicker(let index): return "imagePicker_\(index)"
+            }
+        }
+    }
+    @State private var activeSheet: ActiveSheet? = nil
 
     @ObservedObject private var videoGenerator = AIVideoGenerator.shared
     @ObservedObject private var userService = UserService.shared
@@ -57,20 +75,11 @@ struct ReferenceVideoView: View {
 
             VStack {
                 Spacer()
-                if !isGenerating {
+                if activeSheet == nil {
                     bottomActionSection
                 }
             }
             .ignoresSafeArea(.keyboard)
-
-            if isGenerating {
-                GeneratingView(
-                    progress: currentProgress,
-                    onBackToHome: { videoGenerator.cancelGeneration() }
-                )
-                .transition(.opacity)
-                .zIndex(10)
-            }
 
             // 生成失败提示
             if case .failed(let msg) = videoGenerator.state {
@@ -95,27 +104,51 @@ struct ReferenceVideoView: View {
                 .zIndex(5)
             }
         }
-        .fullScreenCover(isPresented: completionBinding) {
-            if case .completed(let url) = videoGenerator.state {
+        .fullScreenCover(item: $activeSheet) { sheet in
+            switch sheet {
+            case .generating:
+                GeneratingView(
+                    progress: currentProgress,
+                    onBackToHome: { videoGenerator.cancelGeneration(); activeSheet = nil }
+                )
+            case .completion(let url):
                 VideoCompletionView(
                     media: .video(url),
-                    onClose:    { videoGenerator.cancelGeneration() },
-                    onRetake:   { videoGenerator.cancelGeneration() },
+                    onClose:    { videoGenerator.cancelGeneration(); activeSheet = nil },
+                    onRetake:   { videoGenerator.cancelGeneration(); activeSheet = nil },
                     onDownload: { saveVideo(url: url) },
                     onShare:    { shareVideo(url: url) }
                 )
+            case .premium:
+                PremiumView()
+            case .diamondStore:
+                DiamondStoreView()
+            case .imagePicker:
+                ImageSourcePickerView(
+                    onClose: { activeSheet = nil },
+                    onPickCamera: { openCamera() },
+                    onImageSelected: { image in
+                        applySelectedImage(image)
+                        activeSheet = nil
+                    }
+                )
+                .presentationDetents([.height(280)])
             }
         }
-        .sheet(isPresented: $isShowingImagePicker) {
-            ImageSourcePickerView(
-                onClose: { isShowingImagePicker = false },
-                onPickCamera: { openCamera() },
-                onImageSelected: { image in
-                    applySelectedImage(image)
-                    isShowingImagePicker = false
+        .onChange(of: videoGenerator.state) { newState in
+            switch newState {
+            case .completed(let url):
+                activeSheet = nil
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    activeSheet = .completion(url)
                 }
-            )
-            .presentationDetents([.height(280)])
+            case .failed:
+                activeSheet = nil
+            case .uploading, .generating:
+                if activeSheet == nil { activeSheet = .generating }
+            case .idle:
+                if case .generating = activeSheet { activeSheet = nil }
+            }
         }
         .sheet(isPresented: $isShowingCamera) {
             CameraPicker { image in
@@ -123,17 +156,11 @@ struct ReferenceVideoView: View {
             }
             .ignoresSafeArea()
         }
-        .fullScreenCover(isPresented: $isShowingPremium) {
-            PremiumView()
-        }
-        .fullScreenCover(isPresented: $isShowingDiamondStore) {
-            DiamondStoreView()
-        }
         .alert("Insufficient Diamonds", isPresented: $showInsufficientDiamondsAlert) {
             if userService.isPremium {
-                Button("Get Diamonds") { isShowingDiamondStore = true }
+                Button("Get Diamonds") { activeSheet = .diamondStore }
             } else {
-                Button("Upgrade to PRO") { isShowingPremium = true }
+                Button("Upgrade to PRO") { activeSheet = .premium }
             }
             Button("Cancel", role: .cancel) {}
         } message: {
@@ -219,7 +246,7 @@ struct ReferenceVideoView: View {
                 ForEach(options, id: \.self) { opt in
                     Button {
                         if proOptions.contains(opt) && !userService.isPremium {
-                            isShowingPremium = true
+                            activeSheet = .premium
                         } else {
                             selection.wrappedValue = opt
                         }
@@ -311,7 +338,7 @@ struct ReferenceVideoView: View {
         // VIP Check for Pro Options
         let proOptionsInEffect = (["10s"].contains(selectedDuration)) || (["High", "Ultra HD"].contains(selectedQuality))
         if proOptionsInEffect && !userService.isPremium {
-            isShowingPremium = true
+            activeSheet = .premium
             return
         }
 
@@ -340,11 +367,23 @@ struct ReferenceVideoView: View {
         if case .generating(let p) = videoGenerator.state { return p }
         return 0.05
     }
+    private var generatingBinding: Binding<Bool> {
+        Binding(
+            get: {
+                switch videoGenerator.state {
+                case .uploading, .generating(_): return true
+                default: return false
+                }
+            },
+            set: { if !$0 { videoGenerator.cancelGeneration() } }
+        )
+    }
+
     private var completionBinding: Binding<Bool> {
         Binding(get: { if case .completed(_) = videoGenerator.state { return true } else { return false } }, set: { if !$0 { videoGenerator.cancelGeneration() } })
     }
-    private func openImagePicker(for index: Int) { activeReferenceIndex = index; isShowingImagePicker = true }
-    private func openCamera() { isShowingImagePicker = false; isShowingCamera = true }
+    private func openImagePicker(for index: Int) { activeReferenceIndex = index; activeSheet = .imagePicker(index: index) }
+    private func openCamera() { activeSheet = nil; DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { isShowingCamera = true } }
     private func applySelectedImage(_ image: UIImage) { if let index = activeReferenceIndex { referenceImages[index] = image } }
     private func saveVideo(url: URL) {
         Task {
