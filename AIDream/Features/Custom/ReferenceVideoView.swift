@@ -211,13 +211,18 @@ struct ReferenceVideoView: View {
         let image = referenceImages[index]
         return Button { openImagePicker(for: index) } label: {
             ZStack {
+                // 1. 基础占位背景
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(Color.white.opacity(0.05))
+
+                // 2. 内容层
                 if let image = image {
                     Image(uiImage: image)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(maxWidth: .infinity)
+                        .frame(minWidth: 0, maxWidth: .infinity)
                         .frame(height: 110)
-                        .clipShape(RoundedRectangle(cornerRadius: 18))
+                        .clipped() // 强制剪裁图片溢出部分
                 } else {
                     VStack(spacing: 8) {
                         Image(systemName: index == 0 ? "plus.viewfinder" : "plus")
@@ -225,11 +230,11 @@ struct ReferenceVideoView: View {
                         Text(index == 0 ? "Key Frame" : "Add")
                             .font(.system(size: 10, weight: .bold))
                     }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 110)
-                    .glassStyle(cornerRadius: 18)
                 }
             }
+            .frame(maxWidth: .infinity)
+            .frame(height: 110)
+            .glassStyle(cornerRadius: 18) // 包含圆角剪裁
             .primaryBorder(cornerRadius: 18, active: image != nil || index == 0)
         }
         .buttonStyle(.plain)
