@@ -26,6 +26,7 @@ fileprivate struct FullScreenVideoPlayer: UIViewRepresentable {
     func makeUIView(context: Context) -> PlayerContainerView {
         let view = PlayerContainerView()
         view.backgroundColor = .black
+        view.isUserInteractionEnabled = false // 禁止 UIView 拦截手势，让 SwiftUI 接管
         let playerLayer = AVPlayerLayer(player: player)
         playerLayer.videoGravity = .resizeAspectFill
         view.playerLayer = playerLayer
@@ -63,9 +64,15 @@ struct VideoCompletionView: View {
     @State private var localVideoURL: URL?
     @State private var isLoadingVideo = false
 
+    // 缩放与位移状态
+    @State private var scale: CGFloat = 1.0
+    @State private var offset: CGSize = .zero
+    @State private var lastOffset: CGSize = .zero
+    @GestureState private var magnifyBy = 1.0
+
     var body: some View {
         ZStack {
-            // 全屏视频播放器
+            // 全屏媒体容器
             GeometryReader { geo in
                 ZStack {
                     if let error = playerError {
@@ -88,13 +95,17 @@ struct VideoCompletionView: View {
                     } else if isPlayerReady, let player = player {
                         FullScreenVideoPlayer(player: player)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .clipped()
+                            .scaleEffect(scale * magnifyBy)
+                            .offset(offset)
+                            .allowsHitTesting(false)
                     } else if case .image(let uiImage) = media {
                         Image(uiImage: uiImage)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(Color.black)
+                            .scaleEffect(scale * magnifyBy)
+                            .offset(offset)
+                            .allowsHitTesting(false)
                     } else {
                         VStack(spacing: 16) {
                             ProgressView()
@@ -109,9 +120,48 @@ struct VideoCompletionView: View {
                     }
                 }
                 .frame(width: geo.size.width, height: geo.size.height)
+                .background(Color.black)
+                .contentShape(Rectangle())
+                .gesture(
+                    MagnificationGesture()
+                        .updating($magnifyBy) { value, state, _ in
+                            state = value
+                        }
+                        .onEnded { value in
+                            scale *= value
+                            // 限制缩放范围
+                            scale = min(max(scale, 1.0), 5.0)
+                            if scale <= 1.0 {
+                                withAnimation(.spring()) {
+                                    offset = .zero
+                                    lastOffset = .zero
+                                }
+                            }
+                        }
+                )
+                .simultaneousGesture(
+                    DragGesture()
+                        .onChanged { value in
+                            if scale > 1.0 {
+                                offset = CGSize(
+                                    width: lastOffset.width + value.translation.width,
+                                    height: lastOffset.height + value.translation.height
+                                )
+                            }
+                        }
+                        .onEnded { _ in
+                            lastOffset = offset
+                        }
+                )
+                .onTapGesture(count: 2) {
+                    withAnimation(.spring()) {
+                        scale = 1.0
+                        offset = .zero
+                        lastOffset = .zero
+                    }
+                }
             }
             .ignoresSafeArea()
-            .background(Color.black)
 
             // 顶部渐变遮罩（状态栏区域）
             VStack(spacing: 0) {
@@ -124,8 +174,9 @@ struct VideoCompletionView: View {
                 .ignoresSafeArea(edges: .top)
                 Spacer()
             }
+            .allowsHitTesting(false) // 允许点击穿透
 
-            // 底部渐变遮罩（操作栏区域，延伸到最底部）
+            // 底部渐变遮罩（操作栏区域）
             VStack(spacing: 0) {
                 Spacer()
                 LinearGradient(
@@ -133,15 +184,22 @@ struct VideoCompletionView: View {
                     startPoint: .top,
                     endPoint: .bottom
                 )
-                .frame(maxHeight: .infinity)
+                .frame(height: 250) // 限制高度，避免遮挡中间手势
             }
             .ignoresSafeArea(edges: .bottom)
+            .allowsHitTesting(false) // 允许点击穿透
 
             // 内容覆盖层
-            VStack(spacing: 0) {
-                navBar
-                Spacer()
-                actionBar
+            ZStack {
+                VStack {
+                    navBar
+                    Spacer()
+                }
+
+                VStack {
+                    Spacer()
+                    actionBar
+                }
             }
             
             // Toast 消息
@@ -160,6 +218,7 @@ struct VideoCompletionView: View {
                         .padding(.bottom, 130)
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
+                .allowsHitTesting(false)
             }
         }
         .background(Color.black.ignoresSafeArea())
