@@ -36,7 +36,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "05E608C72FC88CDA005B09A3"
-               BuildableName = "AIDreamTests"
+               BuildableName = "AIDreamTests.xctest"
                BlueprintName = "AIDreamTests"
                ReferencedContainer = "container:AIDream.xcodeproj">
             </BuildableReference>

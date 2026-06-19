@@ -138,6 +138,7 @@ final class VideoListViewController: UIViewController {
         setupUI()
         setupHeader()
         setupRefreshControl()
+        setupNotifications()
 
         loadCachedData()
         loadPage(reset: true)
@@ -262,6 +263,20 @@ final class VideoListViewController: UIViewController {
         refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
     }
 
+    private func setupNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(networkBack), name: .networkBecameReachable, object: nil)
+    }
+
+    @objc private func networkBack() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            // If we have no videos and we're not already loading, try to load
+            if self.allVideos.isEmpty && !self.isLoadingPage {
+                self.loadPage(reset: true)
+            }
+        }
+    }
+
     @objc private func handleRefresh() {
         errorBanner.isHidden = true
         loadPage(reset: true)
@@ -359,7 +374,8 @@ final class VideoListViewController: UIViewController {
     private func updateFooterStatus() {
         let indexPath = IndexPath(item: 0, section: 0)
         if let footer = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionFooter, at: indexPath) as? LoadingFooterView {
-            footer.setStatus(isLoading: isLoadingPage, hasMore: hasMorePages)
+            let shouldShowLoading = isLoadingPage && !allVideos.isEmpty
+            footer.setStatus(isLoading: shouldShowLoading, hasMore: hasMorePages)
         }
     }
 
@@ -390,7 +406,9 @@ extension VideoListViewController: UICollectionViewDataSource, UICollectionViewD
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: LoadingFooterView.identifier, for: indexPath) as! LoadingFooterView
-        footer.setStatus(isLoading: isLoadingPage, hasMore: hasMorePages)
+        // 只有在已有数据时才显示底部的加载状态，避免与中央的 activityIndicator 冲突
+        let shouldShowLoading = isLoadingPage && !allVideos.isEmpty
+        footer.setStatus(isLoading: shouldShowLoading, hasMore: hasMorePages)
         return footer
     }
 
@@ -427,6 +445,7 @@ extension VideoListViewController: WaterfallLayoutDelegate {
         return width * 0.75
     }
     func collectionView(_ collectionView: UICollectionView, heightForFooterIn section: Int, contentHeight: CGFloat, availableHeight: CGFloat) -> CGFloat {
+        if allVideos.isEmpty { return 0 }
         let remainingSpace = availableHeight - contentHeight
         return remainingSpace > 0 ? max(remainingSpace, 60) : 60
     }

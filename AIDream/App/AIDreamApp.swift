@@ -11,6 +11,11 @@ import SwiftUI
 struct AIDreamApp: App {
     @State private var showLaunch = true
 
+    init() {
+        // Initialize network monitor to start tracking connectivity
+        _ = NetworkMonitor.shared
+    }
+
     var body: some Scene {
         WindowGroup {
             ZStack {
