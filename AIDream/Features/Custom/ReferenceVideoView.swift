@@ -14,6 +14,7 @@ struct ReferenceVideoView: View {
     @State private var activeReferenceIndex: Int?
     @State private var isShowingImagePicker = false
     @State private var isShowingCamera = false
+    @State private var showErrorBanner = false
     @State private var imageSelectionError: String?
     @State private var showInsufficientDiamondsAlert = false
 
@@ -82,7 +83,7 @@ struct ReferenceVideoView: View {
             .ignoresSafeArea(.keyboard)
 
             // 生成失败提示
-            if case .failed(let msg) = videoGenerator.state {
+            if showErrorBanner, case .failed(let msg) = videoGenerator.state {
                 VStack {
                     Spacer()
                     HStack(spacing: 12) {
@@ -165,7 +166,12 @@ struct ReferenceVideoView: View {
                 }
             case .failed:
                 activeSheet = nil
+                withAnimation { showErrorBanner = true }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+                    withAnimation { showErrorBanner = false }
+                }
             case .uploading, .generating:
+                showErrorBanner = false
                 if activeSheet == nil { activeSheet = .generating }
             case .idle:
                 if case .generating = activeSheet { activeSheet = nil }
@@ -366,6 +372,7 @@ struct ReferenceVideoView: View {
 
     // MARK: - Actions
     private func handleGenerate() {
+        showErrorBanner = false
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
 
         // VIP Check for Pro Options

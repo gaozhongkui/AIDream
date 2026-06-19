@@ -12,7 +12,7 @@ struct ImageSourcePickerView: View {
         ZStack {
             AppTheme.bgSecondary.ignoresSafeArea()
             VStack(spacing: 24) {
-                Capsule().fill(Color.white.opacity(0.1)).frame(width: 40, height: 4).padding(.top, 10)
+                Capsule().fill(Color.white.opacity(0.0)).frame(width: 40, height: 4).padding(.top, 10)
                 HStack {
                     Text("Source").font(.system(size: 20, weight: .bold)).foregroundColor(.white)
                     Spacer()

@@ -10,7 +10,7 @@ struct AIConfig {
     let huggingFaceToken = ""
 
     let openRouterBaseURL = "https://openrouter.ai/api/v1"
-    let openRouterApiKey = "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"
+    let openRouterApiKey = "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"
     let openRouterImageModel = "google/gemini-2.5-flash-image"
 
     let openRouterVideoModel = "minimax/hailuo-2.3"

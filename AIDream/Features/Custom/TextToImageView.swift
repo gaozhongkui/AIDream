@@ -303,6 +303,13 @@ struct TextToImageView: View {
                 errorMessage = err.localizedDescription
                 generationProgress = 0
                 activeSheet = nil
+
+                // 5秒后自动隐藏错误提示
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+                    if errorMessage == err.localizedDescription {
+                        withAnimation { errorMessage = nil }
+                    }
+                }
             }
         }
     }
