@@ -5,10 +5,10 @@ struct ContentView: View {
     @State private var customSelectedMode: GenerationMode = .imageToVideo
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             AppTheme.bgPrimary.ignoresSafeArea()
 
-            // Page content
+            // 主内容区域
             Group {
                 switch selectedTab {
                 case 0:  VideoListViewWrapper().ignoresSafeArea(edges: .top)
@@ -18,7 +18,13 @@ struct ContentView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            customTabBar
+            // Tab Bar Layer - 强制固定在屏幕底部，完全忽略键盘
+            VStack {
+                Spacer()
+                customTabBar
+                    .padding(.bottom, 24)
+            }
+            .ignoresSafeArea(.keyboard, edges: .bottom)
         }
         .preferredColorScheme(.dark)
         .onReceive(NotificationCenter.default.publisher(for: .switchToReferenceMode)) { _ in
@@ -41,7 +47,6 @@ struct ContentView: View {
         .padding(.horizontal, 6)
         .glassStyle(cornerRadius: 24)
         .padding(.horizontal, 20)
-        .padding(.bottom, 24)
     }
 
     private func tabItem(icon: String, label: String, index: Int) -> some View {
@@ -51,13 +56,11 @@ struct ContentView: View {
         } label: {
             VStack(spacing: 4) {
                 ZStack {
-                    // 选中态紫色背景
                     if active {
                         RoundedRectangle(cornerRadius: 14)
                             .fill(AppTheme.accentGrad.opacity(0.2))
                             .frame(width: 86, height: 36)
                     }
-                    // 图标
                     Image(systemName: icon)
                         .font(.system(size: 18, weight: .medium))
                         .foregroundColor(active ? AppTheme.accentSecondary : AppTheme.textMuted)
@@ -73,7 +76,7 @@ struct ContentView: View {
     }
 }
 
-// MARK: - Blur View Helper (保留，供其他地方使用)
+// MARK: - Blur View Helper
 struct BlurView: UIViewRepresentable {
     var style: UIBlurEffect.Style
     func makeUIView(context: Context) -> UIVisualEffectView {

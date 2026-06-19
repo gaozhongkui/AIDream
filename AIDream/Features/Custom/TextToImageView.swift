@@ -228,14 +228,20 @@ struct TextToImageView: View {
                     .foregroundColor(AppTheme.textMuted)
             }
         }
-        .padding(.horizontal, 20).padding(.top, 20)
+        .padding(.horizontal, 20).padding(.top, 32)
         .padding(.bottom, 140)
         .background(
             LinearGradient(
-                colors: [AppTheme.bgPrimary.opacity(0), AppTheme.bgPrimary],
+                colors: [
+                    AppTheme.bgPrimary.opacity(0),
+                    AppTheme.bgPrimary.opacity(0.7),
+                    AppTheme.bgPrimary.opacity(0.95),
+                    AppTheme.bgPrimary
+                ],
                 startPoint: .top,
                 endPoint: .bottom
             )
+            .ignoresSafeArea()
         )
     }
 

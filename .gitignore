@@ -1,10 +1,32 @@
+# IDE & Tools
 .claude
 .idea/
 .deepseek/
-
 AGENTS.md
-AIDream.xcodeproj/xcuserdata/gaozhongkui.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist
-AIDream.xcodeproj/project.xcworkspace/xcuserdata/gaozhongkui.xcuserdatad/UserInterfaceState.xcuserstate
 
-# Secrets
+# Xcode - User state and derived data
+# 忽略所有用户的个人设置，而不是特定的用户名路径
+xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/
+
+# Xcode - Build artifacts
+build/
+DerivedData/
+
+# Xcode - Breakpoints and other state
+*.xcbkptlist
+*.xcuserstate
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# macOS
+.DS_Store
+*.swp
+*.lock
+
+# Secrets & Config
 AIDream/Config.plist

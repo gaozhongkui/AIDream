@@ -41,6 +41,10 @@ struct CustomView: View {
                 }
             }
             .navigationBarHidden(true)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            }
             .onChange(of: externalMode) { newMode in
                 if !hasSyncedExternal {
                     hasSyncedExternal = true
