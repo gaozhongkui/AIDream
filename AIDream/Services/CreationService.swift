@@ -5,15 +5,21 @@ import OSLog
 
 private let logger = Logger(subsystem: "com.aidream", category: "Creation")
 
+enum CreationMediaType: String, Codable {
+    case video
+    case image
+}
+
 struct CreationItem: Identifiable, Codable {
     let id: UUID
     let date: Date
     let prompt: String
-    let videoFileName: String
+    let fileName: String
+    let type: CreationMediaType
 
-    var videoURL: URL {
+    var fileURL: URL {
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        return docs.appendingPathComponent(videoFileName)
+        return docs.appendingPathComponent(fileName)
     }
 
     var displayDate: String {
@@ -28,43 +34,60 @@ struct CreationItem: Identifiable, Codable {
 final class CreationService: ObservableObject {
     static let shared = CreationService()
 
-    private let storageKey = "com.aidream.creations.final.v300"
+    private let storageKey = "com.aidream.creations.final.v301" // Increment version
     @Published var creations: [CreationItem] = []
 
     private init() {
         loadCreations()
     }
 
-    /// Records a creation. If url is remote, it will be downloaded to Documents.
-    func addCreation(prompt: String, url: URL) {
+    /// Records a creation.
+    func addCreation(prompt: String, url: URL? = nil, image: UIImage? = nil) {
         let fileManager = FileManager.default
         let docs = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let fileName = "\(UUID().uuidString).mp4"
-        let destinationURL = docs.appendingPathComponent(fileName)
 
         Task {
             do {
-                if url.isFileURL {
-                    // Local to permanent Documents
-                    if fileManager.fileExists(atPath: url.path) {
-                        try fileManager.copyItem(at: url, to: destinationURL)
+                let fileName: String
+                let type: CreationMediaType
+
+                if let image = image {
+                    type = .image
+                    fileName = "\(UUID().uuidString).jpg"
+                    let destinationURL = docs.appendingPathComponent(fileName)
+                    if let data = image.jpegData(compressionQuality: 0.9) {
+                        try data.write(to: destinationURL)
                     } else {
-                        logger.error("Source file missing at: \(url.path)")
                         return
                     }
+                } else if let url = url {
+                    type = .video
+                    fileName = "\(UUID().uuidString).mp4"
+                    let destinationURL = docs.appendingPathComponent(fileName)
+
+                    if url.isFileURL {
+                        if fileManager.fileExists(atPath: url.path) {
+                            try fileManager.copyItem(at: url, to: destinationURL)
+                        } else {
+                            logger.error("Source file missing at: \(url.path)")
+                            return
+                        }
+                    } else {
+                        logger.info("Downloading remote video for history: \(url)")
+                        var request = URLRequest(url: url, timeoutInterval: 60)
+                        let (data, _) = try await URLSession.shared.data(for: request)
+                        try data.write(to: destinationURL)
+                    }
                 } else {
-                    // Download from remote to permanent Documents
-                    logger.info("Downloading remote video for history: \(url)")
-                    var request = URLRequest(url: url, timeoutInterval: 60)
-                    let (data, _) = try await URLSession.shared.data(for: request)
-                    try data.write(to: destinationURL)
+                    return
                 }
 
                 let newItem = CreationItem(
                     id: UUID(),
                     date: Date(),
                     prompt: prompt.isEmpty ? "AI Generation" : prompt,
-                    videoFileName: fileName
+                    fileName: fileName,
+                    type: type
                 )
 
                 creations.insert(newItem, at: 0)
@@ -78,7 +101,7 @@ final class CreationService: ObservableObject {
 
     func deleteCreation(_ item: CreationItem) {
         creations.removeAll { $0.id == item.id }
-        try? FileManager.default.removeItem(at: item.videoURL)
+        try? FileManager.default.removeItem(at: item.fileURL)
         saveCreations()
     }
 
@@ -92,7 +115,7 @@ final class CreationService: ObservableObject {
         guard let data = UserDefaults.standard.data(forKey: storageKey) else { return }
         if let decoded = try? JSONDecoder().decode([CreationItem].self, from: data) {
             self.creations = decoded.filter { item in
-                FileManager.default.fileExists(atPath: item.videoURL.path)
+                FileManager.default.fileExists(atPath: item.fileURL.path)
             }
         }
     }

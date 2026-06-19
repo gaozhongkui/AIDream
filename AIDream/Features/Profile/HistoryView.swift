@@ -36,12 +36,15 @@ struct HistoryView: View {
                     emptyState
                 } else {
                     ScrollView {
-                        LazyVStack(spacing: 14) {
+                        LazyVGrid(columns: [
+                            GridItem(.flexible(), spacing: 12),
+                            GridItem(.flexible(), spacing: 12)
+                        ], spacing: 16) {
                             ForEach(creationService.creations) { item in
                                 HistoryCard(item: item)
                             }
                         }
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, 16)
                         .padding(.top, 12)
                         .padding(.bottom, 40)
                     }
@@ -81,13 +84,14 @@ struct HistoryCard: View {
     let item: CreationItem
     @State private var showDetail = false
     @State private var toastMessage: String?
+    @State private var thumbnail: UIImage?
 
     var body: some View {
         Button { showDetail = true } label: {
-            HStack(spacing: 0) {
-                // 左侧预览区
+            VStack(alignment: .leading, spacing: 0) {
+                // 预览区
                 ZStack {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: 18)
                         .fill(
                             LinearGradient(
                                 colors: [Color(hex: "#1A1D4A"), Color(hex: "#0E1030")],
@@ -95,68 +99,83 @@ struct HistoryCard: View {
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .frame(width: 88, height: 120)
+                        .aspectRatio(0.75, contentMode: .fit)
 
-                    // 装饰光点
-                    Circle()
-                        .fill(AppTheme.accentPrimary.opacity(0.15))
-                        .frame(width: 50, height: 50)
-                        .blur(radius: 15)
-
-                    ZStack {
+                    if let image = thumbnail {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 200)
+                            .clipShape(RoundedRectangle(cornerRadius: 18))
+                    } else {
+                        // 装饰光点
                         Circle()
-                            .fill(Color.white.opacity(0.1))
-                            .frame(width: 36, height: 36)
-                        Image(systemName: "play.fill")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.white.opacity(0.7))
-                            .offset(x: 1)
+                            .fill(AppTheme.accentPrimary.opacity(0.15))
+                            .frame(width: 80, height: 80)
+                            .blur(radius: 20)
+
+                        Image(systemName: item.type == .video ? "play.fill" : "photo.fill")
+                            .font(.system(size: 32))
+                            .foregroundColor(.white.opacity(0.3))
+                    }
+
+                    // 媒体类型标签
+                    VStack {
+                        HStack {
+                            Text(item.type == .video ? "VIDEO" : "IMAGE")
+                                .font(.system(size: 9, weight: .black))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(item.type == .video ? Color.blue : Color.purple)
+                                .cornerRadius(6)
+                                .padding(10)
+                            Spacer()
+                        }
+                        Spacer()
                     }
                 }
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.white.opacity(0.06), lineWidth: 0.5)
+                    RoundedRectangle(cornerRadius: 18)
+                        .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
                 )
 
-                // 右侧信息
-                VStack(alignment: .leading, spacing: 8) {
+                // 信息区
+                VStack(alignment: .leading, spacing: 6) {
                     Text(item.prompt)
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.system(size: 13, weight: .bold))
                         .foregroundColor(.white)
-                        .lineLimit(2)
+                        .lineLimit(1)
 
-                    Spacer()
-
-                    HStack(spacing: 6) {
+                    HStack(spacing: 4) {
                         Image(systemName: "clock")
-                            .font(.system(size: 10))
+                            .font(.system(size: 9))
                             .foregroundColor(AppTheme.textMuted)
                         Text(item.displayDate)
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.system(size: 10, weight: .medium))
                             .foregroundColor(AppTheme.textMuted)
                     }
                 }
-                .padding(.leading, 16)
-                .padding(.vertical, 14)
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(AppTheme.textMuted)
-                    .padding(.trailing, 4)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 12)
             }
-            .padding(12)
-            .glassStyle(cornerRadius: 22)
+            .background(Color.white.opacity(0.05))
+            .cornerRadius(22)
+            .overlay(
+                RoundedRectangle(cornerRadius: 22)
+                    .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
+            )
         }
         .buttonStyle(.plain)
+        .onAppear { loadThumbnail() }
         .fullScreenCover(isPresented: $showDetail) {
             VideoCompletionView(
-                media: .video(item.videoURL),
+                media: item.type == .video ? .video(item.fileURL) : .image(thumbnail ?? UIImage()),
                 onClose: { showDetail = false },
                 onRetake: { showDetail = false },
                 onDownload: { saveToLibrary() },
-                onShare: { shareVideo() }
+                onShare: { shareMedia() }
             )
         }
         .overlay(alignment: .bottom) {
@@ -181,23 +200,30 @@ struct HistoryCard: View {
         }
     }
 
-    private func saveToLibrary() {
-        let path = item.videoURL.path
-        guard FileManager.default.fileExists(atPath: path) else {
-            toastMessage = "File not found"
-            return
+    private func loadThumbnail() {
+        if item.type == .image {
+            if let data = try? Data(contentsOf: item.fileURL), let img = UIImage(data: data) {
+                self.thumbnail = img
+            }
+        } else {
+            // 对于视频，可以生成缩略图（略）
         }
-        UISaveVideoAtPathToSavedPhotosAlbum(path, nil, nil, nil)
+    }
+
+    private func saveToLibrary() {
+        if item.type == .video {
+            UISaveVideoAtPathToSavedPhotosAlbum(item.fileURL.path, nil, nil, nil)
+        } else {
+            if let data = try? Data(contentsOf: item.fileURL), let img = UIImage(data: data) {
+                UIImageWriteToSavedPhotosAlbum(img, nil, nil, nil)
+            }
+        }
         toastMessage = "Saved to gallery"
     }
 
-    private func shareVideo() {
-        let url = item.videoURL
-        guard FileManager.default.fileExists(atPath: url.path) else {
-            toastMessage = "File not found"
-            return
-        }
-        let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+    private func shareMedia() {
+        let items: [Any] = item.type == .video ? [item.fileURL] : [thumbnail ?? item.fileURL]
+        let av = UIActivityViewController(activityItems: items, applicationActivities: nil)
         if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let rootVC = scene.windows.first?.rootViewController {
             rootVC.present(av, animated: true)

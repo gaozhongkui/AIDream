@@ -290,6 +290,10 @@ struct TextToImageView: View {
             case .success(let res):
                 completedImage = res.image
                 generationProgress = 1.0
+
+                // 保存到历史记录
+                CreationService.shared.addCreation(prompt: trimmed, image: res.image)
+
                 // 先关闭生成页，再打开结果页，确保 SwiftUI 状态平滑过渡
                 activeSheet = nil
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {

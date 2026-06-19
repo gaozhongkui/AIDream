@@ -119,6 +119,9 @@ struct ReferenceVideoView: View {
                     onDownload: { saveVideo(url: url) },
                     onShare:    { shareVideo(url: url) }
                 )
+                .onAppear {
+                    CreationService.shared.addCreation(prompt: promptText, url: url)
+                }
             case .premium:
                 PremiumView()
             case .diamondStore:
