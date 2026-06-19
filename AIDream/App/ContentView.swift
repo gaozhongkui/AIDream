@@ -22,8 +22,25 @@ struct ContentView: View {
             VStack {
                 Spacer()
                 customTabBar
-                    .padding(.bottom, 24)
+                    .padding(.bottom, 20) // 让 TabBar 悬浮在安全区上方
             }
+            .background(
+                // 渐变背景层：确保它从最底部开始并向上延伸
+                VStack {
+                    Spacer()
+                    LinearGradient(
+                        colors: [
+                            AppTheme.bgPrimary.opacity(0),
+                            AppTheme.bgPrimary.opacity(0.9),
+                            AppTheme.bgPrimary
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 180) // 增加高度，使渐变更自然
+                }
+                .ignoresSafeArea() // 关键：让背景忽略安全区域，延伸到底部
+            )
             .ignoresSafeArea(.keyboard, edges: .bottom)
         }
         .preferredColorScheme(.dark)
