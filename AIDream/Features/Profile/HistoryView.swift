@@ -91,23 +91,12 @@ struct HistoryCard: View {
             VStack(alignment: .leading, spacing: 0) {
                 // 预览区
                 ZStack {
-                    RoundedRectangle(cornerRadius: 18)
-                        .fill(
-                            LinearGradient(
-                                colors: [Color(hex: "#1A1D4A"), Color(hex: "#0E1030")],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .aspectRatio(0.75, contentMode: .fit)
-
                     if let image = thumbnail {
                         Image(uiImage: image)
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 200)
-                            .clipShape(RoundedRectangle(cornerRadius: 18))
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                            .clipped() // 显式裁剪掉 fill 模式下多余的部分
                     } else {
                         // 装饰光点
                         Circle()
@@ -136,6 +125,16 @@ struct HistoryCard: View {
                         Spacer()
                     }
                 }
+                .frame(maxWidth: .infinity)
+                .aspectRatio(0.75, contentMode: .fit) // 使用 .fit 确保宽度紧贴网格列宽
+                .background(
+                    LinearGradient(
+                        colors: [Color(hex: "#1A1D4A"), Color(hex: "#0E1030")],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 18)) // 整体形状裁剪
                 .overlay(
                     RoundedRectangle(cornerRadius: 18)
                         .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
