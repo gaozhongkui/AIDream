@@ -7,6 +7,8 @@ struct ProfileView: View {
 
     @State private var showPremiumSheet = false
     @State private var showDiamondStore = false
+    @State private var showFavorites = false
+    @State private var showHistory = false
     @State private var safariURL: URL?
     @State private var showSafari = false
 
@@ -27,7 +29,7 @@ struct ProfileView: View {
 
                         // 菜单区域
                         VStack(spacing: 0) {
-                            NavigationLink(destination: FavoritesView()) {
+                            Button(action: { showFavorites = true }) {
                                 menuRowContent(icon: "heart.square.fill", title: "My Inspirations")
                             }
 
@@ -36,7 +38,7 @@ struct ProfileView: View {
                                 .frame(height: 1)
                                 .padding(.leading, 72)
 
-                            NavigationLink(destination: HistoryView()) {
+                            Button(action: { showHistory = true }) {
                                 menuRowContent(icon: "video.badge.plus.fill", title: "Creative History")
                             }
                         }
@@ -86,6 +88,12 @@ struct ProfileView: View {
             }
             .fullScreenCover(isPresented: $showDiamondStore) {
                 DiamondStoreView()
+            }
+            .fullScreenCover(isPresented: $showFavorites) {
+                FavoritesView()
+            }
+            .fullScreenCover(isPresented: $showHistory) {
+                HistoryView()
             }
         }
     }
