@@ -412,7 +412,10 @@ struct VideoCompletionView: View {
         playerObserver?.invalidate()
         if let observer = loopObserver { NotificationCenter.default.removeObserver(observer) }
         player = nil
-        if let url = localVideoURL { try? FileManager.default.removeItem(at: url) }
+        // 仅删除 Caches 目录下的临时预览文件，避免误删 Documents 下的历史记录文件
+        if let url = localVideoURL, url.path.contains("/Caches/") {
+            try? FileManager.default.removeItem(at: url)
+        }
     }
 
     private func handleDownload() {
@@ -427,9 +430,18 @@ struct VideoCompletionView: View {
     private func performSave() async {
         DispatchQueue.main.async { isSavingToGallery = true; showToast("Saving...") }
         do {
-            guard let url = localVideoURL else { throw NSError(domain: "Save", code: -1) }
+            // 优先使用下载好的临时文件，如果没有则看 media 是否本身就是本地文件
+            let saveURL: URL
+            if let local = localVideoURL {
+                saveURL = local
+            } else if case .video(let url) = media, url.isFileURL {
+                saveURL = url
+            } else {
+                throw NSError(domain: "Save", code: -1, userInfo: [NSLocalizedDescriptionKey: "No local file to save"])
+            }
+
             PHPhotoLibrary.shared().performChanges({
-                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
+                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: saveURL)
             }) { success, _ in
                 DispatchQueue.main.async {
                     isSavingToGallery = false

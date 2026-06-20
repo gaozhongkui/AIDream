@@ -169,13 +169,15 @@ struct HistoryCard: View {
         .buttonStyle(.plain)
         .onAppear { loadThumbnail() }
         .fullScreenCover(isPresented: $showDetail) {
-            VideoCompletionView(
-                media: item.type == .video ? .video(item.fileURL) : .image(thumbnail ?? UIImage()),
-                onClose: { showDetail = false },
-                onRetake: { showDetail = false },
-                onDownload: { saveToLibrary() },
-                onShare: { shareMedia() }
-            )
+            if let playURL = item.availableURL {
+                VideoCompletionView(
+                    media: item.type == .video ? .video(playURL) : .image(thumbnail ?? UIImage()),
+                    onClose: { showDetail = false },
+                    onRetake: { showDetail = false },
+                    onDownload: { saveToLibrary() },
+                    onShare: { shareMedia() }
+                )
+            }
         }
         .overlay(alignment: .bottom) {
             if let msg = toastMessage {
@@ -200,20 +202,48 @@ struct HistoryCard: View {
     }
 
     private func loadThumbnail() {
+        guard let url = item.availableURL else { return }
         if item.type == .image {
-            if let data = try? Data(contentsOf: item.fileURL), let img = UIImage(data: data) {
-                self.thumbnail = img
+            // 图片直接读取
+            DispatchQueue.global(qos: .userInitiated).async {
+                if let data = try? Data(contentsOf: url), let img = UIImage(data: data) {
+                    DispatchQueue.main.async {
+                        self.thumbnail = img
+                    }
+                }
             }
         } else {
-            // 对于视频，可以生成缩略图（略）
+            // 视频提取首帧缩略图
+            let asset = AVAsset(url: url)
+            let generator = AVAssetImageGenerator(asset: asset)
+            generator.appliesPreferredTrackTransform = true
+            generator.maximumSize = CGSize(width: 400, height: 400) // 限制缩略图尺寸节省内存
+
+            let time = CMTime(seconds: 0.0, preferredTimescale: 600)
+
+            generator.generateCGImagesAsynchronously(forTimes: [NSValue(time: time)]) { _, image, _, _, _ in
+                if let image = image {
+                    let uiImage = UIImage(cgImage: image)
+                    DispatchQueue.main.async {
+                        self.thumbnail = uiImage
+                    }
+                }
+            }
         }
     }
 
     private func saveToLibrary() {
+        guard let url = item.availableURL else { return }
         if item.type == .video {
-            UISaveVideoAtPathToSavedPhotosAlbum(item.fileURL.path, nil, nil, nil)
+            if url.isFileURL {
+                UISaveVideoAtPathToSavedPhotosAlbum(url.path, nil, nil, nil)
+            } else {
+                // 如果是远程视频，跳转到详情页下载更好，或者这里提示不支持直接从预览保存
+                toastMessage = "Please download from video player"
+                return
+            }
         } else {
-            if let data = try? Data(contentsOf: item.fileURL), let img = UIImage(data: data) {
+            if let data = try? Data(contentsOf: url), let img = UIImage(data: data) {
                 UIImageWriteToSavedPhotosAlbum(img, nil, nil, nil)
             }
         }
@@ -221,7 +251,8 @@ struct HistoryCard: View {
     }
 
     private func shareMedia() {
-        let items: [Any] = item.type == .video ? [item.fileURL] : [thumbnail ?? item.fileURL]
+        guard let url = item.availableURL else { return }
+        let items: [Any] = item.type == .video ? [url] : [thumbnail ?? url]
         let av = UIActivityViewController(activityItems: items, applicationActivities: nil)
         if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let rootVC = scene.windows.first?.rootViewController {

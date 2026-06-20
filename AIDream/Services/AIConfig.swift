@@ -7,7 +7,8 @@ struct AIConfig {
     let pollinationsApiKey = "sk_UhsZmc01AcRpoVcqd9I83kLCJLGy8OS8"
 
     let huggingFaceBaseURL = "https://api-inference.huggingface.co/models"
-    let huggingFaceToken = ""
+    let huggingFaceToken = "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" 
+    let huggingFaceVideoModel = "stabilityai/stable-video-diffusion-img2vid-xt"
 
     let openRouterBaseURL = "https://openrouter.ai/api/v1"
     let openRouterApiKey = "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"

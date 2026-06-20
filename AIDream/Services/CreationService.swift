@@ -16,10 +16,22 @@ struct CreationItem: Identifiable, Codable {
     let prompt: String
     let fileName: String
     let type: CreationMediaType
+    let remoteURL: String? // 保存原始生成地址
 
     var fileURL: URL {
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         return docs.appendingPathComponent(fileName)
+    }
+
+    /// 获取可用的播放/显示地址：优先本地文件，如果本地不存在则返回远程地址
+    var availableURL: URL? {
+        if FileManager.default.fileExists(atPath: fileURL.path) {
+            return fileURL
+        }
+        if let remoteStr = remoteURL, let url = URL(string: remoteStr) {
+            return url
+        }
+        return nil
     }
 
     var displayDate: String {
@@ -87,7 +99,8 @@ final class CreationService: ObservableObject {
                     date: Date(),
                     prompt: prompt.isEmpty ? "AI Generation" : prompt,
                     fileName: fileName,
-                    type: type
+                    type: type,
+                    remoteURL: url?.isFileURL == false ? url?.absoluteString : nil
                 )
 
                 creations.insert(newItem, at: 0)
@@ -114,8 +127,9 @@ final class CreationService: ObservableObject {
     private func loadCreations() {
         guard let data = UserDefaults.standard.data(forKey: storageKey) else { return }
         if let decoded = try? JSONDecoder().decode([CreationItem].self, from: data) {
+            // 只要本地文件存在或者有远程地址，就保留记录
             self.creations = decoded.filter { item in
-                FileManager.default.fileExists(atPath: item.fileURL.path)
+                FileManager.default.fileExists(atPath: item.fileURL.path) || item.remoteURL != nil
             }
         }
     }

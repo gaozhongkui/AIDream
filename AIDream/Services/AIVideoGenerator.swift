@@ -41,13 +41,25 @@ class AIVideoGenerator: ObservableObject {
         quality: String,
         ratio: String
     ) {
-        logger.info("Starting generation via OpenRouter Dedicated Video API")
+        logger.info("Starting video generation process")
 
         pollingTask?.cancel()
         pollingTask = Task {
             state = .uploading
             do {
-                // 1. 提交专属异步视频任务
+                // --- 方案 A: 尝试 Hugging Face ---
+                do {
+                    logger.info("Attempting Hugging Face generation...")
+                    let videoURL = try await generateWithHuggingFace(prompt: prompt, image: image)
+                    state = .completed(videoURL)
+                    logger.info("Hugging Face generation successful!")
+                    return // 成功则直接返回
+                } catch {
+                    logger.warning("Hugging Face failed: \(error.localizedDescription). Falling back to OpenRouter...")
+                }
+
+                // --- 方案 B: 回退到 OpenRouter ---
+                state = .uploading // 重置状态
                 let jobId = try await submitVideoJob(
                     prompt: prompt,
                     image: image,
@@ -63,13 +75,13 @@ class AIVideoGenerator: ObservableObject {
                 let videoURL = try await pollVideoJob(jobId: jobId)
 
                 // 验证 URL 合法性
-                guard videoURL.scheme == "https" else {
-                    logger.error("Security Risk: AI returned a non-https URL: \(videoURL.absoluteString)")
-                    throw VideoError.serverError("Insecure video source returned.")
+                guard videoURL.scheme == "https" || videoURL.isFileURL else {
+                    logger.error("Security Risk: AI returned an invalid URL: \(videoURL.absoluteString)")
+                    throw VideoError.serverError("Insecure video source.")
                 }
 
                 state = .completed(videoURL)
-                logger.info("Generation successful: \(videoURL.absoluteString)")
+                logger.info("OpenRouter fallback successful: \(videoURL.absoluteString)")
 
             } catch is CancellationError {
                 logger.info("Generation task was cancelled.")
@@ -260,6 +272,53 @@ class AIVideoGenerator: ObservableObject {
             }
         }
         throw VideoError.timeout
+    }
+
+    // MARK: - 3. Hugging Face 视频生成 (方案 A)
+    private func generateWithHuggingFace(prompt: String, image: UIImage?) async throws -> URL {
+        let model = AIConfig.shared.huggingFaceVideoModel
+        let token = AIConfig.shared.huggingFaceToken
+
+        // 如果没有配置 Token 且不是公开端点，抛出错误以触发回退
+        guard !token.isEmpty, token != "hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" else {
+            throw VideoError.missingApiKey
+        }
+
+        let endpoint = "\(AIConfig.shared.huggingFaceBaseURL)/\(model)"
+        guard let url = URL(string: endpoint) else { throw VideoError.invalidURL }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.timeoutInterval = 30 // 缩短连接超时，以便快速回退到 OpenRouter
+
+        // 构造输入，SVD 等模型通常需要图片输入
+        var payload: [String: Any] = ["inputs": prompt]
+        if let img = image, let b64 = processAndEncodeImage(img, maxDim: 1024) {
+            payload["image"] = "data:image/jpeg;base64,\(b64)"
+        }
+
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let http = response as? HTTPURLResponse else { throw VideoError.invalidResponse }
+
+        // 处理 HF 的 503 (模型加载中) 或其他错误
+        if http.statusCode != 200 {
+            let msg = String(data: data, encoding: .utf8) ?? "HTTP \(http.statusCode)"
+            logger.warning("HF API Error: \(msg)")
+            throw VideoError.serverError("HF API Error: \(http.statusCode)")
+        }
+
+        // 很多 HF 视频接口直接返回视频二进制流，将其存入临时文件
+        let tempURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString)
+            .appendingPathExtension("mp4")
+
+        try data.write(to: tempURL)
+        return tempURL
     }
 
     // MARK: - 辅助：高质量图片缩放编码
