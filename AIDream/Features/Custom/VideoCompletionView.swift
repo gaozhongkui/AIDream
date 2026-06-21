@@ -339,7 +339,9 @@ struct VideoCompletionView: View {
                 var request = URLRequest(url: url, timeoutInterval: 30)
 
                 if url.absoluteString.contains("openrouter.ai") {
-                    request.setValue("Bearer \(AIConfig.shared.openRouterApiKey)", forHTTPHeaderField: "Authorization")
+                    let apiKey = AIConfig.shared.openRouterApiKey
+                    print("[VideoCompletionView] Using API Key (first 10 chars): \(apiKey.prefix(10))...")
+                    request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
                     request.setValue("https://aidream.app", forHTTPHeaderField: "HTTP-Referer")
                     request.setValue("AIDream", forHTTPHeaderField: "X-Title")
                 }
@@ -463,7 +465,7 @@ struct VideoCompletionView: View {
 final class RedirectHandler: NSObject, URLSessionTaskDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
         var req = newRequest
-        if let oHost = task.originalRequest?.url?.host, let nHost = newRequest.url?.host, oHost != nHost {
+        if let nHost = newRequest.url?.host, !nHost.contains("openrouter.ai") {
             req.setValue(nil, forHTTPHeaderField: "Authorization")
         }
         completionHandler(req)

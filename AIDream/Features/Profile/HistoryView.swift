@@ -79,6 +79,89 @@ struct HistoryView: View {
     }
 }
 
+// MARK: - Looped Video Player for Preview
+struct LoopedVideoPlayer: UIViewRepresentable {
+    let url: URL
+
+    func makeUIView(context: Context) -> PlayerUIView {
+        PlayerUIView(url: url)
+    }
+
+    func updateUIView(_ uiView: PlayerUIView, context: Context) {
+        uiView.updateURL(url)
+    }
+
+    class PlayerUIView: UIView {
+        private var playerLayer = AVPlayerLayer()
+        private var player: AVPlayer?
+        private var url: URL?
+
+        init(url: URL) {
+            self.url = url
+            super.init(frame: .zero)
+            setupPlayer()
+        }
+
+        required init?(coder: NSCoder) { fatalError() }
+
+        func updateURL(_ newURL: URL) {
+            if url != newURL {
+                self.url = newURL
+                setupPlayer()
+            }
+        }
+
+        private func setupPlayer() {
+            guard let url = url else { return }
+            player?.pause()
+
+            var headers: [String: String] = [
+                           "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+                       ]
+                       
+                       if url.absoluteString.contains("openrouter.ai") {
+                           let apiKey = AIConfig.shared.openRouterApiKey
+                           headers["Authorization"] = "Bearer \\(apiKey)"
+                           headers["HTTP-Referer"] = "https://aidream.app"
+                           headers["X-Title"] = "AIDream"
+                       }
+            
+            let asset = AVURLAsset(url: url, options: ["AVURLAssetHTTPHeaderFieldsKey": headers])
+                     let item = AVPlayerItem(asset: asset)
+            let player = AVPlayer(playerItem: item)
+            player.isMuted = true // 列表预览静音
+            player.preventsDisplaySleepDuringVideoPlayback = false
+
+            self.player = player
+            playerLayer.player = player
+            playerLayer.videoGravity = .resizeAspectFill
+
+            if layer.sublayers?.contains(playerLayer) != true {
+                layer.addSublayer(playerLayer)
+            }
+
+            NotificationCenter.default.addObserver(self, selector: #selector(reachEnd), name: .AVPlayerItemDidPlayToEndTime, object: item)
+            player.play()
+        }
+
+        @objc private func reachEnd() {
+            player?.seek(to: .zero)
+            player?.play()
+        }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            playerLayer.frame = bounds
+        }
+
+        deinit {
+            NotificationCenter.default.removeObserver(self)
+        }
+    }
+}
+
+
+
 // MARK: - History Card
 struct HistoryCard: View {
     let item: CreationItem
@@ -91,7 +174,11 @@ struct HistoryCard: View {
             VStack(alignment: .leading, spacing: 0) {
                 // 预览区
                 ZStack {
-                    if let image = thumbnail {
+                    if item.type == .video, let url = item.availableURL {
+                        // 视频自动播放预览
+                        LoopedVideoPlayer(url: url)
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                    } else if let image = thumbnail {
                         Image(uiImage: image)
                             .resizable()
                             .aspectRatio(contentMode: .fill)
@@ -260,3 +347,5 @@ struct HistoryCard: View {
         }
     }
 }
+
+

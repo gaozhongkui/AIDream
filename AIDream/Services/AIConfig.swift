@@ -11,7 +11,7 @@ struct AIConfig {
     let huggingFaceVideoModel = "stabilityai/stable-video-diffusion-img2vid-xt"
 
     let openRouterBaseURL = "https://openrouter.ai/api/v1"
-    let openRouterApiKey = "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"
+    let openRouterApiKey = "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"
     let openRouterImageModel = "google/gemini-2.5-flash-image"
 
     let openRouterVideoModel = "minimax/hailuo-2.3"
