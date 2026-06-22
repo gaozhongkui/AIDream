@@ -30,6 +30,7 @@
 "btn_share" = "공유";
 "btn_download" = "다운로드";
 "btn_retake" = "재시도";
+"btn_close" = "닫기";
 "btn_recharge" = "충전";
 "btn_reset_account" = "계정 데이터 초기화";
 "btn_upload" = "업로드";

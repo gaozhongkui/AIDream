@@ -31,6 +31,7 @@
 "btn_share" = "共有";
 "btn_download" = "ダウンロード";
 "btn_retake" = "撮り直し";
+"btn_close" = "閉じる";
 "btn_recharge" = "チャージ";
 "btn_reset_account" = "アカウントデータをリセット";
 "btn_upload" = "アップロード";

@@ -18,6 +18,7 @@ struct ImageToVideoView: View {
     @State private var showToast = false
     @State private var showErrorBanner = false
     @State private var showInsufficientDiamondsAlert = false
+    @State private var hasRecordedCreation = false
 
     // 统一弹窗管理
     enum ActiveSheet: Identifiable {
@@ -146,7 +147,10 @@ struct ImageToVideoView: View {
                     onShare:    { shareVideo(url: url) }
                 )
                 .onAppear {
-                    CreationService.shared.addCreation(prompt: promptText, url: url)
+                    if !hasRecordedCreation {
+                        hasRecordedCreation = true
+                        CreationService.shared.addCreation(prompt: promptText, url: url)
+                    }
                 }
             case .premium:
                 PremiumView()
@@ -409,6 +413,7 @@ struct ImageToVideoView: View {
     // MARK: - Actions
     private func handleGenerate() {
         showErrorBanner = false
+        hasRecordedCreation = false
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
 
         // Check Pro requirement for current selections

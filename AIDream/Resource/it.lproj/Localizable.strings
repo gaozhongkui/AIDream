@@ -31,6 +31,7 @@
 "btn_share" = "Condividi";
 "btn_download" = "Scarica";
 "btn_retake" = "Rifai";
+"btn_close" = "Chiudi";
 "btn_recharge" = "Ricarica";
 "btn_reset_all_data" = "Cancella tutti i dati";
 "btn_confirm_reset" = "Ripristina ora";

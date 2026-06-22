@@ -30,6 +30,7 @@
 "btn_share" = "Partager";
 "btn_download" = "Télécharger";
 "btn_retake" = "Recommencer";
+"btn_close" = "Fermer";
 "btn_recharge" = "Recharger";
 "btn_reset_account" = "Réinitialiser les Données";
 "btn_upload" = "Téléverser";

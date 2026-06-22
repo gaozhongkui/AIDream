@@ -30,6 +30,7 @@
 "btn_share" = "Teilen";
 "btn_download" = "Herunterladen";
 "btn_retake" = "Neu aufnehmen";
+"btn_close" = "Schließen";
 "btn_recharge" = "Aufladen";
 "btn_reset_account" = "Kontodaten zurücksetzen";
 "btn_upload" = "Hochladen";

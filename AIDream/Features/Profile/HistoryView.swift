@@ -261,9 +261,13 @@ struct HistoryCard: View {
                 VideoCompletionView(
                     media: item.type == .video ? .video(playURL) : .image(thumbnail ?? UIImage()),
                     onClose: { showDetail = false },
-                    onRetake: { showDetail = false },
+                    onRetake: {
+                        CreationService.shared.deleteCreation(item)
+                        showDetail = false
+                    },
                     onDownload: { saveToLibrary() },
-                    onShare: { shareMedia() }
+                    onShare: { shareMedia() },
+                    isFromHistory: true
                 )
             }
         }

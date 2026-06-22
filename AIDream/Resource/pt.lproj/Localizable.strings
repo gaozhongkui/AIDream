@@ -31,6 +31,7 @@
 "btn_share" = "Compartilhar";
 "btn_download" = "Baixar";
 "btn_retake" = "Refazer";
+"btn_close" = "Fechar";
 "btn_recharge" = "Recarregar";
 "btn_reset_account" = "Redefinir Dados da Conta";
 "btn_upload" = "Carregar";

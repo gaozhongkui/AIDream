@@ -52,6 +52,7 @@ struct VideoCompletionView: View {
     var onRetake: () -> Void
     var onDownload: (() -> Void)? = nil
     var onShare: () -> Void
+    var isFromHistory: Bool = false
 
     @State private var player: AVPlayer?
     @State private var isPlayerReady = false
@@ -269,12 +270,14 @@ struct VideoCompletionView: View {
     // MARK: - Action Bar（底部覆盖层）
     private var actionBar: some View {
         HStack(spacing: 10) {
-            // Retake 按钮
+            // Retake / Delete 按钮
             Button(action: onRetake) {
                 VStack(spacing: 4) {
-                    Image(systemName: "trash")
+                    Image(systemName: isFromHistory ? "trash" :"square.and.pencil")
                         .font(.system(size: 18, weight: .semibold))
-                    Text(NSLocalizedString("btn_retake", comment: ""))
+                    Text(isFromHistory
+                         ? NSLocalizedString("btn_delete", comment: "")
+                         : NSLocalizedString("btn_retake", comment: ""))
                         .font(.system(size: 11, weight: .semibold))
                 }
                 .foregroundColor(.white)
