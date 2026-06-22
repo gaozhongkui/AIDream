@@ -2823,8 +2823,8 @@
           "id": "s1wq0h",
           "name": "Promo 1 - Create",
           "clip": true,
-          "width": 1290,
-          "height": 2796,
+          "width": 1242,
+          "height": 2688,
           "fill": {
             "type": "gradient",
             "gradientType": "linear",
@@ -2853,8 +2853,8 @@
             {
               "type": "ellipse",
               "id": "hEhJA",
-              "x": 100,
-              "y": 200,
+              "x": 96,
+              "y": 192,
               "name": "Glow Purple",
               "opacity": 0.12,
               "fill": {
@@ -2877,14 +2877,14 @@
                   }
                 ]
               },
-              "width": 900,
-              "height": 900
+              "width": 867,
+              "height": 865
             },
             {
               "type": "ellipse",
               "id": "C9505G",
-              "x": 500,
-              "y": 800,
+              "x": 481,
+              "y": 769,
               "name": "Glow Cyan",
               "opacity": 0.08,
               "fill": {
@@ -2907,14 +2907,14 @@
                   }
                 ]
               },
-              "width": 700,
-              "height": 700
+              "width": 674,
+              "height": 673
             },
             {
               "type": "ellipse",
               "id": "USVm5",
-              "x": -100,
-              "y": 1600,
+              "x": -96,
+              "y": 1538,
               "name": "Glow Pink",
               "opacity": 0.1,
               "fill": {
@@ -2937,14 +2937,14 @@
                   }
                 ]
               },
-              "width": 800,
-              "height": 800
+              "width": 770,
+              "height": 769
             },
             {
               "type": "ellipse",
               "id": "p9oRo",
-              "x": 570,
-              "y": 180,
+              "x": 549,
+              "y": 173,
               "name": "App Icon",
               "fill": {
                 "type": "gradient",
@@ -2965,14 +2965,14 @@
                   }
                 ]
               },
-              "width": 150,
-              "height": 150
+              "width": 144,
+              "height": 144
             },
             {
               "type": "path",
               "id": "slItr",
-              "x": 615,
-              "y": 220,
+              "x": 592,
+              "y": 212,
               "name": "Play Triangle",
               "geometry": "M0 0l60 35-60 35z",
               "viewBox": [
@@ -2982,29 +2982,29 @@
                 70
               ],
               "fill": "#FFFFFF",
-              "width": 60,
-              "height": 70
+              "width": 58,
+              "height": 67
             },
             {
               "type": "text",
               "id": "L5zLY",
-              "x": 95,
-              "y": 420,
+              "x": 91,
+              "y": 404,
               "name": "Headline Create",
               "fill": "#FFFFFF",
               "textGrowth": "fixed-width",
-              "width": 1100,
+              "width": 1059,
               "content": "Create Stunning",
               "textAlign": "center",
               "fontFamily": "Inter",
-              "fontSize": 120,
+              "fontSize": 116,
               "fontWeight": "800"
             },
             {
               "type": "text",
               "id": "Q8Mi1",
-              "x": 95,
-              "y": 560,
+              "x": 91,
+              "y": 538,
               "name": "Headline AI Art",
               "fill": {
                 "type": "gradient",
@@ -3026,33 +3026,33 @@
                 ]
               },
               "textGrowth": "fixed-width",
-              "width": 1100,
+              "width": 1059,
               "content": "AI Art",
               "textAlign": "center",
               "fontFamily": "Inter",
-              "fontSize": 120,
+              "fontSize": 116,
               "fontWeight": "800"
             },
             {
               "type": "text",
               "id": "m8IYnm",
-              "x": 145,
-              "y": 720,
+              "x": 140,
+              "y": 692,
               "name": "Subtitle",
               "fill": "#FFFFFFBB",
               "textGrowth": "fixed-width",
-              "width": 1000,
+              "width": 963,
               "content": "Describe your vision, AI brings it to life",
               "textAlign": "center",
               "fontFamily": "Inter",
-              "fontSize": 48,
+              "fontSize": 46,
               "fontWeight": "normal"
             },
             {
               "type": "ellipse",
               "id": "ONbFS",
-              "x": 195,
-              "y": 2550,
+              "x": 188,
+              "y": 2452,
               "name": "Phone Shadow",
               "fill": {
                 "type": "gradient",
@@ -3074,20 +3074,20 @@
                   }
                 ]
               },
-              "width": 900,
-              "height": 100
+              "width": 867,
+              "height": 96
             },
             {
               "type": "frame",
               "id": "sqK2x",
-              "x": 195,
-              "y": 900,
+              "x": 188,
+              "y": 865,
               "name": "Phone Frame",
               "clip": true,
-              "width": 900,
-              "height": 1800,
+              "width": 867,
+              "height": 1730,
               "fill": "#1A1025",
-              "cornerRadius": 60,
+              "cornerRadius": 58,
               "stroke": "#FFFFFF15",
               "strokeWidth": 3,
               "layout": "none",
@@ -3104,16 +3104,16 @@
                     "url": "simulator_screenshot_5CEA0243-26C2-4DBD-8161-5337F639AAD2.png",
                     "mode": "fill"
                   },
-                  "width": 900,
-                  "height": 1800
+                  "width": 867,
+                  "height": 1730
                 }
               ]
             },
             {
               "type": "path",
               "id": "h8ezL8",
-              "x": 120,
-              "y": 380,
+              "x": 116,
+              "y": 365,
               "name": "Sparkle",
               "opacity": 0.7,
               "geometry": "M12 0l2 10 10 2-10 2-2 10-2-10-10-2 10-2z",
@@ -3124,14 +3124,14 @@
                 24
               ],
               "fill": "#FFFFFF",
-              "width": 30,
-              "height": 30
+              "width": 29,
+              "height": 29
             },
             {
               "type": "path",
               "id": "HEJkq",
-              "x": 1100,
-              "y": 450,
+              "x": 1059,
+              "y": 433,
               "name": "Sparkle",
               "opacity": 0.5,
               "geometry": "M12 0l2 10 10 2-10 2-2 10-2-10-10-2 10-2z",
@@ -3142,14 +3142,14 @@
                 24
               ],
               "fill": "#06B6D4",
-              "width": 25,
-              "height": 25
+              "width": 24,
+              "height": 24
             },
             {
               "type": "path",
               "id": "BP1As",
-              "x": 200,
-              "y": 650,
+              "x": 193,
+              "y": 625,
               "name": "Sparkle",
               "opacity": 0.4,
               "geometry": "M12 0l2 10 10 2-10 2-2 10-2-10-10-2 10-2z",
@@ -3160,14 +3160,14 @@
                 24
               ],
               "fill": "#FFFFFF",
-              "width": 20,
-              "height": 20
+              "width": 19,
+              "height": 19
             },
             {
               "type": "path",
               "id": "KK3Hr",
-              "x": 1050,
-              "y": 300,
+              "x": 1011,
+              "y": 288,
               "name": "Sparkle",
               "opacity": 0.6,
               "geometry": "M12 0l2 10 10 2-10 2-2 10-2-10-10-2 10-2z",
@@ -3178,14 +3178,14 @@
                 24
               ],
               "fill": "#8B5CF6",
-              "width": 35,
-              "height": 35
+              "width": 34,
+              "height": 34
             },
             {
               "type": "path",
               "id": "PoOTH",
-              "x": 950,
-              "y": 700,
+              "x": 915,
+              "y": 673,
               "name": "Sparkle",
               "opacity": 0.5,
               "geometry": "M12 0l2 10 10 2-10 2-2 10-2-10-10-2 10-2z",
@@ -3196,8 +3196,8 @@
                 24
               ],
               "fill": "#06B6D4",
-              "width": 22,
-              "height": 22
+              "width": 21,
+              "height": 21
             }
           ]
         },
@@ -3206,8 +3206,8 @@
           "id": "a7dRZd",
           "name": "Promo 2 - Reference",
           "clip": true,
-          "width": 1290,
-          "height": 2796,
+          "width": 1242,
+          "height": 2688,
           "fill": {
             "type": "gradient",
             "gradientType": "linear",
@@ -3236,8 +3236,8 @@
             {
               "type": "ellipse",
               "id": "GPJrb",
-              "x": 300,
-              "y": 100,
+              "x": 289,
+              "y": 96,
               "name": "Glow Blue",
               "opacity": 0.1,
               "fill": {
@@ -3260,14 +3260,14 @@
                   }
                 ]
               },
-              "width": 800,
-              "height": 800
+              "width": 770,
+              "height": 769
             },
             {
               "type": "ellipse",
               "id": "mcXAc",
-              "x": -50,
-              "y": 600,
+              "x": -48,
+              "y": 577,
               "name": "Glow Purple",
               "opacity": 0.12,
               "fill": {
@@ -3290,14 +3290,14 @@
                   }
                 ]
               },
-              "width": 700,
-              "height": 700
+              "width": 674,
+              "height": 673
             },
             {
               "type": "ellipse",
               "id": "iMPxn",
-              "x": 600,
-              "y": 1800,
+              "x": 578,
+              "y": 1730,
               "name": "Glow Indigo",
               "opacity": 0.08,
               "fill": {
@@ -3320,19 +3320,19 @@
                   }
                 ]
               },
-              "width": 800,
-              "height": 800
+              "width": 770,
+              "height": 769
             },
             {
               "type": "frame",
               "id": "u7iAM",
-              "x": 445,
-              "y": 200,
+              "x": 428,
+              "y": 192,
               "name": "Badge",
-              "width": 400,
-              "height": 70,
+              "width": 385,
+              "height": 67,
               "fill": "#8B5CF620",
-              "cornerRadius": 35,
+              "cornerRadius": 34,
               "stroke": "#8B5CF640",
               "strokeWidth": 2,
               "justifyContent": "center",
@@ -3345,7 +3345,7 @@
                   "fill": "#C4B5FD",
                   "content": "REFERENCE MODE",
                   "fontFamily": "Inter",
-                  "fontSize": 36,
+                  "fontSize": 35,
                   "fontWeight": "700"
                 }
               ]
@@ -3353,23 +3353,23 @@
             {
               "type": "text",
               "id": "WAyNQ",
-              "x": 95,
-              "y": 360,
+              "x": 91,
+              "y": 346,
               "name": "Headline Smart",
               "fill": "#FFFFFF",
               "textGrowth": "fixed-width",
-              "width": 1100,
+              "width": 1059,
               "content": "Smart Style",
               "textAlign": "center",
               "fontFamily": "Inter",
-              "fontSize": 120,
+              "fontSize": 116,
               "fontWeight": "800"
             },
             {
               "type": "text",
               "id": "lDnRR",
-              "x": 95,
-              "y": 500,
+              "x": 91,
+              "y": 481,
               "name": "Headline Transfer",
               "fill": {
                 "type": "gradient",
@@ -3391,33 +3391,33 @@
                 ]
               },
               "textGrowth": "fixed-width",
-              "width": 1100,
+              "width": 1059,
               "content": "Transfer",
               "textAlign": "center",
               "fontFamily": "Inter",
-              "fontSize": 120,
+              "fontSize": 116,
               "fontWeight": "800"
             },
             {
               "type": "text",
               "id": "o4dS49",
-              "x": 145,
-              "y": 660,
+              "x": 140,
+              "y": 635,
               "name": "Subtitle",
               "fill": "#FFFFFFBB",
               "textGrowth": "fixed-width",
-              "width": 1000,
+              "width": 963,
               "content": "Upload references, AI evolves your vision",
               "textAlign": "center",
               "fontFamily": "Inter",
-              "fontSize": 48,
+              "fontSize": 46,
               "fontWeight": "normal"
             },
             {
               "type": "ellipse",
               "id": "X4PDw",
-              "x": 640,
-              "y": 2150,
+              "x": 616,
+              "y": 2067,
               "name": "Phone Shadow",
               "fill": {
                 "type": "gradient",
@@ -3439,20 +3439,20 @@
                   }
                 ]
               },
-              "width": 600,
-              "height": 100
+              "width": 578,
+              "height": 96
             },
             {
               "type": "frame",
               "id": "z7DSh7",
-              "x": 640,
-              "y": 950,
+              "x": 616,
+              "y": 913,
               "name": "Phone Frame",
               "clip": true,
-              "width": 600,
-              "height": 1300,
+              "width": 578,
+              "height": 1250,
               "fill": "#1A1025",
-              "cornerRadius": 55,
+              "cornerRadius": 53,
               "stroke": "#FFFFFF15",
               "strokeWidth": 3,
               "layout": "none",
@@ -3469,26 +3469,26 @@
                     "url": "simulator_screenshot_85C304CC-E8A4-4B9D-BDB1-EFE880E9CB68.png",
                     "mode": "fill"
                   },
-                  "width": 600,
-                  "height": 1300
+                  "width": 578,
+                  "height": 1250
                 }
               ]
             },
             {
               "type": "frame",
               "id": "XRPjy",
-              "x": 70,
-              "y": 1100,
+              "x": 67,
+              "y": 1058,
               "name": "Key Frames Feature",
-              "gap": 16,
+              "gap": 15,
               "alignItems": "center",
               "children": [
                 {
                   "type": "icon",
                   "id": "Zepmf",
                   "name": "Key Frames Icon",
-                  "width": 28,
-                  "height": 28,
+                  "width": 27,
+                  "height": 27,
                   "icon": "image",
                   "library": "lucide",
                   "fill": "#8B5CF6"
@@ -3497,7 +3497,7 @@
                   "type": "frame",
                   "id": "vmVNq",
                   "name": "Key Frames Text",
-                  "width": 450,
+                  "width": 433,
                   "layout": "vertical",
                   "gap": 4,
                   "children": [
@@ -3510,7 +3510,7 @@
                       "width": "fill_container",
                       "content": "Key Frames",
                       "fontFamily": "Inter",
-                      "fontSize": 36,
+                      "fontSize": 35,
                       "fontWeight": "600"
                     },
                     {
@@ -3522,7 +3522,7 @@
                       "width": "fill_container",
                       "content": "Extract key moments from any reference",
                       "fontFamily": "Inter",
-                      "fontSize": 24,
+                      "fontSize": 23,
                       "fontWeight": "normal"
                     }
                   ]
@@ -3532,18 +3532,18 @@
             {
               "type": "frame",
               "id": "g9Qrk",
-              "x": 70,
-              "y": 1400,
+              "x": 67,
+              "y": 1346,
               "name": "AI Evolution Feature",
-              "gap": 16,
+              "gap": 15,
               "alignItems": "center",
               "children": [
                 {
                   "type": "icon",
                   "id": "TPFaK",
                   "name": "AI Evolution Icon",
-                  "width": 28,
-                  "height": 28,
+                  "width": 27,
+                  "height": 27,
                   "icon": "sparkles",
                   "library": "lucide",
                   "fill": "#8B5CF6"
@@ -3552,7 +3552,7 @@
                   "type": "frame",
                   "id": "aXKhz",
                   "name": "AI Evolution Text",
-                  "width": 450,
+                  "width": 433,
                   "layout": "vertical",
                   "gap": 4,
                   "children": [
@@ -3565,7 +3565,7 @@
                       "width": "fill_container",
                       "content": "AI Evolution",
                       "fontFamily": "Inter",
-                      "fontSize": 36,
+                      "fontSize": 35,
                       "fontWeight": "600"
                     },
                     {
@@ -3577,7 +3577,7 @@
                       "width": "fill_container",
                       "content": "Intelligent style adaptation engine",
                       "fontFamily": "Inter",
-                      "fontSize": 24,
+                      "fontSize": 23,
                       "fontWeight": "normal"
                     }
                   ]
@@ -3587,18 +3587,18 @@
             {
               "type": "frame",
               "id": "yAD8n",
-              "x": 70,
-              "y": 1700,
+              "x": 67,
+              "y": 1634,
               "name": "Style Mix Feature",
-              "gap": 16,
+              "gap": 15,
               "alignItems": "center",
               "children": [
                 {
                   "type": "icon",
                   "id": "E0hXu",
                   "name": "Style Mix Icon",
-                  "width": 28,
-                  "height": 28,
+                  "width": 27,
+                  "height": 27,
                   "icon": "palette",
                   "library": "lucide",
                   "fill": "#8B5CF6"
@@ -3607,7 +3607,7 @@
                   "type": "frame",
                   "id": "w82F0",
                   "name": "Style Mix Text",
-                  "width": 450,
+                  "width": 433,
                   "layout": "vertical",
                   "gap": 4,
                   "children": [
@@ -3620,7 +3620,7 @@
                       "width": "fill_container",
                       "content": "Style Mix",
                       "fontFamily": "Inter",
-                      "fontSize": 36,
+                      "fontSize": 35,
                       "fontWeight": "600"
                     },
                     {
@@ -3632,7 +3632,7 @@
                       "width": "fill_container",
                       "content": "Blend multiple artistic influences",
                       "fontFamily": "Inter",
-                      "fontSize": 24,
+                      "fontSize": 23,
                       "fontWeight": "normal"
                     }
                   ]
@@ -3646,8 +3646,8 @@
           "id": "Z8qBRt",
           "name": "Promo 3 - Video",
           "clip": true,
-          "width": 1290,
-          "height": 2796,
+          "width": 1242,
+          "height": 2688,
           "fill": {
             "type": "gradient",
             "gradientType": "linear",
@@ -3676,8 +3676,8 @@
             {
               "type": "ellipse",
               "id": "V9saW",
-              "x": 100,
-              "y": 200,
+              "x": 96,
+              "y": 192,
               "name": "BG Glow 1",
               "fill": {
                 "type": "gradient",
@@ -3699,14 +3699,14 @@
                   }
                 ]
               },
-              "width": 800,
-              "height": 700
+              "width": 770,
+              "height": 673
             },
             {
               "type": "ellipse",
               "id": "EysWp",
-              "x": 500,
-              "y": 1400,
+              "x": 481,
+              "y": 1346,
               "name": "BG Glow 2",
               "fill": {
                 "type": "gradient",
@@ -3728,14 +3728,14 @@
                   }
                 ]
               },
-              "width": 900,
-              "height": 800
+              "width": 867,
+              "height": 769
             },
             {
               "type": "ellipse",
               "id": "W82zy",
-              "x": -100,
-              "y": 2000,
+              "x": -96,
+              "y": 1923,
               "name": "BG Glow 3",
               "fill": {
                 "type": "gradient",
@@ -3757,19 +3757,19 @@
                   }
                 ]
               },
-              "width": 700,
-              "height": 600
+              "width": 674,
+              "height": 577
             },
             {
               "type": "frame",
               "id": "H85t8B",
-              "x": 395,
-              "y": 200,
+              "x": 380,
+              "y": 192,
               "name": "Badge",
-              "width": 500,
-              "height": 72,
+              "width": 481,
+              "height": 69,
               "fill": "#06B6D415",
-              "cornerRadius": 36,
+              "cornerRadius": 35,
               "stroke": "#06B6D440",
               "strokeWidth": 2,
               "gap": 12,
@@ -3780,8 +3780,8 @@
                   "type": "icon",
                   "id": "BuqBQ",
                   "name": "Film Icon",
-                  "width": 28,
-                  "height": 28,
+                  "width": 27,
+                  "height": 27,
                   "icon": "film",
                   "library": "lucide",
                   "fill": "#06B6D4"
@@ -3793,7 +3793,7 @@
                   "fill": "#67E8F9",
                   "content": "VIDEO CREATION",
                   "fontFamily": "Inter",
-                  "fontSize": 32,
+                  "fontSize": 31,
                   "fontWeight": "700"
                 }
               ]
@@ -3801,23 +3801,23 @@
             {
               "type": "text",
               "id": "zrhjq",
-              "x": 95,
-              "y": 360,
+              "x": 91,
+              "y": 346,
               "name": "Headline 1",
               "fill": "#FFFFFF",
               "textGrowth": "fixed-width",
-              "width": 1100,
+              "width": 1059,
               "content": "Photos Come",
               "textAlign": "center",
               "fontFamily": "Inter",
-              "fontSize": 120,
+              "fontSize": 116,
               "fontWeight": "800"
             },
             {
               "type": "text",
               "id": "a6UT3",
-              "x": 95,
-              "y": 500,
+              "x": 91,
+              "y": 481,
               "name": "Headline 2",
               "fill": {
                 "type": "gradient",
@@ -3839,39 +3839,39 @@
                 ]
               },
               "textGrowth": "fixed-width",
-              "width": 1100,
+              "width": 1059,
               "content": "Alive",
               "textAlign": "center",
               "fontFamily": "Inter",
-              "fontSize": 120,
+              "fontSize": 116,
               "fontWeight": "800"
             },
             {
               "type": "text",
               "id": "BUCHD",
-              "x": 145,
-              "y": 660,
+              "x": 140,
+              "y": 635,
               "name": "Subtitle",
               "fill": "#FFFFFFBB",
               "textGrowth": "fixed-width",
-              "width": 1000,
+              "width": 963,
               "content": "Transform static images into cinematic videos",
               "textAlign": "center",
               "fontFamily": "Inter",
-              "fontSize": 46,
+              "fontSize": 44,
               "fontWeight": "normal"
             },
             {
               "type": "frame",
               "id": "MdUeh",
-              "x": 500,
-              "y": 900,
+              "x": 481,
+              "y": 865,
               "name": "Phone Frame",
               "clip": true,
-              "width": 740,
-              "height": 1480,
+              "width": 712,
+              "height": 1423,
               "fill": "#1A1025",
-              "cornerRadius": 60,
+              "cornerRadius": 58,
               "stroke": "#FFFFFF15",
               "strokeWidth": 3,
               "effect": {
@@ -3880,9 +3880,9 @@
                 "color": "#00000060",
                 "offset": {
                   "x": 0,
-                  "y": 20
+                  "y": 19
                 },
-                "blur": 80
+                "blur": 77
               },
               "layout": "none",
               "children": [
@@ -3898,28 +3898,28 @@
                     "url": "simulator_screenshot_9FAA7F8A-6506-42E5-9DE9-555096055998.png",
                     "mode": "fill"
                   },
-                  "width": 740,
-                  "height": 1480
+                  "width": 712,
+                  "height": 1423
                 }
               ]
             },
             {
               "type": "frame",
               "id": "LlRPW",
-              "x": 50,
-              "y": 1050,
+              "x": 48,
+              "y": 1009,
               "name": "Feature Start & End Frames",
-              "gap": 16,
+              "gap": 15,
               "alignItems": "center",
               "children": [
                 {
                   "type": "frame",
                   "id": "t5snRn",
                   "name": "Icon Wrap",
-                  "width": 64,
-                  "height": 64,
+                  "width": 62,
+                  "height": 62,
                   "fill": "#06B6D415",
-                  "cornerRadius": 16,
+                  "cornerRadius": 15,
                   "stroke": "#06B6D430",
                   "strokeWidth": 1,
                   "justifyContent": "center",
@@ -3929,8 +3929,8 @@
                       "type": "icon",
                       "id": "UUes9",
                       "name": "Feat Icon",
-                      "width": 28,
-                      "height": 28,
+                      "width": 27,
+                      "height": 27,
                       "icon": "upload",
                       "library": "lucide",
                       "fill": "#06B6D4"
@@ -3951,7 +3951,7 @@
                       "fill": "#FFFFFF",
                       "content": "Start & End Frames",
                       "fontFamily": "Inter",
-                      "fontSize": 34,
+                      "fontSize": 33,
                       "fontWeight": "600"
                     },
                     {
@@ -3961,7 +3961,7 @@
                       "fill": "#FFFFFFAA",
                       "content": "Set the journey for AI",
                       "fontFamily": "Inter",
-                      "fontSize": 26,
+                      "fontSize": 25,
                       "fontWeight": "normal"
                     }
                   ]
@@ -3971,20 +3971,20 @@
             {
               "type": "frame",
               "id": "jady3",
-              "x": 50,
-              "y": 1320,
+              "x": 48,
+              "y": 1269,
               "name": "Feature AI Motion Engine",
-              "gap": 16,
+              "gap": 15,
               "alignItems": "center",
               "children": [
                 {
                   "type": "frame",
                   "id": "mfhpZ",
                   "name": "Icon Wrap",
-                  "width": 64,
-                  "height": 64,
+                  "width": 62,
+                  "height": 62,
                   "fill": "#06B6D415",
-                  "cornerRadius": 16,
+                  "cornerRadius": 15,
                   "stroke": "#06B6D430",
                   "strokeWidth": 1,
                   "justifyContent": "center",
@@ -3994,8 +3994,8 @@
                       "type": "icon",
                       "id": "jEKta",
                       "name": "Feat Icon",
-                      "width": 28,
-                      "height": 28,
+                      "width": 27,
+                      "height": 27,
                       "icon": "sparkles",
                       "library": "lucide",
                       "fill": "#06B6D4"
@@ -4016,7 +4016,7 @@
                       "fill": "#FFFFFF",
                       "content": "AI Motion Engine",
                       "fontFamily": "Inter",
-                      "fontSize": 34,
+                      "fontSize": 33,
                       "fontWeight": "600"
                     },
                     {
@@ -4026,7 +4026,7 @@
                       "fill": "#FFFFFFAA",
                       "content": "Intelligent animation",
                       "fontFamily": "Inter",
-                      "fontSize": 26,
+                      "fontSize": 25,
                       "fontWeight": "normal"
                     }
                   ]
@@ -4036,20 +4036,20 @@
             {
               "type": "frame",
               "id": "XCyWH",
-              "x": 50,
-              "y": 1590,
+              "x": 48,
+              "y": 1529,
               "name": "Feature Full Control",
-              "gap": 16,
+              "gap": 15,
               "alignItems": "center",
               "children": [
                 {
                   "type": "frame",
                   "id": "X32zF",
                   "name": "Icon Wrap",
-                  "width": 64,
-                  "height": 64,
+                  "width": 62,
+                  "height": 62,
                   "fill": "#06B6D415",
-                  "cornerRadius": 16,
+                  "cornerRadius": 15,
                   "stroke": "#06B6D430",
                   "strokeWidth": 1,
                   "justifyContent": "center",
@@ -4059,8 +4059,8 @@
                       "type": "icon",
                       "id": "Ueg1w",
                       "name": "Feat Icon",
-                      "width": 28,
-                      "height": 28,
+                      "width": 27,
+                      "height": 27,
                       "icon": "sliders-horizontal",
                       "library": "lucide",
                       "fill": "#06B6D4"
@@ -4081,7 +4081,7 @@
                       "fill": "#FFFFFF",
                       "content": "Full Control",
                       "fontFamily": "Inter",
-                      "fontSize": 34,
+                      "fontSize": 33,
                       "fontWeight": "600"
                     },
                     {
@@ -4091,7 +4091,7 @@
                       "fill": "#FFFFFFAA",
                       "content": "Duration, quality, style",
                       "fontFamily": "Inter",
-                      "fontSize": 26,
+                      "fontSize": 25,
                       "fontWeight": "normal"
                     }
                   ]
@@ -4101,8 +4101,8 @@
             {
               "type": "path",
               "id": "q3Q6u",
-              "x": 120,
-              "y": 320,
+              "x": 116,
+              "y": 308,
               "name": "Sparkle 1",
               "opacity": 0.7,
               "geometry": "M9 0l1.5 6.5 6.5 2.5-6.5 2.5-1.5 6.5-1.5-6.5-7.5-2.5 7.5-2.5z",
@@ -4113,14 +4113,14 @@
                 18
               ],
               "fill": "#FFFFFF",
-              "width": 40,
-              "height": 40
+              "width": 39,
+              "height": 38
             },
             {
               "type": "path",
               "id": "EyRix",
-              "x": 1100,
-              "y": 280,
+              "x": 1059,
+              "y": 269,
               "name": "Sparkle 2",
               "opacity": 0.5,
               "geometry": "M9 0l1.5 6.5 6.5 2.5-6.5 2.5-1.5 6.5-1.5-6.5-7.5-2.5 7.5-2.5z",
@@ -4131,14 +4131,14 @@
                 18
               ],
               "fill": "#06B6D4",
-              "width": 35,
-              "height": 35
+              "width": 34,
+              "height": 34
             },
             {
               "type": "path",
               "id": "PwAmS",
-              "x": 1050,
-              "y": 600,
+              "x": 1011,
+              "y": 577,
               "name": "Sparkle 3",
               "opacity": 0.4,
               "geometry": "M9 0l1.5 6.5 6.5 2.5-6.5 2.5-1.5 6.5-1.5-6.5-7.5-2.5 7.5-2.5z",
@@ -4149,14 +4149,14 @@
                 18
               ],
               "fill": "#FFFFFF",
-              "width": 28,
-              "height": 28
+              "width": 27,
+              "height": 27
             },
             {
               "type": "path",
               "id": "fE6yy",
-              "x": 180,
-              "y": 770,
+              "x": 173,
+              "y": 740,
               "name": "Sparkle 4",
               "opacity": 0.5,
               "geometry": "M9 0l1.5 6.5 6.5 2.5-6.5 2.5-1.5 6.5-1.5-6.5-7.5-2.5 7.5-2.5z",
@@ -4167,14 +4167,14 @@
                 18
               ],
               "fill": "#8B5CF6",
-              "width": 30,
-              "height": 30
+              "width": 29,
+              "height": 29
             },
             {
               "type": "path",
               "id": "e7MyF",
-              "x": 80,
-              "y": 2500,
+              "x": 77,
+              "y": 2403,
               "name": "Sparkle 5",
               "opacity": 0.3,
               "geometry": "M9 0l1.5 6.5 6.5 2.5-6.5 2.5-1.5 6.5-1.5-6.5-7.5-2.5 7.5-2.5z",
@@ -4185,8 +4185,8 @@
                 18
               ],
               "fill": "#06B6D4",
-              "width": 24,
-              "height": 24
+              "width": 23,
+              "height": 23
             }
           ]
         },
@@ -4195,8 +4195,8 @@
           "id": "DhDNC",
           "name": "Promo 4 - Explore",
           "clip": true,
-          "width": 1290,
-          "height": 2796,
+          "width": 1242,
+          "height": 2688,
           "fill": {
             "type": "gradient",
             "gradientType": "linear",
@@ -4225,8 +4225,8 @@
             {
               "type": "ellipse",
               "id": "kf8ke",
-              "x": 200,
-              "y": 100,
+              "x": 193,
+              "y": 96,
               "name": "BG Glow 1",
               "fill": {
                 "type": "gradient",
@@ -4248,14 +4248,14 @@
                   }
                 ]
               },
-              "width": 900,
-              "height": 800
+              "width": 867,
+              "height": 769
             },
             {
               "type": "ellipse",
               "id": "bKm3B",
-              "x": -200,
-              "y": 1600,
+              "x": -193,
+              "y": 1538,
               "name": "BG Glow 2",
               "fill": {
                 "type": "gradient",
@@ -4277,14 +4277,14 @@
                   }
                 ]
               },
-              "width": 800,
-              "height": 700
+              "width": 770,
+              "height": 673
             },
             {
               "type": "ellipse",
               "id": "Bfmlp",
-              "x": 600,
-              "y": 2200,
+              "x": 578,
+              "y": 2115,
               "name": "BG Glow 3",
               "fill": {
                 "type": "gradient",
@@ -4306,19 +4306,19 @@
                   }
                 ]
               },
-              "width": 700,
-              "height": 600
+              "width": 674,
+              "height": 577
             },
             {
               "type": "frame",
               "id": "z4HZ6J",
-              "x": 395,
-              "y": 200,
+              "x": 380,
+              "y": 192,
               "name": "Badge",
-              "width": 500,
-              "height": 72,
+              "width": 481,
+              "height": 69,
               "fill": "#EC489915",
-              "cornerRadius": 36,
+              "cornerRadius": 35,
               "stroke": "#EC489940",
               "strokeWidth": 2,
               "gap": 12,
@@ -4329,8 +4329,8 @@
                   "type": "icon",
                   "id": "rd9cx",
                   "name": "Globe Icon",
-                  "width": 28,
-                  "height": 28,
+                  "width": 27,
+                  "height": 27,
                   "icon": "globe",
                   "library": "lucide",
                   "fill": "#EC4899"
@@ -4342,7 +4342,7 @@
                   "fill": "#F9A8D4",
                   "content": "COMMUNITY",
                   "fontFamily": "Inter",
-                  "fontSize": 32,
+                  "fontSize": 31,
                   "fontWeight": "700"
                 }
               ]
@@ -4350,23 +4350,23 @@
             {
               "type": "text",
               "id": "NS5HU",
-              "x": 95,
-              "y": 360,
+              "x": 91,
+              "y": 346,
               "name": "Headline 1",
               "fill": "#FFFFFF",
               "textGrowth": "fixed-width",
-              "width": 1100,
+              "width": 1059,
               "content": "Discover &",
               "textAlign": "center",
               "fontFamily": "Inter",
-              "fontSize": 120,
+              "fontSize": 116,
               "fontWeight": "800"
             },
             {
               "type": "text",
               "id": "txh7q",
-              "x": 95,
-              "y": 500,
+              "x": 91,
+              "y": 481,
               "name": "Headline 2",
               "fill": {
                 "type": "gradient",
@@ -4388,39 +4388,39 @@
                 ]
               },
               "textGrowth": "fixed-width",
-              "width": 1100,
+              "width": 1059,
               "content": "Inspire",
               "textAlign": "center",
               "fontFamily": "Inter",
-              "fontSize": 120,
+              "fontSize": 116,
               "fontWeight": "800"
             },
             {
               "type": "text",
               "id": "e08u4U",
-              "x": 145,
-              "y": 660,
+              "x": 140,
+              "y": 635,
               "name": "Subtitle",
               "fill": "#FFFFFFBB",
               "textGrowth": "fixed-width",
-              "width": 1000,
+              "width": 963,
               "content": "Browse amazing AI-generated masterpieces",
               "textAlign": "center",
               "fontFamily": "Inter",
-              "fontSize": 46,
+              "fontSize": 44,
               "fontWeight": "normal"
             },
             {
               "type": "frame",
               "id": "YFRv6",
-              "x": 195,
-              "y": 880,
+              "x": 188,
+              "y": 846,
               "name": "Phone Frame",
               "clip": true,
-              "width": 900,
-              "height": 1800,
+              "width": 867,
+              "height": 1730,
               "fill": "#1A1025",
-              "cornerRadius": 60,
+              "cornerRadius": 58,
               "stroke": "#FFFFFF15",
               "strokeWidth": 3,
               "effect": {
@@ -4429,9 +4429,9 @@
                 "color": "#00000060",
                 "offset": {
                   "x": 0,
-                  "y": 20
+                  "y": 19
                 },
-                "blur": 80
+                "blur": 77
               },
               "layout": "none",
               "children": [
@@ -4447,21 +4447,21 @@
                     "url": "simulator_screenshot_1A0718F8-C809-4C1B-B849-1F0CA8885E45.png",
                     "mode": "fill"
                   },
-                  "width": 900,
-                  "height": 1800
+                  "width": 867,
+                  "height": 1730
                 }
               ]
             },
             {
               "type": "frame",
               "id": "yExeq",
-              "x": 100,
-              "y": 2620,
+              "x": 96,
+              "y": 2519,
               "name": "Stat Creations",
-              "width": 350,
-              "height": 120,
+              "width": 337,
+              "height": 115,
               "fill": "#FFFFFF08",
-              "cornerRadius": 20,
+              "cornerRadius": 19,
               "stroke": "#FFFFFF10",
               "strokeWidth": 1,
               "layout": "vertical",
@@ -4494,7 +4494,7 @@
                   },
                   "content": "10K+",
                   "fontFamily": "Inter",
-                  "fontSize": 40,
+                  "fontSize": 39,
                   "fontWeight": "800"
                 },
                 {
@@ -4504,7 +4504,7 @@
                   "fill": "#FFFFFFAA",
                   "content": "Creations",
                   "fontFamily": "Inter",
-                  "fontSize": 24,
+                  "fontSize": 23,
                   "fontWeight": "normal"
                 }
               ]
@@ -4512,13 +4512,13 @@
             {
               "type": "frame",
               "id": "pwE8B",
-              "x": 470,
-              "y": 2620,
+              "x": 453,
+              "y": 2519,
               "name": "Stat AI Styles",
-              "width": 350,
-              "height": 120,
+              "width": 337,
+              "height": 115,
               "fill": "#FFFFFF08",
-              "cornerRadius": 20,
+              "cornerRadius": 19,
               "stroke": "#FFFFFF10",
               "strokeWidth": 1,
               "layout": "vertical",
@@ -4551,7 +4551,7 @@
                   },
                   "content": "50+",
                   "fontFamily": "Inter",
-                  "fontSize": 40,
+                  "fontSize": 39,
                   "fontWeight": "800"
                 },
                 {
@@ -4561,7 +4561,7 @@
                   "fill": "#FFFFFFAA",
                   "content": "AI Styles",
                   "fontFamily": "Inter",
-                  "fontSize": 24,
+                  "fontSize": 23,
                   "fontWeight": "normal"
                 }
               ]
@@ -4569,13 +4569,13 @@
             {
               "type": "frame",
               "id": "ZznyI",
-              "x": 840,
-              "y": 2620,
+              "x": 809,
+              "y": 2519,
               "name": "Stat Rating",
-              "width": 350,
-              "height": 120,
+              "width": 337,
+              "height": 115,
               "fill": "#FFFFFF08",
-              "cornerRadius": 20,
+              "cornerRadius": 19,
               "stroke": "#FFFFFF10",
               "strokeWidth": 1,
               "layout": "vertical",
@@ -4608,7 +4608,7 @@
                   },
                   "content": "HD",
                   "fontFamily": "Inter",
-                  "fontSize": 40,
+                  "fontSize": 39,
                   "fontWeight": "800"
                 },
                 {
@@ -4618,7 +4618,7 @@
                   "fill": "#FFFFFFAA",
                   "content": "Quality",
                   "fontFamily": "Inter",
-                  "fontSize": 24,
+                  "fontSize": 23,
                   "fontWeight": "normal"
                 }
               ]
@@ -4626,8 +4626,8 @@
             {
               "type": "path",
               "id": "j3Phg",
-              "x": 150,
-              "y": 300,
+              "x": 144,
+              "y": 288,
               "name": "Sparkle 1",
               "opacity": 0.7,
               "geometry": "M9 0l1.5 6.5 6.5 2.5-6.5 2.5-1.5 6.5-1.5-6.5-7.5-2.5 7.5-2.5z",
@@ -4638,14 +4638,14 @@
                 18
               ],
               "fill": "#FFFFFF",
-              "width": 38,
-              "height": 38
+              "width": 37,
+              "height": 37
             },
             {
               "type": "path",
               "id": "UaAe2",
-              "x": 1080,
-              "y": 350,
+              "x": 1040,
+              "y": 336,
               "name": "Sparkle 2",
               "opacity": 0.5,
               "geometry": "M9 0l1.5 6.5 6.5 2.5-6.5 2.5-1.5 6.5-1.5-6.5-7.5-2.5 7.5-2.5z",
@@ -4656,14 +4656,14 @@
                 18
               ],
               "fill": "#EC4899",
-              "width": 32,
-              "height": 32
+              "width": 31,
+              "height": 31
             },
             {
               "type": "path",
               "id": "qsA45",
-              "x": 1100,
-              "y": 700,
+              "x": 1059,
+              "y": 673,
               "name": "Sparkle 3",
               "opacity": 0.4,
               "geometry": "M9 0l1.5 6.5 6.5 2.5-6.5 2.5-1.5 6.5-1.5-6.5-7.5-2.5 7.5-2.5z",
@@ -4674,14 +4674,14 @@
                 18
               ],
               "fill": "#FFFFFF",
-              "width": 26,
-              "height": 26
+              "width": 25,
+              "height": 25
             },
             {
               "type": "path",
               "id": "F3kELE",
-              "x": 100,
-              "y": 800,
+              "x": 96,
+              "y": 769,
               "name": "Sparkle 4",
               "opacity": 0.5,
               "geometry": "M9 0l1.5 6.5 6.5 2.5-6.5 2.5-1.5 6.5-1.5-6.5-7.5-2.5 7.5-2.5z",
@@ -4692,14 +4692,14 @@
                 18
               ],
               "fill": "#8B5CF6",
-              "width": 30,
-              "height": 30
+              "width": 29,
+              "height": 29
             },
             {
               "type": "path",
               "id": "F71tr",
-              "x": 130,
-              "y": 2550,
+              "x": 125,
+              "y": 2452,
               "name": "Sparkle 5",
               "opacity": 0.35,
               "geometry": "M9 0l1.5 6.5 6.5 2.5-6.5 2.5-1.5 6.5-1.5-6.5-7.5-2.5 7.5-2.5z",
@@ -4710,14 +4710,14 @@
                 18
               ],
               "fill": "#EC4899",
-              "width": 22,
-              "height": 22
+              "width": 21,
+              "height": 21
             },
             {
               "type": "path",
               "id": "VyWcC",
-              "x": 1150,
-              "y": 2500,
+              "x": 1107,
+              "y": 2403,
               "name": "Sparkle 6",
               "opacity": 0.3,
               "geometry": "M9 0l1.5 6.5 6.5 2.5-6.5 2.5-1.5 6.5-1.5-6.5-7.5-2.5 7.5-2.5z",
@@ -4728,8 +4728,8 @@
                 18
               ],
               "fill": "#8B5CF6",
-              "width": 28,
-              "height": 28
+              "width": 27,
+              "height": 27
             }
           ]
         }
@@ -4925,7 +4925,8 @@
               "content": "Describe your vision, AI brings it to life",
               "textAlign": "center",
               "fontFamily": "Inter",
-              "fontSize": 56
+              "fontSize": 56,
+              "fontWeight": "normal"
             },
             {
               "type": "frame",
@@ -5288,7 +5289,8 @@
               "content": "Upload references, AI evolves your vision",
               "textAlign": "center",
               "fontFamily": "Inter",
-              "fontSize": 56
+              "fontSize": 56,
+              "fontWeight": "normal"
             },
             {
               "type": "frame",
@@ -5395,7 +5397,8 @@
                       "width": "fill_container",
                       "content": "Set reference images as creative anchors",
                       "fontFamily": "Inter",
-                      "fontSize": 28
+                      "fontSize": 28,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -5464,7 +5467,8 @@
                       "width": "fill_container",
                       "content": "Watch AI transform and enhance your style",
                       "fontFamily": "Inter",
-                      "fontSize": 28
+                      "fontSize": 28,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -5533,7 +5537,8 @@
                       "width": "fill_container",
                       "content": "Blend multiple references into unique art",
                       "fontFamily": "Inter",
-                      "fontSize": 28
+                      "fontSize": 28,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -5848,7 +5853,8 @@
               "content": "Transform static images into cinematic videos",
               "textAlign": "center",
               "fontFamily": "Inter",
-              "fontSize": 56
+              "fontSize": 56,
+              "fontWeight": "normal"
             },
             {
               "type": "frame",
@@ -5955,7 +5961,8 @@
                       "width": "fill_container",
                       "content": "Set the journey for AI",
                       "fontFamily": "Inter",
-                      "fontSize": 28
+                      "fontSize": 28,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -6024,7 +6031,8 @@
                       "width": "fill_container",
                       "content": "Intelligent animation",
                       "fontFamily": "Inter",
-                      "fontSize": 28
+                      "fontSize": 28,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -6093,7 +6101,8 @@
                       "width": "fill_container",
                       "content": "Duration, quality, style",
                       "fontFamily": "Inter",
-                      "fontSize": 28
+                      "fontSize": 28,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -6408,7 +6417,8 @@
               "content": "Browse amazing AI-generated masterpieces",
               "textAlign": "center",
               "fontFamily": "Inter",
-              "fontSize": 56
+              "fontSize": 56,
+              "fontWeight": "normal"
             },
             {
               "type": "frame",
@@ -6504,7 +6514,8 @@
                   "fill": "#FFFFFFAA",
                   "content": "Creations",
                   "fontFamily": "Inter",
-                  "fontSize": 28
+                  "fontSize": 28,
+                  "fontWeight": "normal"
                 }
               ]
             },
@@ -6560,7 +6571,8 @@
                   "fill": "#FFFFFFAA",
                   "content": "AI Styles",
                   "fontFamily": "Inter",
-                  "fontSize": 28
+                  "fontSize": 28,
+                  "fontWeight": "normal"
                 }
               ]
             },
@@ -6616,7 +6628,8 @@
                   "fill": "#FFFFFFAA",
                   "content": "Quality",
                   "fontFamily": "Inter",
-                  "fontSize": 28
+                  "fontSize": 28,
+                  "fontWeight": "normal"
                 }
               ]
             },
