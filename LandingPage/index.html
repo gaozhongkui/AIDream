@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnimaPic AI — The Architecture of Motion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&family=Inter:wght@300;500;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #000000;
+            --surface-deep: #080808;
+            --surface: #111111;
+            --accent: #6F31D5;
+            --accent-glow: #A07BFF;
+            --text: #FFFFFF;
+            --text-dim: rgba(255, 255, 255, 0.5);
+            --border: rgba(255, 255, 255, 0.06);
+            --radius-lg: 32px;
+            --radius-md: 20px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* --- Dynamic Grainy Background --- */
+        #hero-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #151515 0%, #000 100%);
+        }
+        .grain {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.1; pointer-events: none; z-index: 0;
+        }
+
+        /* --- Elite Header --- */
+        header {
+            position: fixed; top: 0; width: 100%; padding: 24px 6%;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        header.scrolled {
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(20px);
+            padding: 16px 6%; border-bottom: 1px solid var(--border);
+        }
+        .logo { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 20px; letter-spacing: -1px; }
+        .nav-links { display: flex; gap: 40px; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+        .nav-links a:hover { color: #fff; }
+
+        /* --- Cinematic Hero --- */
+        .hero {
+            height: 100vh; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; text-align: center; padding: 0 6%; position: relative;
+        }
+        .hero-tag {
+            font-size: 11px; font-weight: 800; color: var(--accent-glow);
+            letter-spacing: 4px; text-transform: uppercase; margin-bottom: 30px;
+            padding: 8px 16px; background: rgba(111, 49, 213, 0.1); border-radius: 50px;
+            border: 1px solid rgba(111, 49, 213, 0.2);
+        }
+        .hero h1 {
+            font-size: clamp(60px, 12vw, 180px); font-weight: 800; line-height: 0.85;
+            letter-spacing: -8px; margin-bottom: 40px;
+            background: linear-gradient(180deg, #fff 30%, #444 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero p { font-size: 22px; color: var(--text-dim); max-width: 800px; line-height: 1.4; margin-bottom: 60px; }
+
+        .btn-elite {
+            padding: 22px 60px; background: #fff; color: #000; border-radius: 100px;
+            font-weight: 800; text-decoration: none; font-size: 18px;
+            transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 0 0 rgba(255,255,255,0);
+        }
+        .btn-elite:hover { transform: scale(1.05); box-shadow: 0 20px 40px rgba(255,255,255,0.1); }
+
+        /* --- The Prompt Lab (Interactive Section) --- */
+        .lab-section { padding: 120px 6%; display: flex; flex-direction: column; align-items: center; }
+        .prompt-box {
+            width: 100%; max-width: 900px; background: var(--surface);
+            border-radius: var(--radius-lg); padding: 40px;
+            border: 1px solid var(--border); position: relative;
+        }
+        .prompt-input {
+            width: 100%; background: transparent; border: none; color: #fff;
+            font-size: 24px; font-weight: 500; outline: none; margin-bottom: 30px;
+            font-family: inherit;
+        }
+        .lab-visual {
+            width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius-md);
+            overflow: hidden; border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #1A1D4A, #0E1030);
+        }
+
+        /* --- Advanced Bento Grid --- */
+        .grid-section { padding: 100px 6%; }
+        .bento {
+            display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px;
+            max-width: 1400px; margin: 0 auto;
+        }
+        .bento-card {
+            background: var(--surface-deep); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 50px; position: relative;
+            overflow: hidden; transition: 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .bento-card:hover { border-color: var(--accent); }
+        .bento-card h3 { font-size: 36px; margin-bottom: 16px; font-weight: 700; letter-spacing: -1px; }
+        .bento-card p { color: var(--text-dim); font-size: 18px; line-height: 1.6; }
+
+        .wide { grid-column: span 8; height: 600px; }
+        .tall { grid-column: span 4; height: 600px; }
+        .medium { grid-column: span 6; height: 500px; }
+
+        .card-visual {
+            position: absolute; bottom: 0; right: 0; width: 70%; height: 60%;
+            background: rgba(255,255,255,0.02); border-radius: var(--radius-md) 0 0 0;
+            border: 1px solid var(--border); transform: translate(30px, 30px) rotate(-5deg);
+        }
+
+        /* --- Professional Comparison Table --- */
+        .comparison { padding: 150px 6%; text-align: center; }
+        .comp-wrap {
+            max-width: 1000px; margin: 80px auto; background: var(--surface-deep);
+            border-radius: var(--radius-lg); border: 1px solid var(--border); overflow: hidden;
+        }
+        .comp-row {
+            display: grid; grid-template-columns: 2fr 1fr 1fr;
+            padding: 30px 50px; border-bottom: 1px solid var(--border); text-align: left;
+        }
+        .comp-row.head { background: rgba(255,255,255,0.02); font-weight: 700; color: var(--accent-glow); }
+        .comp-row span { font-weight: 600; }
+        .comp-row .check { color: #00FF94; }
+
+        /* --- Visual Steps --- */
+        .steps { padding: 100px 6%; text-align: center; }
+        .step-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; max-width: 1200px; margin: 80px auto; }
+        .step-num { font-family: 'Inter', sans-serif; font-size: 80px; font-weight: 900; opacity: 0.1; line-height: 1; }
+        .step-content h4 { font-size: 24px; margin-top: -30px; margin-bottom: 16px; }
+
+        /* --- Footer Elite --- */
+        footer {
+            padding: 120px 6% 60px; background: #000; border-top: 1px solid var(--border);
+            display: flex; justify-content: space-between; flex-wrap: wrap; gap: 50px;
+        }
+        .footer-info { max-width: 400px; }
+        .footer-links-wrap { display: flex; gap: 80px; }
+        .f-col h5 { font-size: 14px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 24px; letter-spacing: 2px; }
+        .f-col a { display: block; color: #fff; text-decoration: none; margin-bottom: 12px; font-size: 15px; opacity: 0.6; transition: 0.3s; }
+        .f-col a:hover { opacity: 1; }
+
+        /* Cursor Glow */
+        #glow {
+            position: fixed; width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(111, 49, 213, 0.08) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none; z-index: -1; transform: translate(-50%, -50%);
+        }
+
+        /* Animations */
+        .reveal { opacity: 0; transform: translateY(60px); transition: 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+    </style>
+</head>
+<body>
+
+    <div id="hero-canvas"></div>
+    <div class="grain"></div>
+    <div id="glow"></div>
+
+    <header id="header">
+        <div class="logo">ANIMAPIC AI</div>
+        <div class="nav-links">
+            <a href="#lab">Lab</a>
+            <a href="#engine">Engine</a>
+            <a href="#pro">Professional</a>
+        </div>
+        <a href="#" class="btn-elite" style="padding: 12px 30px; font-size: 14px;">App Store</a>
+    </header>
+
+    <section class="hero">
+        <div class="reveal active">
+            <span class="hero-tag">Design of Neural Synthesis</span>
+            <h1>BEYOND<br>MOTION.</h1>
+            <p>The architecture of visionary creativity. Animate static pixels into 4K cinematic reality with the world's most advanced temporal consistency engine.</p>
+            <a href="#lab" class="btn-elite">Initiate Rendering</a>
+        </div>
+    </section>
+
+    <section class="lab-section" id="lab">
+        <div class="reveal">
+            <h2 style="font-size: 56px; margin-bottom: 40px; text-align: center; letter-spacing: -2px;">The Prompt Lab</h2>
+            <div class="prompt-box">
+                <input type="text" class="prompt-input" value="A hyper-realistic cinematic shot of a nebula being born, deep purple and gold..." readonly>
+                <div class="lab-visual">
+                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200" style="width:100%; height:100%; object-fit:cover; opacity: 0.4;">
+                    <div style="position:absolute; font-size: 12px; font-weight: 700; letter-spacing: 2px;">SYNTHESIZING... 84%</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="grid-section" id="engine">
+        <div class="bento">
+            <div class="bento-card wide reveal">
+                <span style="color:var(--accent-glow); font-size: 12px; font-weight: 800; display: block; margin-bottom: 20px;">01 — TEMPORAL FLOW</span>
+                <h3>Vision Lab 2.0</h3>
+                <p>Proprietary temporal consistency algorithms bridge the gap between static frames and fluid cinematic motion. No flicker. No artifacts. Just pure vision.</p>
+                <div class="card-visual">
+                    <img src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=800" style="width:100%; height:100%; object-fit:cover; opacity: 0.3;">
+                </div>
+            </div>
+            <div class="bento-card tall reveal">
+                <span style="color:var(--accent-glow); font-size: 12px; font-weight: 800; display: block; margin-bottom: 20px;">02 — DNA</span>
+                <h3>Style Sync</h3>
+                <p>Maintain precise artistic control. Inject the DNA of any reference image directly into your video generation pipeline.</p>
+            </div>
+            <div class="bento-card tall reveal">
+                <span style="color:var(--accent-glow); font-size: 12px; font-weight: 800; display: block; margin-bottom: 20px;">03 — OPTICS</span>
+                <h3>4K Neural Master</h3>
+                <p>Every frame is upscaled using high-fidelity neural optics, designed for the retina displays of the future.</p>
+            </div>
+            <div class="bento-card wide reveal">
+                <span style="color:var(--accent-glow); font-size: 12px; font-weight: 800; display: block; margin-bottom: 20px;">04 — IMAGINATION</span>
+                <h3>Dream Canvas</h3>
+                <p>Multi-modal prompt interpretation that understands art history, lighting physics, and complex textures better than ever before.</p>
+                <div class="card-visual" style="width: 50%; right: -20px;"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="steps reveal">
+        <h2 style="font-size: 48px; margin-bottom: 10px;">The Creative Protocol</h2>
+        <p style="color: var(--text-dim); margin-bottom: 60px;">From thought to 4K masterpiece in three steps.</p>
+        <div class="step-grid">
+            <div class="step-content">
+                <div class="step-num">01</div>
+                <h4>Define Vision</h4>
+                <p style="color: var(--text-dim);">Input a text prompt or start frame image to set the foundation.</p>
+            </div>
+            <div class="step-content">
+                <div class="step-num">02</div>
+                <h4>Sync DNA</h4>
+                <p style="color: var(--text-dim);">Apply reference images to guide the lighting and texture synthesis.</p>
+            </div>
+            <div class="step-content">
+                <div class="step-num">03</div>
+                <h4>Render</h4>
+                <p style="color: var(--text-dim);">Execute the neural engine to generate your high-fidelity cinematic video.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="comparison reveal" id="pro">
+        <h2 style="font-size: 56px; margin-bottom: 10px; letter-spacing: -2px;">Professional Tier.</h2>
+        <p style="color: var(--text-dim); margin-bottom: 60px;">Engineered for those who require absolute performance.</p>
+
+        <div class="comp-wrap">
+            <div class="comp-row head">
+                <div>Capability</div>
+                <div>Standard</div>
+                <div>Professional</div>
+            </div>
+            <div class="comp-row">
+                <div>Neural Engine</div>
+                <div>V1 Base</div>
+                <span>V2 Turbo Ultra</span>
+            </div>
+            <div class="comp-row">
+                <div>Max Output</div>
+                <div>720p HD</div>
+                <span class="check">4K Cinematic</span>
+            </div>
+            <div class="comp-row">
+                <div>Monthly Credits</div>
+                <div>Daily Gift</div>
+                <span class="check">1,200 Diamonds</span>
+            </div>
+            <div class="comp-row">
+                <div>Private Queue</div>
+                <div>Standard</div>
+                <span class="check">Priority Zero</span>
+            </div>
+            <div class="comp-row" style="border: none;">
+                <div>Commercial Usage</div>
+                <div>—</div>
+                <span class="check">Unlimited</span>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-info">
+            <div class="logo" style="margin-bottom: 24px;">ANIMAPIC AI</div>
+            <p style="color: var(--text-dim); line-height: 1.6;">The world's leading research lab for neural motion synthesis and AI-native cinematic production.</p>
+        </div>
+        <div class="footer-links-wrap">
+            <div class="f-col">
+                <h5>Platform</h5>
+                <a href="#">iOS App</a>
+                <a href="#">Neural Models</a>
+                <a href="#">API Docs</a>
+            </div>
+            <div class="f-col">
+                <h5>Legal</h5>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Security</a>
+            </div>
+        </div>
+        <div style="width: 100%; border-top: 1px solid var(--border); padding-top: 40px; margin-top: 40px; display: flex; justify-content: space-between; font-size: 13px; color: var(--text-dim);">
+            <div>© 2024 AnimaPic AI Research Lab.</div>
+            <div>Designed for the Visionary.</div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth Header Transition
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+        });
+
+        // Mouse Follow Glow
+        const glow = document.getElementById('glow');
+        document.addEventListener('mousemove', (e) => {
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+        });
+
+        // Scroll Reveal System
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Parallax Effect for Cards
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.bento-card');
+            const x = (window.innerWidth / 2 - e.clientX) / 80;
+            const y = (window.innerHeight / 2 - e.clientY) / 80;
+            cards.forEach(card => {
+                card.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -28,8 +28,8 @@ class AIConfig {
             "openRouterApiKey": "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" as NSObject,
             "openRouterImageModel": "google/gemini-2.5-flash-image" as NSObject,
             "openRouterVideoModel": "minimax/hailuo-2.3" as NSObject,
-            "privacyPolicyURL": "https://aidream.app/privacy" as NSObject,
-            "termsOfServiceURL": "https://aidream.app/terms" as NSObject
+            "privacyPolicyURL": "https://sites.google.com/view/anima-pic-ai-privacy-policy" as NSObject,
+            "termsOfServiceURL": "https://sites.google.com/view/anima-pic-ai-terms-of-service" as NSObject
         ]
         remoteConfig.setDefaults(defaults)
     }
