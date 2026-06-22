@@ -288,6 +288,7 @@ final class VideoDetailCell: UICollectionViewCell {
         if let observer = favoriteObserver {
             NotificationCenter.default.removeObserver(observer)
         }
+        NotificationCenter.default.removeObserver(self)
     }
 
     @objc private func backTapped() {
@@ -342,14 +343,27 @@ final class VideoDetailCell: UICollectionViewCell {
         self.isLiked = FavoriteService.shared.isFavorited(video.id)
         updateLikeButtonStyle(animated: false)
         coverImageView.kf.setImage(with: video.coverURL, options: [.keepCurrentImageWhileLoading])
-        setupPlayer()
+        startPlayback()
     }
 
-    private func setupPlayer() {
+    func startPlayback() {
         guard let url = videoURL else { return }
+
+        // 如果已经有 Player 且 URL 一致，直接播放
+        if let currentPlayer = player, (currentPlayer.currentItem?.asset as? AVURLAsset)?.url == url {
+            currentPlayer.play()
+            return
+        }
+
         stopPlayback()
+        coverImageView.alpha = 1 // 关键：确保在视频准备好之前显示封面，防止黑屏
+
         let item = AVPlayerItem(url: url)
         player = AVPlayer(playerItem: item)
+
+        // 循环播放
+        NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: item)
+
         let layer = AVPlayerLayer(player: player)
         layer.videoGravity = .resizeAspectFill
         layer.frame = contentView.bounds
@@ -366,9 +380,17 @@ final class VideoDetailCell: UICollectionViewCell {
         player?.play()
     }
 
+    @objc private func playerDidFinishPlaying(note: NSNotification) {
+        player?.seek(to: .zero)
+        player?.play()
+    }
+
     func stopPlayback() {
         player?.pause()
         playerLayer?.removeFromSuperlayer()
+        if let currentItem = player?.currentItem {
+            NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: currentItem)
+        }
         player = nil
         playerLayer = nil
         playerLayerObserver?.invalidate()

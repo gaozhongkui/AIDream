@@ -53,11 +53,18 @@ final class VideoDetailViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        // 核心：在布局完成后，且仅执行一次精准滚动
+        // 在布局完成后，且仅执行一次精准滚动
         if !isInitialScrollDone {
             isInitialScrollDone = true
             let indexPath = IndexPath(item: initialIndex, section: 0)
             collectionView.scrollToItem(at: indexPath, at: .top, animated: false)
+
+            // 滚动后立即触发当前可见 Cell 的播放
+            DispatchQueue.main.async {
+                if let cell = self.collectionView.cellForItem(at: indexPath) as? VideoDetailCell {
+                    cell.startPlayback()
+                }
+            }
         }
     }
 
@@ -108,6 +115,11 @@ extension VideoDetailViewController: UICollectionViewDataSource, UICollectionVie
             self?.showFeedbackAlert()
         }
         return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        // 当 Cell 即将显示时，重新开始播放
+        (cell as? VideoDetailCell)?.startPlayback()
     }
 
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
