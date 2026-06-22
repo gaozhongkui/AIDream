@@ -1,5 +1,5 @@
-import SwiftUI
 import AVKit
+import SwiftUI
 
 struct HistoryView: View {
     @ObservedObject var creationService = CreationService.shared
@@ -80,6 +80,7 @@ struct HistoryView: View {
 }
 
 // MARK: - Looped Video Player for Preview
+
 struct LoopedVideoPlayer: UIViewRepresentable {
     let url: URL
 
@@ -102,11 +103,12 @@ struct LoopedVideoPlayer: UIViewRepresentable {
             setupPlayer()
         }
 
+        @available(*, unavailable)
         required init?(coder: NSCoder) { fatalError() }
 
         func updateURL(_ newURL: URL) {
             if url != newURL {
-                self.url = newURL
+                url = newURL
                 setupPlayer()
             }
         }
@@ -115,19 +117,19 @@ struct LoopedVideoPlayer: UIViewRepresentable {
             guard let url = url else { return }
             player?.pause()
 
-            var headers: [String: String] = [
-                           "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
-                       ]
-                       
-                       if url.absoluteString.contains("openrouter.ai") {
-                           let apiKey = AIConfig.shared.openRouterApiKey
-                           headers["Authorization"] = "Bearer \\(apiKey)"
-                           headers["HTTP-Referer"] = "https://aidream.app"
-                           headers["X-Title"] = "AIDream"
-                       }
-            
+            var headers = [
+                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+            ]
+
+            if url.absoluteString.contains("openrouter.ai") {
+                let apiKey = AIConfig.shared.openRouterApiKey
+                headers["Authorization"] = "Bearer \(apiKey)"
+                headers["HTTP-Referer"] = "https://aidream.app"
+                headers["X-Title"] = "AIDream"
+            }
+
             let asset = AVURLAsset(url: url, options: ["AVURLAssetHTTPHeaderFieldsKey": headers])
-                     let item = AVPlayerItem(asset: asset)
+            let item = AVPlayerItem(asset: asset)
             let player = AVPlayer(playerItem: item)
             player.isMuted = true // 列表预览静音
             player.preventsDisplaySleepDuringVideoPlayback = false
@@ -160,9 +162,8 @@ struct LoopedVideoPlayer: UIViewRepresentable {
     }
 }
 
-
-
 // MARK: - History Card
+
 struct HistoryCard: View {
     let item: CreationItem
     @State private var showDetail = false
@@ -342,10 +343,9 @@ struct HistoryCard: View {
         let items: [Any] = item.type == .video ? [url] : [thumbnail ?? url]
         let av = UIActivityViewController(activityItems: items, applicationActivities: nil)
         if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let rootVC = scene.windows.first?.rootViewController {
+           let rootVC = scene.windows.first?.rootViewController
+        {
             rootVC.present(av, animated: true)
         }
     }
 }
-
-
