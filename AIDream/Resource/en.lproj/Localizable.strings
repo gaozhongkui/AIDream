@@ -137,6 +137,36 @@
 "toast_pull_to_refresh" = "Pull to refresh";
 "toast_network_error_retry" = "Network error — pull to retry";
 
+/* Generating Messages */
+"gen_msg_1" = "Almost there — greatness takes a moment...";
+"gen_msg_2" = "Crafting every frame with neural precision...";
+"gen_msg_3" = "Your masterpiece is materializing...";
+"gen_msg_4" = "Weaving light and motion together...";
+"gen_msg_5" = "Polishing details, one pixel at a time...";
+"gen_msg_6" = "Translating your vision into reality...";
+"gen_msg_7" = "AI is painting motion from your imagination...";
+
+/* Errors */
+"err_unknown" = "An unexpected error occurred.";
+"err_missing_api_key" = "API Key Missing";
+"err_invalid_api_key" = "Invalid API Key. Please check your settings.";
+"err_insufficient_credits" = "Insufficient credits on OpenRouter.";
+"err_service_error" = "Service Error (%d)";
+"err_no_job_id" = "Accepted, but no video job ID returned.";
+"err_gen_failed" = "Generation failed";
+"err_url_not_found" = "Video generated but link was not found.";
+"err_timeout" = "Generation took too long. Please check back later.";
+"err_creation_failed" = "Video creation failed.";
+"err_insecure_source" = "Insecure video source.";
+"err_prefix" = "Error: %@";
+"err_invalid_url" = "Invalid URL";
+"err_invalid_response" = "Invalid Response";
+"err_no_permission" = "No Permission";
+"err_failed" = "Failed";
+"err_all_providers_failed" = "All image providers failed, please try again later";
+"err_invalid_prompt" = "Invalid prompt";
+"err_invalid_image_data" = "Failed to parse image data";
+
 /* Premium View */
 "premium_title" = "AnimaPic AI Pro";
 "premium_subtitle" = "Unlock the full potential of AI";

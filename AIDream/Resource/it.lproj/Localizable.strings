@@ -11,6 +11,7 @@
 "title_trending" = "Tendenze Attuali";
 "title_favorites" = "Preferiti";
 "title_diamond_store" = "Negozio Diamanti";
+"title_feedback" = "Feedback";
 
 /* Buttons */
 "btn_got_it" = "Ho capito";
@@ -31,8 +32,12 @@
 "btn_download" = "Scarica";
 "btn_retake" = "Rifai";
 "btn_recharge" = "Ricarica";
-"btn_reset_account" = "Ripristina dati account";
+"btn_reset_all_data" = "Cancella tutti i dati";
+"btn_confirm_reset" = "Ripristina ora";
 "btn_upload" = "Carica";
+"btn_submit" = "Invia";
+"btn_report" = "Segnala contenuto";
+"btn_block" = "Blocca utente";
 
 /* Generation States */
 "state_ready" = "Pronto per Creare";
@@ -59,6 +64,12 @@
 "alert_product_not_found" = "Prodotto non trovato. Riprova.";
 "alert_delete_creation_title" = "Elimina Creazione";
 "alert_delete_creation_msg" = "Sei sicuro di voler eliminare questo capolavoro?";
+"alert_feedback_success_title" = "Feedback inviato";
+"alert_feedback_success_msg" = "Grazie per il tuo feedback!";
+"alert_reset_title" = "Cancella tutti i dati";
+"alert_reset_message" = "Questo eliminerà permanentemente tutte le tue creazioni, i preferiti e ripristinerà il tuo saldo diamanti. Questa azione non può essere annullata.";
+"alert_report_title" = "Segnala contenuto";
+"alert_report_msg" = "Grazie per la segnalazione. Il nostro team di moderazione esaminerà questo contenuto entro 24 ore.";
 
 /* UI Labels */
 "label_source" = "Sorgente";
@@ -98,6 +109,8 @@
 "label_app_version_format" = "AnimaPic AI v%@";
 "label_designed_for" = "Progettato per artisti visionari";
 "label_quality_guaranteed" = "Qualità garantita · Rimborsabile";
+"label_explore_subtitle" = "Scopri i capolavori generati dall'IA";
+"label_feedback_subtitle" = "Diamo valore al tuo feedback per migliorare la nostra app. Descrivi la tua esperienza qui sotto.";
 
 /* Diamond Store specific */
 "label_current_balance" = "BILANCIO ATTUALE";
@@ -116,10 +129,13 @@
 "placeholder_image_to_video" = "Descrivi il movimento o i cambiamenti di scena...";
 "placeholder_reference_video" = "Descrivi la storia o la scena...";
 "placeholder_cinematic_video" = "Un video cinematografico con movimento di alta qualità";
+"placeholder_feedback" = "Scrivi il tuo feedback qui...";
 
 /* Toasts */
 "toast_download_from_player" = "Scarica dal lettore video";
 "toast_saved_to_gallery" = "Salvato in galleria";
+"toast_pull_to_refresh" = "Trascina per aggiornare";
+"toast_network_error_retry" = "Errore di rete — trascina per riprovare";
 
 /* Generating Messages */
 "gen_msg_1" = "Quasi fatto — la grandezza richiede un momento...";
@@ -136,7 +152,7 @@
 "err_invalid_api_key" = "Chiave API non valida. Controlla le tue impostazioni.";
 "err_insufficient_credits" = "Crediti insufficienti su OpenRouter.";
 "err_service_error" = "Errore di servizio (%d)";
-"err_no_job_id" = "Accettato, ma nessun ID lavoro video restituito.";
+"err_no_job_id" = "Accettato, mas nessun ID lavoro video restituito.";
 "err_gen_failed" = "Generazione fallita";
 "err_url_not_found" = "Video generato ma il link non è stato trovato.";
 "err_timeout" = "La generazione ha richiesto troppo tempo. Riprova più tardi.";
@@ -185,3 +201,4 @@
 
 /* Video List */
 "label_end_of_universe" = "— Fine dell'universo —";
+"label_no_videos" = "Nessun video ancora";
