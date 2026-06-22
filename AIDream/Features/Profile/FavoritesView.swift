@@ -94,11 +94,11 @@ struct FavoriteVideoCard: View {
         Button {
             let allVideos = FavoriteService.shared.favoriteVideos
             guard let idx = allVideos.firstIndex(where: { $0.id == video.id }) else { return }
-            if let rootVC = UIApplication.shared.connectedScenes
-                .compactMap({ $0 as? UIWindowScene })
-                .first?.windows.first?.rootViewController {
+
+            if let topVC = getTopViewController() {
+                HapticManager.shared.impact(style: .medium)
                 let detailVC = VideoDetailViewController(videos: allVideos, initialIndex: idx)
-                rootVC.present(detailVC, animated: true)
+                topVC.present(detailVC, animated: true)
             }
         } label: {
             ZStack(alignment: .bottomLeading) {
@@ -164,5 +164,18 @@ struct FavoriteVideoCard: View {
             return String(format: "%.1fk", Double(count) / 1000.0)
         }
         return "\(count)"
+    }
+
+    private func getTopViewController() -> UIViewController? {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootVC = windowScene.windows.first?.rootViewController else {
+            return nil
+        }
+
+        var topVC = rootVC
+        while let presentedVC = topVC.presentedViewController {
+            topVC = presentedVC
+        }
+        return topVC
     }
 }
