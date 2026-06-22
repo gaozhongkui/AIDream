@@ -76,33 +76,6 @@ struct ProfileView: View {
                                 menuRowContent(icon: "scroll.fill", title: NSLocalizedString("btn_terms", comment: ""))
                             }
 
-                            Rectangle()
-                                .fill(Color.white.opacity(0.05))
-                                .frame(height: 1)
-                                .padding(.leading, 72)
-
-                            // 数据清除 (App Store 隐私合规：即使无账户也需提供数据删除路径)
-                            Button(action: {
-                                HapticManager.shared.notification(type: .warning)
-                                showResetAlert = true
-                            }) {
-                                HStack(spacing: 16) {
-                                    Image(systemName: "trash.fill")
-                                        .font(.system(size: 18))
-                                        .foregroundColor(.red.opacity(0.8))
-                                        .frame(width: 40, height: 40)
-                                        .background(Circle().fill(Color.red.opacity(0.1)))
-                                    Text(NSLocalizedString("btn_reset_all_data", comment: ""))
-                                        .font(.system(size: 16, weight: .medium))
-                                        .foregroundColor(.red.opacity(0.8))
-                                    Spacer()
-                                    Image(systemName: "chevron.right")
-                                        .font(.system(size: 12, weight: .bold))
-                                        .foregroundColor(AppTheme.textMuted)
-                                }
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 14)
-                            }
                         }
                         .glassStyle(cornerRadius: 22)
                         .padding(.horizontal, 20)
@@ -123,7 +96,7 @@ struct ProfileView: View {
                     secondaryButton: .cancel()
                 )
             }
-            .sheet(isPresented: $showPremiumSheet) {
+            .fullScreenCover(isPresented: $showPremiumSheet) {
                 PremiumView()
             }
             .sheet(isPresented: $showSafari) {
