@@ -1,0 +1,174 @@
+/* Tabs */
+"tab_explore" = "استكشاف";
+"tab_create" = "إنشاء";
+"tab_profile" = "الملف الشخصي";
+
+/* Navigation & Titles */
+"nav_vision_lab" = "مختبر الرؤية";
+"nav_style_sync" = "مزامنة النمط";
+"nav_dream_canvas" = "لوحة الأحلام";
+"title_creative_history" = "تاريخ الإبداع";
+"title_trending" = "رائج الآن";
+"title_favorites" = "المفضلات";
+"title_diamond_store" = "متجر الماس";
+
+/* Buttons */
+"btn_got_it" = "فهمت";
+"btn_retry" = "إعادة المحاولة";
+"btn_cancel" = "إلغاء";
+"btn_restore" = "استعادة";
+"btn_upgrade_pro" = "الترقية إلى برو";
+"btn_get_diamonds" = "احصل على الماس";
+"btn_cancel_gen" = "إلغاء الإنشاء";
+"btn_ok" = "موافق";
+"btn_terms" = "الشروط";
+"btn_privacy" = "الخصوصية";
+"btn_render_masterpiece" = "عرض التحفة الفنية";
+"btn_generate_creation" = "إنشاء العمل";
+"btn_sync_generate" = "مزامنة وإنشاء";
+"btn_delete" = "حذف";
+"btn_share" = "مشاركة";
+"btn_download" = "تنزيل";
+"btn_retake" = "إعادة المحاولة";
+"btn_recharge" = "شحن";
+"btn_reset_account" = "إعادة تعيين بيانات الحساب";
+"btn_upload" = "رفع";
+
+/* Generation States */
+"state_ready" = "جاهز للإنشاء";
+"state_uploading" = "جاري الاتصال بالذكاء الاصطناعي...";
+"state_generating" = "جاري الإنشاء...";
+"state_generating_progress" = "جاري الإنشاء... %d%%";
+"state_completed" = "الفيديو جاهز";
+"state_loading" = "جاري التحميل...";
+"state_downloading" = "جاري التنزيل...";
+"state_saving" = "جاري الحفظ...";
+"state_saved" = "تم الحفظ!";
+
+/* Alerts & Tips */
+"alert_gen_tips_title" = "نصائح الإنشاء";
+"alert_gen_tips_msg" = "فيديو: ارفع صورة الإطار الأول، أضف وصفاً، وسيقوم الذكاء الاصطناعي بتحريكها.\nمرجع: ارفع صوراً مرجعية لتوجيه النمط.\nصورة: صف رؤيتك بالكلمات وسيقوم الذكاء الاصطناعي برسمها.";
+"alert_insufficient_diamonds" = "الماس غير كافٍ";
+"alert_recharge_msg" = "تحتاج إلى %d ماسة للإنشاء. يرجى الشحن للمتابعة.";
+"alert_subscribe_pro_msg" = "تحتاج إلى %d ماسة للإنشاء. اشترك في برو للحصول على ماس إضافي!";
+"alert_purchase_error" = "خطأ في الشراء";
+"alert_product_not_found" = "المنتج غير موجود. يرجى المحاولة مرة أخرى.";
+"alert_delete_creation_title" = "حذف العمل";
+"alert_delete_creation_msg" = "هل أنت متأكد أنك تريد حذف هذه التحفة الفنية؟";
+
+/* UI Labels */
+"label_source" = "المصدر";
+"label_duration" = "المدة";
+"label_quality" = "الجودة";
+"label_aspect_ratio" = "نسبة العرض إلى الارتفاع";
+"label_camera" = "الكاميرا";
+"label_leave_screen_tip" = "يمكنك مغادرة هذه الشاشة - سنواصل العمل.";
+"label_video" = "فيديو";
+"label_reference" = "مرجع";
+"label_image" = "صورة";
+"label_imagination_prompt" = "وصف الخيال";
+"label_canvas_ratio" = "نسبة اللوحة";
+"label_animate_vision" = "تحريك الرؤية";
+"label_start_frame" = "صورة الإطار الأول";
+"label_end_frame" = "صورة الإطار الأخير";
+"label_style_sync_header" = "مزامنة النمط";
+"label_reference_images" = "الصور المرجعية";
+"label_video_settings" = "إعدادات الفيديو";
+"label_ai_artist_ready" = "فنان الذكاء الاصطناعي جاهز لأوامرك";
+"label_no_history" = "لا توجد أعمال بعد";
+"label_history_subtitle" = "ستظهر تحفك الفنية التي تم إنشاؤها بالذكاء الاصطناعي هنا";
+"label_no_favorites" = "لا توجد مفضلات بعد";
+"label_studio" = "الاستوديو";
+"label_preferences" = "التفضيلات";
+"label_vision_artist" = "فنان الرؤية";
+"label_pro_member" = "عضو برو";
+"label_free_member" = "عضو مجاني";
+"label_creations" = "الأعمال";
+"label_likes" = "الإعجابات";
+"label_diamonds" = "الماس";
+"label_pro_membership" = "عضوية برو";
+"label_unlock_premium" = "فتح جميع الميزات المميزة";
+"label_diamond_balance" = "رصيد الماس";
+"label_app_version_format" = "AnimaPic AI إصدار %@";
+"label_designed_for" = "مصمم للفنانين المبدعين";
+"label_quality_guaranteed" = "الجودة مضمونة · قابلة للاسترداد";
+
+/* Diamond Store specific */
+"label_current_balance" = "الرصيد الحالي";
+"label_diamond_hero_tip" = "استخدم الماس لإنشاء تحف فنية بالذكاء الاصطناعي";
+"label_membership_bonus_tip" = "ما يصل إلى 10,000 ماسة إضافية!";
+"label_diamond_packs" = "حزم الماس";
+"label_recharge_subtitle" = "اختر حزمة للشحن";
+"label_includes_bonus" = "يتضمن %d إضافية";
+"label_footer_secure" = "آمن";
+"label_footer_instant" = "فوري";
+"label_footer_no_expiry" = "بدون تاريخ انتهاء";
+"label_diamond_footer_disclaimer" = "يستخدم الماس لخدمات إنشاء الذكاء الاصطناعي. جميع المشتريات نهائية وغير قابلة للاسترداد.";
+
+/* Placeholders */
+"placeholder_text_to_image" = "ارسم صورة بالكلمات... صف الأنسجة، الإضاءة، والمشاعر.";
+"placeholder_image_to_video" = "صف الحركة أو تغييرات المشهد...";
+"placeholder_reference_video" = "صف القصة أو المشهد...";
+
+/* Toasts */
+"toast_download_from_player" = "يرجى التنزيل من مشغل الفيديو";
+"toast_saved_to_gallery" = "تم الحفظ في المعرض";
+
+/* Generating Messages */
+"gen_msg_1" = "اقتربنا — العظمة تستغرق لحظة...";
+"gen_msg_2" = "صياغة كل إطار بدقة عصبية...";
+"gen_msg_3" = "تحفتك الفنية تتجسد...";
+"gen_msg_4" = "نسج الضوء والحركة معاً...";
+"gen_msg_5" = "صقل التفاصيل، بكسل تلو الآخر...";
+"gen_msg_6" = "تحويل رؤيتك إلى واقع...";
+"gen_msg_7" = "الذكاء الاصطناعي يرسم الحركة من خيالك...";
+
+/* Errors */
+"err_unknown" = "حدث خطأ غير متوقع.";
+"err_missing_api_key" = "مفتاح API مفقود";
+"err_invalid_api_key" = "مفتاح API غير صالح. يرجى التحقق من إعداداتك.";
+"err_insufficient_credits" = "رصيد غير كافٍ في OpenRouter.";
+"err_service_error" = "خطأ في الخدمة (%d)";
+"err_no_job_id" = "تم القبول، ولكن لم يتم إرجاع معرف مهمة الفيديو.";
+"err_gen_failed" = "فشل الإنشاء";
+"err_url_not_found" = "تم إنشاء الفيديو ولكن لم يتم العثور على الرابط.";
+"err_timeout" = "استغرق الإنشاء وقتاً طويلاً. يرجى التحقق لاحقاً.";
+"err_creation_failed" = "فشل إنشاء الفيديو.";
+"err_insecure_source" = "مصدر فيديو غير آمن.";
+"err_prefix" = "خطأ: %@";
+"err_invalid_url" = "رابط غير صالح";
+"err_invalid_response" = "استجابة غير صالحة";
+"err_no_permission" = "لا يوجد إذن";
+"err_failed" = "فشل";
+
+/* Premium View */
+"premium_title" = "AnimaPic AI Pro";
+"premium_subtitle" = "إطلاق العنان للإمكانات الكاملة للذكاء الاصطناعي";
+"premium_feature_1_title" = "فائق السرعة";
+"premium_feature_1_desc" = "وصول ذو أولوية";
+"premium_feature_2_title" = "فيديو 4K";
+"premium_feature_2_desc" = "جودة سينمائية";
+"premium_feature_3_title" = "1,200 مكافأة";
+"premium_feature_3_desc" = "مطالبة شهرية";
+"premium_feature_4_title" = "نماذج برو";
+"premium_feature_4_desc" = "ذكاء اصطناعي فني خاص";
+
+"premium_plan_weekly" = "أسبوعي";
+"premium_plan_monthly" = "شهري";
+"premium_plan_lifetime" = "مدى الحياة";
+"premium_plan_diamonds_suffix" = "ماسة";
+"premium_plan_lifetime_desc" = "10,000 ماسة و VIP دائم";
+"premium_includes_diamonds" = "يتضمن %d ماسة";
+
+"premium_tag_popular" = "شائع";
+"premium_tag_best_value" = "أفضل قيمة";
+"premium_tag_whale" = "حوت";
+"premium_tag_active" = "نشط";
+
+"premium_btn_active" = "الخطة الحالية نشطة";
+"premium_btn_switch" = "تبديل الخطة";
+"premium_btn_unlock" = "فتح ميزات برو";
+"premium_footer_tip" = "إلغاء في أي وقت. تفعيل فوري.";
+
+/* Launch View */
+"launch_visionary_creativity" = "إبداع بصري";

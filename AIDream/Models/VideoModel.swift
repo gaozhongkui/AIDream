@@ -53,7 +53,7 @@ struct VideoItem: Codable {
 
         return VideoData(
             id: workId,
-            title: title ?? "Untitled",
+            title: title ?? NSLocalizedString("label_untitled", comment: ""),
             introduction: introduction ?? "",
             videoURL: URL(string: resource.resource),
             coverURL: URL(string: cover.resource),

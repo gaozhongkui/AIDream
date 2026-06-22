@@ -69,7 +69,7 @@ final class CreationService: ObservableObject {
         let newItem = CreationItem(
             id: id,
             date: Date(),
-            prompt: prompt.isEmpty ? "AI Generation" : prompt,
+            prompt: prompt.isEmpty ? NSLocalizedString("label_ai_generation", comment: "") : prompt,
             fileName: fileName,
             type: type,
             remoteURL: remoteURLString

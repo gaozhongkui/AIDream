@@ -14,7 +14,7 @@ struct ImageSourcePickerView: View {
             VStack(spacing: 24) {
                 Capsule().fill(Color.white.opacity(0.0)).frame(width: 40, height: 4).padding(.top, 10)
                 HStack {
-                    Text("Source").font(.system(size: 20, weight: .bold)).foregroundColor(.white)
+                    Text(NSLocalizedString("label_source", comment: "")).font(.system(size: 20, weight: .bold)).foregroundColor(.white)
                     Spacer()
                     Button(action: onClose) {
                         Image(systemName: "xmark")
@@ -26,13 +26,13 @@ struct ImageSourcePickerView: View {
                 HStack(spacing: 16) {
                     // 相机按钮
                     Button(action: onPickCamera) {
-                        tileLabel(icon: "camera.fill", title: "Camera")
+                        tileLabel(icon: "camera.fill", title: NSLocalizedString("label_camera", comment: ""))
                     }
                     .buttonStyle(.plain)
 
                     // 相册选择器
                     PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
-                        tileLabel(icon: "photo.on.rectangle.angled", title: "Library")
+                        tileLabel(icon: "photo.on.rectangle.angled", title: NSLocalizedString("label_library", comment: ""))
                     }
                     .buttonStyle(.plain)
                 }.padding(.horizontal, 24)

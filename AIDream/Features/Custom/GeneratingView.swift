@@ -7,13 +7,13 @@ struct GeneratingView: View {
 
     @State private var tipIndex: Int = 0
     private let tips = [
-        "Crafting every frame with neural precision...",
-        "AI is painting motion from your imagination...",
-        "Polishing details, one pixel at a time...",
-        "Translating your vision into reality...",
-        "Almost there — greatness takes a moment...",
-        "Weaving light and motion together...",
-        "Your masterpiece is materializing..."
+        NSLocalizedString("gen_msg_1", comment: ""),
+        NSLocalizedString("gen_msg_2", comment: ""),
+        NSLocalizedString("gen_msg_3", comment: ""),
+        NSLocalizedString("gen_msg_4", comment: ""),
+        NSLocalizedString("gen_msg_5", comment: ""),
+        NSLocalizedString("gen_msg_6", comment: ""),
+        NSLocalizedString("gen_msg_7", comment: "")
     ]
 
     private let timer = Timer.publish(every: 4, on: .main, in: .common).autoconnect()
@@ -109,7 +109,7 @@ struct GeneratingView: View {
 
                 // 取消按钮
                 Button(action: onBackToHome) {
-                    Text("Cancel Generation")
+                    Text(NSLocalizedString("btn_cancel_gen", comment: ""))
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(AppTheme.textMuted)
                         .padding(.horizontal, 28)
@@ -123,7 +123,7 @@ struct GeneratingView: View {
                 .padding(.bottom, 16)
 
                 // 底部提示
-                Text("You can leave this screen — we'll keep working.")
+                Text(NSLocalizedString("label_leave_screen_tip", comment: ""))
                     .font(.system(size: 12))
                     .foregroundColor(AppTheme.textMuted)
                     .padding(.bottom, 50)

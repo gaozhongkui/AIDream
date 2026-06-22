@@ -53,10 +53,10 @@ struct CustomView: View {
                     }
                 }
             }
-            .alert("Generation Tips", isPresented: $showTip) {
-                Button("Got it") {}
+            .alert(NSLocalizedString("alert_gen_tips_title", comment: ""), isPresented: $showTip) {
+                Button(NSLocalizedString("btn_got_it", comment: "")) {}
             } message: {
-                Text("Video: Upload a start frame image, add a prompt, and AI will animate it.\nReference: Upload reference images to guide the style.\nImage: Describe your vision in words and AI will paint it.")
+                Text(NSLocalizedString("alert_gen_tips_msg", comment: ""))
             }
             .fullScreenCover(isPresented: $showDiamondStore) {
                 DiamondStoreView()
@@ -103,9 +103,9 @@ struct CustomView: View {
 
     private var navTitle: String {
         switch selectedMode {
-        case .imageToVideo: return "Vision Lab"
-        case .reference:    return "Style Sync"
-        case .textToImage:  return "Dream Canvas"
+        case .imageToVideo: return NSLocalizedString("nav_vision_lab", comment: "")
+        case .reference:    return NSLocalizedString("nav_style_sync", comment: "")
+        case .textToImage:  return NSLocalizedString("nav_dream_canvas", comment: "")
         }
     }
 
@@ -140,9 +140,9 @@ struct CustomView: View {
 
     private func modeTitle(for mode: GenerationMode) -> String {
         switch mode {
-        case .imageToVideo: return "Video"
-        case .reference:    return "Reference"
-        case .textToImage:  return "Image"
+        case .imageToVideo: return NSLocalizedString("label_video", comment: "")
+        case .reference:    return NSLocalizedString("label_reference", comment: "")
+        case .textToImage:  return NSLocalizedString("label_image", comment: "")
         }
     }
 }

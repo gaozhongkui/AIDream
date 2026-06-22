@@ -60,12 +60,12 @@ struct ImageToVideoView: View {
                     promptSection
 
                     VStack(spacing: 24) {
-                        optionRow(title: "Duration",
+                        optionRow(title: NSLocalizedString("label_duration", comment: ""),
                                   options: ["6s", "10s"],
                                   selection: $selectedDuration,
                                   proOptions: ["10s"])
 
-                        optionRow(title: "Quality",
+                        optionRow(title: NSLocalizedString("label_quality", comment: ""),
                                   options: ["Standard", "High", "Ultra HD"],
                                   selection: $selectedQuality,
                                   proOptions: ["High", "Ultra HD"])
@@ -96,7 +96,7 @@ struct ImageToVideoView: View {
                         Text(msg)
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(AppTheme.error)
-                        Button("Retry") { handleGenerate() }
+                        Button(NSLocalizedString("btn_retry", comment: "")) { handleGenerate() }
                             .font(.system(size: 13, weight: .bold))
                             .foregroundColor(AppTheme.accentSecondary)
                     }
@@ -202,18 +202,18 @@ struct ImageToVideoView: View {
             }
             .ignoresSafeArea()
         }
-        .alert("Insufficient Diamonds", isPresented: $showInsufficientDiamondsAlert) {
+        .alert(NSLocalizedString("alert_insufficient_diamonds", comment: ""), isPresented: $showInsufficientDiamondsAlert) {
             if userService.isPremium {
-                Button("Get Diamonds") { activeSheet = .diamondStore }
+                Button(NSLocalizedString("btn_get_diamonds", comment: "")) { activeSheet = .diamondStore }
             } else {
-                Button("Upgrade to PRO") { activeSheet = .premium }
+                Button(NSLocalizedString("btn_upgrade_pro", comment: "")) { activeSheet = .premium }
             }
-            Button("Cancel", role: .cancel) {}
+            Button(NSLocalizedString("btn_cancel", comment: ""), role: .cancel) {}
         } message: {
             if userService.isPremium {
-                Text("You need \(generationCost) diamonds to generate a video. Please recharge to continue.")
+                Text(String(format: NSLocalizedString("alert_recharge_msg", comment: ""), generationCost))
             } else {
-                Text("You need \(generationCost) diamonds to generate a video. Subscribe to PRO to get 500 bonus diamonds!")
+                Text(String(format: NSLocalizedString("alert_subscribe_pro_msg", comment: ""), generationCost))
             }
         }
     }
@@ -221,13 +221,13 @@ struct ImageToVideoView: View {
     // MARK: - UI Components
     private var imageUploadSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Label("Visual Reference", systemImage: "photo.on.rectangle.angled")
+            Label(NSLocalizedString("label_animate_vision", comment: ""), systemImage: "photo.on.rectangle.angled")
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(AppTheme.accentSecondary)
 
             HStack(spacing: 16) {
-                imageCard(title: "Start Frame", image: startImage) { openImagePicker(for: .start) }
-                imageCard(title: "End Frame", image: endImage) { openImagePicker(for: .end) }
+                imageCard(title: NSLocalizedString("label_start_frame", comment: ""), image: startImage) { openImagePicker(for: .start) }
+                imageCard(title: NSLocalizedString("label_end_frame", comment: ""), image: endImage) { openImagePicker(for: .end) }
             }
         }
     }
@@ -247,7 +247,7 @@ struct ImageToVideoView: View {
                             Image(systemName: "plus.circle.fill")
                                 .font(.system(size: 28))
                                 .foregroundStyle(AppTheme.accentGrad)
-                            Text("Upload")
+                            Text(NSLocalizedString("btn_upload", comment: ""))
                                 .font(.system(size: 13, weight: .medium))
                                 .foregroundColor(AppTheme.textSecondary)
                         }
@@ -268,7 +268,7 @@ struct ImageToVideoView: View {
 
     private var promptSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Label("Creative Prompt", systemImage: "sparkles")
+            Label(NSLocalizedString("label_imagination_prompt", comment: ""), systemImage: "sparkles")
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(AppTheme.accentSecondary)
 
@@ -282,7 +282,7 @@ struct ImageToVideoView: View {
                     .foregroundColor(.white)
 
                 if promptText.isEmpty {
-                    Text("Describe the motion, atmosphere, and cinematic style...")
+                    Text(NSLocalizedString("placeholder_image_to_video", comment: ""))
                         .font(.system(size: 14))
                         .foregroundColor(AppTheme.textMuted)
                         .padding(.horizontal, 20)
@@ -330,7 +330,7 @@ struct ImageToVideoView: View {
 
     private var aspectRatioSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("ASPECT RATIO")
+            Text(NSLocalizedString("label_aspect_ratio", comment: ""))
                 .font(.system(size: 11, weight: .bold))
                 .tracking(1.5)
                 .foregroundColor(AppTheme.textMuted)
@@ -363,7 +363,7 @@ struct ImageToVideoView: View {
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "wand.and.rays").font(.system(size: 20, weight: .bold))
-                    Text("Generate Creation")
+                    Text(NSLocalizedString("btn_generate_creation", comment: ""))
                         .font(.system(size: 17, weight: .bold))
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
@@ -386,7 +386,7 @@ struct ImageToVideoView: View {
 
             HStack(spacing: 6) {
                 Image(systemName: "checkmark.seal.fill").foregroundColor(AppTheme.accentSecondary)
-                Text("Quality Guaranteed · Refundable").font(.system(size: 12, weight: .medium)).foregroundColor(AppTheme.textMuted)
+                Text(NSLocalizedString("label_quality_guaranteed", comment: "")).font(.system(size: 12, weight: .medium)).foregroundColor(AppTheme.textMuted)
             }
         }
         .padding(.horizontal, 20).padding(.top, 32)
@@ -435,7 +435,7 @@ struct ImageToVideoView: View {
     private func saveVideo(url: URL) {
         Task {
             do {
-                showToast(message: "Downloading video...")
+                showToast(message: NSLocalizedString("state_downloading", comment: ""))
                 var request = URLRequest(url: url)
                 if url.absoluteString.contains("openrouter.ai") {
                     request.setValue("Bearer \(AIConfig.shared.openRouterApiKey)", forHTTPHeaderField: "Authorization")
@@ -451,11 +451,11 @@ struct ImageToVideoView: View {
 
                 DispatchQueue.main.async {
                     UISaveVideoAtPathToSavedPhotosAlbum(tempURL.path, nil, nil, nil)
-                    showToast(message: "Video saved to gallery")
+                    showToast(message: NSLocalizedString("state_completed", comment: ""))
                 }
             } catch {
                 print("Save failed: \(error)")
-                showToast(message: "Failed to save video")
+                showToast(message: NSLocalizedString("err_creation_failed", comment: ""))
             }
         }
     }

@@ -25,7 +25,7 @@ final class VideoListViewController: UIViewController {
 
     private let headerTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Explore"
+        label.text = NSLocalizedString("tab_explore", comment: "")
         label.font = .systemFont(ofSize: 32, weight: .black)
         label.textColor = .white
         return label
@@ -33,7 +33,7 @@ final class VideoListViewController: UIViewController {
 
     private let headerSubtitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Discover AI-generated masterpieces"
+        label.text = NSLocalizedString("label_explore_subtitle", comment: "")
         label.font = .systemFont(ofSize: 13, weight: .medium)
         label.textColor = UIColor.white.withAlphaComponent(0.4)
         return label
@@ -79,7 +79,7 @@ final class VideoListViewController: UIViewController {
             .foregroundColor: UIColor.white.withAlphaComponent(0.5),
             .font: UIFont.systemFont(ofSize: 12, weight: .medium)
         ]
-        rc.attributedTitle = NSAttributedString(string: "Pull to refresh", attributes: attributes)
+        rc.attributedTitle = NSAttributedString(string: NSLocalizedString("toast_pull_to_refresh", comment: ""), attributes: attributes)
         return rc
     }()
 
@@ -106,7 +106,7 @@ final class VideoListViewController: UIViewController {
 
     private let emptyLabel: UILabel = {
         let label = UILabel()
-        label.text = "No videos yet"
+        label.text = NSLocalizedString("label_no_videos", comment: "")
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = UIColor.white.withAlphaComponent(0.3)
         label.textAlignment = .center
@@ -363,7 +363,7 @@ final class VideoListViewController: UIViewController {
                         }
                     }
                 case .failure(let error):
-                    self.showErrorBanner("Network error — pull to retry")
+                    self.showErrorBanner(NSLocalizedString("toast_network_error_retry", comment: ""))
                     self.emptyStateView.isHidden = !self.allVideos.isEmpty
                     self.updateFooterStatus()
                 }

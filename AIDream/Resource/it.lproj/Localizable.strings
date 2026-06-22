@@ -1,0 +1,187 @@
+/* Tabs */
+"tab_explore" = "Esplora";
+"tab_create" = "Crea";
+"tab_profile" = "Profilo";
+
+/* Navigation & Titles */
+"nav_vision_lab" = "Vision Lab";
+"nav_style_sync" = "Style Sync";
+"nav_dream_canvas" = "Dream Canvas";
+"title_creative_history" = "Cronologia Creativa";
+"title_trending" = "Tendenze Attuali";
+"title_favorites" = "Preferiti";
+"title_diamond_store" = "Negozio Diamanti";
+
+/* Buttons */
+"btn_got_it" = "Ho capito";
+"btn_retry" = "Riprova";
+"btn_cancel" = "Annulla";
+"btn_restore" = "Ripristina";
+"btn_upgrade_pro" = "Passa a PRO";
+"btn_get_diamonds" = "Ottieni Diamanti";
+"btn_cancel_gen" = "Annulla Generazione";
+"btn_ok" = "OK";
+"btn_terms" = "Termini";
+"btn_privacy" = "Privacy";
+"btn_render_masterpiece" = "Rendering Capolavoro";
+"btn_generate_creation" = "Genera Creazione";
+"btn_sync_generate" = "Sincronizza e Genera";
+"btn_delete" = "Elimina";
+"btn_share" = "Condividi";
+"btn_download" = "Scarica";
+"btn_retake" = "Rifai";
+"btn_recharge" = "Ricarica";
+"btn_reset_account" = "Ripristina dati account";
+"btn_upload" = "Carica";
+
+/* Generation States */
+"state_ready" = "Pronto per Creare";
+"state_uploading" = "Connessione all'IA...";
+"state_generating" = "Generazione in corso...";
+"state_generating_progress" = "Generazione in corso... %d%%";
+"state_completed" = "Video Pronto";
+"state_loading" = "Caricamento...";
+"state_downloading" = "Download in corso...";
+"state_saving" = "Salvataggio...";
+"state_saved" = "Salvato!";
+"state_preparing" = "Preparazione...";
+"state_requesting_server" = "Richiesta al server...";
+"state_processing_image" = "Elaborazione immagine...";
+"state_done" = "Fatto";
+
+/* Alerts & Tips */
+"alert_gen_tips_title" = "Suggerimenti Generazione";
+"alert_gen_tips_msg" = "Video: Carica un'immagine di inizio, aggiungi un prompt e l'IA la animerà.\nRiferimento: Carica immagini di riferimento per guidare lo stile.\nImmagine: Descrivi la tua visione a parole e l'IA la dipingerà.";
+"alert_insufficient_diamonds" = "Diamanti Insufficienti";
+"alert_recharge_msg" = "Hai bisogno di %d diamanti per generare. Ricarica per continuare.";
+"alert_subscribe_pro_msg" = "Hai bisogno di %d diamanti per generare. Abbonati a PRO per ottenere diamanti bonus!";
+"alert_purchase_error" = "Errore di acquisto";
+"alert_product_not_found" = "Prodotto non trovato. Riprova.";
+"alert_delete_creation_title" = "Elimina Creazione";
+"alert_delete_creation_msg" = "Sei sicuro di voler eliminare questo capolavoro?";
+
+/* UI Labels */
+"label_source" = "Sorgente";
+"label_duration" = "Durata";
+"label_quality" = "Qualità";
+"label_aspect_ratio" = "Rapporto Aspetto";
+"label_camera" = "Fotocamera";
+"label_library" = "Libreria";
+"label_leave_screen_tip" = "Puoi lasciare questa schermata — continueremo a lavorare.";
+"label_video" = "Video";
+"label_reference" = "Riferimento";
+"label_image" = "Immagine";
+"label_imagination_prompt" = "Prompt Immaginazione";
+"label_canvas_ratio" = "RAPPORTO TELA";
+"label_animate_vision" = "ANIMA VISIONE";
+"label_start_frame" = "Immagine Inizio";
+"label_end_frame" = "Immagine Fine";
+"label_style_sync_header" = "STYLE SYNC";
+"label_reference_images" = "Immagini Riferimento";
+"label_video_settings" = "IMPOSTAZIONI VIDEO";
+"label_ai_artist_ready" = "L'artista IA è pronto per i tuoi comandi";
+"label_no_history" = "Nessuna creazione ancora";
+"label_history_subtitle" = "I tuoi capolavori generati dall'IA appariranno qui";
+"label_no_favorites" = "Nessun preferito ancora";
+"label_no_favorites_subtitle" = "Trova qualcosa che ti piace in Esplora e salvalo qui!";
+"label_studio" = "Studio";
+"label_preferences" = "Preferenze";
+"label_vision_artist" = "Vision Artist";
+"label_pro_member" = "MEMBRO PRO";
+"label_free_member" = "MEMBRO GRATUITO";
+"label_creations" = "Creazioni";
+"label_likes" = "Like";
+"label_diamonds" = "Diamanti";
+"label_pro_membership" = "Abbonamento PRO";
+"label_unlock_premium" = "Sblocca tutte le funzioni premium";
+"label_diamond_balance" = "Bilancio Diamanti";
+"label_app_version_format" = "AnimaPic AI v%@";
+"label_designed_for" = "Progettato per artisti visionari";
+"label_quality_guaranteed" = "Qualità garantita · Rimborsabile";
+
+/* Diamond Store specific */
+"label_current_balance" = "BILANCIO ATTUALE";
+"label_diamond_hero_tip" = "Usa i diamanti per generare capolavori IA";
+"label_membership_bonus_tip" = "Fino a 10.000 diamanti bonus!";
+"label_diamond_packs" = "PACCHETTI DIAMANTI";
+"label_recharge_subtitle" = "Seleziona un pacchetto per ricaricare";
+"label_includes_bonus" = "Include %d bonus";
+"label_footer_secure" = "Sicuro";
+"label_footer_instant" = "Istantaneo";
+"label_footer_no_expiry" = "Senza scadenza";
+"label_diamond_footer_disclaimer" = "I diamanti vengono utilizzati per i servizi di generazione IA. Tutti gli acquisti sono definitivi e non rimborsabili.";
+
+/* Placeholders */
+"placeholder_text_to_image" = "Dipingi un quadro con le parole... Descrivi texture, illuminazione ed emozioni.";
+"placeholder_image_to_video" = "Descrivi il movimento o i cambiamenti di scena...";
+"placeholder_reference_video" = "Descrivi la storia o la scena...";
+"placeholder_cinematic_video" = "Un video cinematografico con movimento di alta qualità";
+
+/* Toasts */
+"toast_download_from_player" = "Scarica dal lettore video";
+"toast_saved_to_gallery" = "Salvato in galleria";
+
+/* Generating Messages */
+"gen_msg_1" = "Quasi fatto — la grandezza richiede un momento...";
+"gen_msg_2" = "Creazione di ogni fotogramma con precisione neurale...";
+"gen_msg_3" = "Il tuo capolavoro si sta materializzando...";
+"gen_msg_4" = "Intrecciando luce e movimento...";
+"gen_msg_5" = "Perfezionando i dettagli, pixel dopo pixel...";
+"gen_msg_6" = "Traducendo la tua visione in realtà...";
+"gen_msg_7" = "L'IA sta dipingendo il movimento dalla tua immaginazione...";
+
+/* Errors */
+"err_unknown" = "Si è verificato un errore imprevisto.";
+"err_missing_api_key" = "Chiave API mancante";
+"err_invalid_api_key" = "Chiave API non valida. Controlla le tue impostazioni.";
+"err_insufficient_credits" = "Crediti insufficienti su OpenRouter.";
+"err_service_error" = "Errore di servizio (%d)";
+"err_no_job_id" = "Accettato, ma nessun ID lavoro video restituito.";
+"err_gen_failed" = "Generazione fallita";
+"err_url_not_found" = "Video generato ma il link non è stato trovato.";
+"err_timeout" = "La generazione ha richiesto troppo tempo. Riprova più tardi.";
+"err_creation_failed" = "Creazione video fallita.";
+"err_insecure_source" = "Sorgente video non sicura.";
+"err_prefix" = "Errore: %@";
+"err_invalid_url" = "URL non valido";
+"err_invalid_response" = "Risposta non valida";
+"err_no_permission" = "Nessun permesso";
+"err_failed" = "Fallito";
+"err_all_providers_failed" = "Tutti i fornitori di immagini hanno fallito, riprova più tardi";
+"err_invalid_prompt" = "Prompt non valido";
+"err_invalid_image_data" = "Impossibile analizzare i dati dell'immagine";
+
+/* Premium View */
+"premium_title" = "AnimaPic AI Pro";
+"premium_subtitle" = "Sblocca tutto il potenziale dell'IA";
+"premium_feature_1_title" = "Ultra veloce";
+"premium_feature_1_desc" = "Accesso prioritario";
+"premium_feature_2_title" = "Video 4K";
+"premium_feature_2_desc" = "Qualità cinematografica";
+"premium_feature_3_title" = "1.200 Bonus";
+"premium_feature_3_desc" = "Richiesta mensile";
+"premium_feature_4_title" = "Modelli Pro";
+"premium_feature_4_desc" = "IA artistica privata";
+
+"premium_plan_weekly" = "Settimanale";
+"premium_plan_monthly" = "Mensile";
+"premium_plan_lifetime" = "A vita";
+"premium_plan_diamonds_suffix" = "Diamanti";
+"premium_plan_lifetime_desc" = "10.000 diamanti e VIP permanente";
+"premium_includes_diamonds" = "Include %d diamanti";
+
+"premium_tag_popular" = "POPOLARE";
+"premium_tag_best_value" = "MIGLIOR VALORE";
+"premium_tag_whale" = "WHALE";
+"premium_tag_active" = "ATTIVO";
+
+"premium_btn_active" = "Piano attuale attivo";
+"premium_btn_switch" = "Cambia piano";
+"premium_btn_unlock" = "Sblocca funzioni Pro";
+"premium_footer_tip" = "Annulla in qualsiasi momento. Attivazione istantanea.";
+
+/* Launch View */
+"launch_visionary_creativity" = "CREATIVITÀ VISIONARIA";
+
+/* Video List */
+"label_end_of_universe" = "— Fine dell'universo —";

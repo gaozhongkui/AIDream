@@ -1,0 +1,197 @@
+/* Tabs */
+"tab_explore" = "探索";
+"tab_create" = "作成";
+"tab_profile" = "プロフィール";
+
+/* Navigation & Titles */
+"nav_vision_lab" = "ビジョンラボ";
+"nav_style_sync" = "スタイル同期";
+"nav_dream_canvas" = "ドリームキャンバス";
+"title_creative_history" = "作成履歴";
+"title_trending" = "トレンド";
+"title_favorites" = "お気に入り";
+"title_diamond_store" = "ダイヤモンドストア";
+"title_feedback" = "フィードバック";
+
+/* Buttons */
+"btn_got_it" = "了解";
+"btn_retry" = "再試行";
+"btn_cancel" = "キャンセル";
+"btn_restore" = "復元";
+"btn_upgrade_pro" = "PROにアップグレード";
+"btn_get_diamonds" = "ダイヤモンドを入手";
+"btn_cancel_gen" = "生成をキャンセル";
+"btn_ok" = "OK";
+"btn_terms" = "規約";
+"btn_privacy" = "プライバシー";
+"btn_render_masterpiece" = "傑作をレンダリング";
+"btn_generate_creation" = "作成物を生成";
+"btn_sync_generate" = "同期して生成";
+"btn_delete" = "削除";
+"btn_share" = "共有";
+"btn_download" = "ダウンロード";
+"btn_retake" = "撮り直し";
+"btn_recharge" = "チャージ";
+"btn_reset_account" = "アカウントデータをリセット";
+"btn_upload" = "アップロード";
+"btn_submit" = "送信";
+
+/* Generation States */
+"state_ready" = "作成準備完了";
+"state_uploading" = "AIに接続中...";
+"state_generating" = "生成中...";
+"state_generating_progress" = "生成中... %d%%";
+"state_completed" = "ビデオが完成しました";
+"state_loading" = "読み込み中...";
+"state_downloading" = "ダウンロード中...";
+"state_saving" = "保存中...";
+"state_saved" = "保存されました！";
+"state_preparing" = "準備中...";
+"state_requesting_server" = "サーバーにリクエスト中...";
+"state_processing_image" = "画像を処理中...";
+"state_done" = "完了";
+
+/* Alerts & Tips */
+"alert_gen_tips_title" = "生成のヒント";
+"alert_gen_tips_msg" = "ビデオ：開始フレーム画像をアップロードし、プロンプトを追加すると、AIがアニメーション化します。\nリファレンス：リファレンス画像をアップロードしてスタイルをガイドします。\n画像：ビジョンを言葉で説明すると、AIがそれを描きます。";
+"alert_insufficient_diamonds" = "ダイヤモンド不足";
+"alert_recharge_msg" = "生成には %d 個のダイヤモンドが必要です。続行するにはチャージしてください。";
+"alert_subscribe_pro_msg" = "生成には %d 個のダイヤモンドが必要です。PROを購読してボーナスダイヤモンドをゲットしましょう！";
+"alert_purchase_error" = "購入エラー";
+"alert_product_not_found" = "製品が見つかりません。もう一度お試しください。";
+"alert_delete_creation_title" = "作成物を削除";
+"alert_delete_creation_msg" = "この傑作を削除してもよろしいですか？";
+"alert_feedback_success_title" = "フィードバック成功";
+"alert_feedback_success_msg" = "フィードバックをいただきありがとうございます！";
+
+/* UI Labels */
+"label_source" = "ソース";
+"label_duration" = "期間";
+"label_quality" = "品質";
+"label_aspect_ratio" = "アスペクト比";
+"label_camera" = "カメラ";
+"label_library" = "ライブラリ";
+"label_leave_screen_tip" = "この画面を離れても大丈夫です。作業を続行します。";
+"label_video" = "ビデオ";
+"label_reference" = "リファレンス";
+"label_image" = "画像";
+"label_imagination_prompt" = "イマジネーションプロンプト";
+"label_canvas_ratio" = "キャンバス比率";
+"label_animate_vision" = "ビジョンをアニメーション化";
+"label_start_frame" = "開始フレーム画像";
+"label_end_frame" = "終了フレーム画像";
+"label_style_sync_header" = "スタイル同期";
+"label_reference_images" = "リファレンス画像";
+"label_video_settings" = "ビデオ設定";
+"label_ai_artist_ready" = "AIアーティストがあなたの命令を待っています";
+"label_no_history" = "まだ作成物がありません";
+"label_history_subtitle" = "あなたのAIの旅はここから始まります";
+"label_no_favorites" = "お気に入りはまだありません";
+"label_no_favorites_subtitle" = "探索で見つけたお気に入りをここに保存しましょう！";
+"label_studio" = "スタジオ";
+"label_preferences" = "設定";
+"label_vision_artist" = "ビジョンアーティスト";
+"label_pro_member" = "PROメンバー";
+"label_free_member" = "無料メンバー";
+"label_creations" = "作成物";
+"label_likes" = "いいね";
+"label_diamonds" = "ダイヤモンド";
+"label_pro_membership" = "PROメンバーシップ";
+"label_unlock_premium" = "すべてのプレミアム機能をアンロック";
+"label_diamond_balance" = "ダイヤモンド残高";
+"label_app_version_format" = "AnimaPic AI v%@";
+"label_designed_for" = "先見の明のあるアーティストのために設計されました";
+"label_quality_guaranteed" = "品質保証・返金可能";
+"label_explore_subtitle" = "AI生成の傑作を探索する";
+"label_feedback_subtitle" = "アプリ改善のため、あなたの意見をお聞かせください。以下に体験を記入してください。";
+
+/* Diamond Store specific */
+"label_current_balance" = "現在の残高";
+"label_diamond_hero_tip" = "ダイヤモンドを使ってAIの傑作を生成しましょう";
+"label_membership_bonus_tip" = "最大10,000ボーナスダイヤモンド！";
+"label_diamond_packs" = "ダイヤモンドパック";
+"label_recharge_subtitle" = "チャージするパッケージを選択してください";
+"label_includes_bonus" = "%d ボーナスを含む";
+"label_footer_secure" = "安全";
+"label_footer_instant" = "即時";
+"label_footer_no_expiry" = "有効期限なし";
+"label_diamond_footer_disclaimer" = "ダイヤモンドはAI生成サービスに使用されます。すべての購入は最終的なものであり、払い戻しはできません。";
+
+/* Placeholders */
+"placeholder_text_to_image" = "言葉で絵を描きましょう... テクスチャ、照明、感情を説明してください。";
+"placeholder_image_to_video" = "動きやシーンの変化を説明してください...";
+"placeholder_reference_video" = "ストーリーやシーンを説明してください...";
+"placeholder_cinematic_video" = "高品質な動きを持つ映画のようなビデオ";
+"placeholder_feedback" = "こちらにフィードバックを記入してください...";
+
+/* Toasts */
+"toast_download_from_player" = "ビデオプレーヤーからダウンロードしてください";
+"toast_saved_to_gallery" = "ギャラリーに保存されました";
+"toast_pull_to_refresh" = "引いて更新";
+"toast_network_error_retry" = "ネットワークエラー — 引いて再試行";
+
+/* Generating Messages */
+"gen_msg_1" = "あと少しです — 偉大な作品には時間がかかります...";
+"gen_msg_2" = "ニューラルな精度で各フレームを構築中...";
+"gen_msg_3" = "あなたの傑作が形になりつつあります...";
+"gen_msg_4" = "光と動きを織り交ぜています...";
+"gen_msg_5" = "ピクセルごとに詳細を磨き上げています...";
+"gen_msg_6" = "あなたのビジョンを現実に変換中...";
+"gen_msg_7" = "AIがあなたの想像力から動きを描いています...";
+
+/* Errors */
+"err_unknown" = "予期しないエラーが発生しました。";
+"err_missing_api_key" = "APIキーが見つかりません";
+"err_invalid_api_key" = "無効なAPIキーです。設定を確認してください。";
+"err_insufficient_credits" = "OpenRouterのクレジットが不足しています。";
+"err_service_error" = "サービスエラー (%d)";
+"err_no_job_id" = "承認されましたが、ビデオジョブIDが返されませんでした。";
+"err_gen_failed" = "生成に失敗しました";
+"err_url_not_found" = "ビデオは生成されましたが、リンクが見つかりませんでした。";
+"err_timeout" = "生成に時間がかかりすぎています。後でもう一度確認してください。";
+"err_creation_failed" = "ビデオの作成に失敗しました。";
+"err_insecure_source" = "安全でないビデオソースです。";
+"err_prefix" = "エラー: %@";
+"err_invalid_url" = "無効なURL";
+"err_invalid_response" = "無効なレスポンス";
+"err_no_permission" = "権限がありません";
+"err_failed" = "失敗しました";
+"err_all_providers_failed" = "すべての画像プロバイダーが失敗しました。後でもう一度お試しください。";
+"err_invalid_prompt" = "無効なプロンプト";
+"err_invalid_image_data" = "画像データの解析に失敗しました";
+
+/* Premium View */
+"premium_title" = "AnimaPic AI Pro";
+"premium_subtitle" = "AIの可能性を最大限に引き出す";
+"premium_feature_1_title" = "超高速";
+"premium_feature_1_desc" = "優先アクセス";
+"premium_feature_2_title" = "4Kビデオ";
+"premium_feature_2_desc" = "シネマティック品質";
+"premium_feature_3_title" = "1,200ボーナス";
+"premium_feature_3_desc" = "毎月の請求";
+"premium_feature_4_title" = "プロモデル";
+"premium_feature_4_desc" = "プライベートな芸術的AI";
+
+"premium_plan_weekly" = "週間";
+"premium_plan_monthly" = "月間";
+"premium_plan_lifetime" = "生涯";
+"premium_plan_diamonds_suffix" = "ダイヤモンド";
+"premium_plan_lifetime_desc" = "10,000ダイヤモンド & 永久VIP";
+"premium_includes_diamonds" = "%d 個のダイヤモンドを含む";
+
+"premium_tag_popular" = "人気";
+"premium_tag_best_value" = "最高のお得感";
+"premium_tag_whale" = "クジラ級";
+"premium_tag_active" = "有効";
+
+"premium_btn_active" = "現在のプランが有効です";
+"premium_btn_switch" = "プランを切り替える";
+"premium_btn_unlock" = "Pro機能をアンロック";
+"premium_footer_tip" = "いつでもキャンセル可能。即時有効化。";
+
+/* Launch View */
+"launch_visionary_creativity" = "先見的な創造性";
+
+/* Video List */
+"label_end_of_universe" = "— 宇宙の終わり —";
+"label_no_videos" = "ビデオがまだありません";

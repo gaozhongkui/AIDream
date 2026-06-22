@@ -86,7 +86,7 @@ struct VideoCompletionView: View {
                                 .foregroundColor(AppTheme.textMuted)
                                 .multilineTextAlignment(.center)
                                 .padding()
-                            Button("Retry") { loadMedia() }
+                            Button(NSLocalizedString("btn_retry", comment: "")) { loadMedia() }
                                 .font(.system(size: 14, weight: .bold))
                                 .foregroundColor(AppTheme.accentSecondary)
                         }
@@ -111,7 +111,7 @@ struct VideoCompletionView: View {
                             ProgressView()
                                 .tint(AppTheme.accentSecondary)
                                 .scaleEffect(1.2)
-                            Text(isLoadingVideo ? "Downloading..." : "Loading...")
+                            Text(isLoadingVideo ? NSLocalizedString("state_downloading", comment: "") : NSLocalizedString("state_loading", comment: ""))
                                 .font(.system(size: 13))
                                 .foregroundColor(AppTheme.textMuted)
                         }
@@ -244,7 +244,7 @@ struct VideoCompletionView: View {
             Spacer()
 
             // 标题
-            Text("Trending Now")
+            Text(NSLocalizedString("title_trending", comment: ""))
                 .font(.system(size: 18, weight: .bold))
                 .foregroundColor(.white)
 
@@ -274,7 +274,7 @@ struct VideoCompletionView: View {
                 VStack(spacing: 4) {
                     Image(systemName: "trash")
                         .font(.system(size: 18, weight: .semibold))
-                    Text("Retake")
+                    Text(NSLocalizedString("btn_retake", comment: ""))
                         .font(.system(size: 11, weight: .semibold))
                 }
                 .foregroundColor(.white)
@@ -297,7 +297,7 @@ struct VideoCompletionView: View {
                         Image(systemName: "arrow.down.to.line")
                             .font(.system(size: 18, weight: .bold))
                     }
-                    Text(isSavingToGallery ? "Saving..." : "Download")
+                    Text(isSavingToGallery ? NSLocalizedString("state_saving", comment: "") : NSLocalizedString("btn_download", comment: ""))
                         .font(.system(size: 18, weight: .bold))
                 }
                 .foregroundColor(.white)
@@ -351,7 +351,7 @@ struct VideoCompletionView: View {
 
                 guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
                     let code = (response as? HTTPURLResponse)?.statusCode ?? -1
-                    throw NSError(domain: "Download", code: code, userInfo: [NSLocalizedDescriptionKey: "Server returned error \(code)"])
+                    throw NSError(domain: "Download", code: code, userInfo: [NSLocalizedDescriptionKey: String(format: NSLocalizedString("err_service_error", comment: ""), code)])
                 }
 
                 let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
@@ -392,7 +392,7 @@ struct VideoCompletionView: View {
                     playerError = nil
                     player.play()
                 } else if item.status == .failed {
-                    let err = item.error?.localizedDescription ?? "Play failed"
+                    let err = item.error?.localizedDescription ?? NSLocalizedString("err_creation_failed", comment: "")
                     print("[VideoCompletionView] Player Failed: \(err)")
                     playerError = err
                     isPlayerReady = false
@@ -425,12 +425,12 @@ struct VideoCompletionView: View {
         PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
             if status == .authorized || status == .limited {
                 Task { await performSave() }
-            } else { showToast("No Permission") }
+            } else { showToast(NSLocalizedString("err_no_permission", comment: "")) }
         }
     }
 
     private func performSave() async {
-        DispatchQueue.main.async { isSavingToGallery = true; showToast("Saving...") }
+        DispatchQueue.main.async { isSavingToGallery = true; showToast(NSLocalizedString("state_saving", comment: "")) }
         do {
             // 优先使用下载好的临时文件，如果没有则看 media 是否本身就是本地文件
             let saveURL: URL
@@ -447,11 +447,11 @@ struct VideoCompletionView: View {
             }) { success, _ in
                 DispatchQueue.main.async {
                     isSavingToGallery = false
-                    showToast(success ? "Saved!" : "Failed")
+                    showToast(success ? NSLocalizedString("state_saved", comment: "") : NSLocalizedString("err_failed", comment: ""))
                 }
             }
         } catch {
-            DispatchQueue.main.async { isSavingToGallery = false; showToast("Error") }
+            DispatchQueue.main.async { isSavingToGallery = false; showToast(NSLocalizedString("err_prefix", comment: "")) }
         }
     }
 

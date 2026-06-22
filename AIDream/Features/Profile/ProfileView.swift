@@ -25,12 +25,12 @@ struct ProfileView: View {
                         vipMembershipCard.padding(.top, 28)
                         diamondBalanceCard.padding(.top, 16)
 
-                        sectionLabel("Studio").padding(.top, 40)
+                        sectionLabel(NSLocalizedString("label_studio", comment: "")).padding(.top, 40)
 
                         // 菜单区域
                         VStack(spacing: 0) {
                             Button(action: { showFavorites = true }) {
-                                menuRowContent(icon: "heart.square.fill", title: "My Inspirations")
+                                menuRowContent(icon: "heart.square.fill", title: NSLocalizedString("title_favorites", comment: ""))
                             }
 
                             Rectangle()
@@ -39,20 +39,20 @@ struct ProfileView: View {
                                 .padding(.leading, 72)
 
                             Button(action: { showHistory = true }) {
-                                menuRowContent(icon: "video.badge.plus.fill", title: "Creative History")
+                                menuRowContent(icon: "video.badge.plus.fill", title: NSLocalizedString("title_creative_history", comment: ""))
                             }
                         }
                         .glassStyle(cornerRadius: 22)
                         .padding(.horizontal, 20)
 
-                        sectionLabel("Preferences").padding(.top, 32)
+                        sectionLabel(NSLocalizedString("label_preferences", comment: "")).padding(.top, 32)
 
                         VStack(spacing: 0) {
                             Button(action: {
                                 safariURL = URL(string: AIConfig.shared.privacyPolicyURL)
                                 showSafari = true
                             }) {
-                                menuRowContent(icon: "doc.text.fill", title: "Privacy Policy")
+                                menuRowContent(icon: "doc.text.fill", title: NSLocalizedString("btn_privacy", comment: ""))
                             }
 
                             Rectangle()
@@ -64,7 +64,7 @@ struct ProfileView: View {
                                 safariURL = URL(string: AIConfig.shared.termsOfServiceURL)
                                 showSafari = true
                             }) {
-                                menuRowContent(icon: "scroll.fill", title: "Terms of Service")
+                                menuRowContent(icon: "scroll.fill", title: NSLocalizedString("btn_terms", comment: ""))
                             }
                         }
                         .glassStyle(cornerRadius: 22)
@@ -123,11 +123,11 @@ struct ProfileView: View {
             .buttonStyle(PlainButtonStyle())
 
             VStack(spacing: 8) {
-                Text("Vision Artist")
+                Text(NSLocalizedString("label_vision_artist", comment: ""))
                     .font(.system(size: 22, weight: .bold))
                     .foregroundColor(.white)
 
-                Text(userService.isPremium ? "PRO MEMBER" : "FREE MEMBER")
+                Text(userService.isPremium ? NSLocalizedString("label_pro_member", comment: "") : NSLocalizedString("label_free_member", comment: ""))
                     .font(.system(size: 10, weight: .black))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
@@ -141,9 +141,9 @@ struct ProfileView: View {
 
     private var statsRow: some View {
         HStack(spacing: 12) {
-            statCard(value: "\(creationService.creations.count)", label: "Creations")
-            statCard(value: "\(favoriteService.favoriteVideos.count)", label: "Likes")
-            statCard(value: "\(userService.diamonds)", label: "Diamonds")
+            statCard(value: "\(creationService.creations.count)", label: NSLocalizedString("label_creations", comment: ""))
+            statCard(value: "\(favoriteService.favoriteVideos.count)", label: NSLocalizedString("label_likes", comment: ""))
+            statCard(value: "\(userService.diamonds)", label: NSLocalizedString("label_diamonds", comment: ""))
         }
         .padding(.horizontal, 20)
     }
@@ -180,8 +180,8 @@ struct ProfileView: View {
                     Image(systemName: "crown.fill").font(.system(size: 20)).foregroundStyle(AppTheme.vipGold)
                 }
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("PRO Membership").font(.system(size: 16, weight: .bold)).foregroundColor(.white)
-                    Text("Unlock all premium features").font(.system(size: 12)).foregroundColor(AppTheme.textMuted)
+                    Text(NSLocalizedString("label_pro_membership", comment: "")).font(.system(size: 16, weight: .bold)).foregroundColor(.white)
+                    Text(NSLocalizedString("label_unlock_premium", comment: "")).font(.system(size: 12)).foregroundColor(AppTheme.textMuted)
                 }
                 Spacer()
                 Image(systemName: "chevron.right").font(.system(size: 14, weight: .bold)).foregroundColor(AppTheme.textMuted)
@@ -199,12 +199,12 @@ struct ProfileView: View {
                         Image(systemName: "diamond.fill").font(.system(size: 20)).foregroundStyle(AppTheme.accentGrad)
                     }
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Diamond Balance").font(.system(size: 11, weight: .medium)).foregroundColor(AppTheme.textMuted)
+                        Text(NSLocalizedString("label_diamond_balance", comment: "")).font(.system(size: 11, weight: .medium)).foregroundColor(AppTheme.textMuted)
                         Text("💎 \(userService.diamonds)").font(.system(size: 22, weight: .bold)).foregroundColor(.white)
                     }
                 }
                 Spacer()
-                Text("Recharge").font(.system(size: 14, weight: .bold)).foregroundColor(.white).padding(.horizontal, 18).padding(.vertical, 10).background(AppTheme.accentGradH).clipShape(Capsule())
+                Text(NSLocalizedString("btn_recharge", comment: "")).font(.system(size: 14, weight: .bold)).foregroundColor(.white).padding(.horizontal, 18).padding(.vertical, 10).background(AppTheme.accentGradH).clipShape(Capsule())
             }.padding(18).glassStyle(cornerRadius: 20)
         }.padding(.horizontal, 20)
     }
@@ -214,14 +214,14 @@ struct ProfileView: View {
             userService.addDiamonds(100)
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         }) {
-            Text("Reset Account Data").font(.system(size: 15, weight: .bold)).foregroundColor(AppTheme.textMuted).frame(maxWidth: .infinity).frame(height: 56).glassStyle(cornerRadius: 20)
+            Text(NSLocalizedString("btn_reset_account", comment: "")).font(.system(size: 15, weight: .bold)).foregroundColor(AppTheme.textMuted).frame(maxWidth: .infinity).frame(height: 56).glassStyle(cornerRadius: 20)
         }.padding(.horizontal, 20)
     }
 
     private var versionInfo: some View {
         VStack(spacing: 4) {
-            Text("AnimaPic AI v1.0.0")
-            Text("Designed for Visionary Artists")
+            Text(String(format: NSLocalizedString("label_app_version_format", comment: ""), "1.0.0"))
+            Text(NSLocalizedString("label_designed_for", comment: ""))
         }
         .font(.system(size: 11, weight: .medium))
         .foregroundColor(AppTheme.textMuted.opacity(0.5))

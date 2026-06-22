@@ -25,7 +25,7 @@ struct FavoritesView: View {
 
                     Spacer()
 
-                    Text("My Inspirations")
+                    Text(NSLocalizedString("title_favorites", comment: ""))
                         .font(.system(size: 18, weight: .bold))
                         .foregroundColor(.white)
 
@@ -73,10 +73,10 @@ struct FavoritesView: View {
                     .font(.system(size: 36))
                     .foregroundStyle(AppTheme.accentGrad)
             }
-            Text("No inspirations yet")
+            Text(NSLocalizedString("label_no_favorites", comment: ""))
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(AppTheme.textSecondary)
-            Text("Find something you like in Explore and save it here!")
+            Text(NSLocalizedString("label_no_favorites_subtitle", comment: ""))
                 .font(.system(size: 13))
                 .foregroundColor(AppTheme.textMuted)
                 .multilineTextAlignment(.center)

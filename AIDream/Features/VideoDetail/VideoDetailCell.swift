@@ -167,7 +167,7 @@ final class VideoDetailCell: UICollectionViewCell {
 
     private let remixButton: GradientButton = {
         let btn = GradientButton(type: .system)
-        btn.setTitle("  Remix This Style", for: .normal)
+        btn.setTitle("  " + NSLocalizedString("btn_sync_generate", comment: ""), for: .normal)
         btn.setTitleColor(.white, for: .normal)
         btn.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         let config = UIImage.SymbolConfiguration(pointSize: 14, weight: .bold)

@@ -65,7 +65,7 @@ final class LoadingFooterView: UICollectionReusableView {
                 noMoreLabel.isHidden = true
                 separatorLine.isHidden = true
             } else {
-                noMoreLabel.text = "— End of the universe —"
+                noMoreLabel.text = NSLocalizedString("label_end_of_universe", comment: "")
                 noMoreLabel.isHidden = false
                 separatorLine.isHidden = false
             }

@@ -88,21 +88,21 @@ struct TextToImageView: View {
                 DiamondStoreView()
             }
         }
-        .alert("Insufficient Diamonds", isPresented: Binding(
+        .alert(NSLocalizedString("alert_insufficient_diamonds", comment: ""), isPresented: Binding(
             get: { showInsufficientDiamondsAlert },
             set: { showInsufficientDiamondsAlert = $0 }
         )) {
             if userService.isPremium {
-                Button("Get Diamonds") { activeSheet = .diamondStore }
+                Button(NSLocalizedString("btn_get_diamonds", comment: "")) { activeSheet = .diamondStore }
             } else {
-                Button("Upgrade to PRO") { activeSheet = .premium }
+                Button(NSLocalizedString("btn_upgrade_pro", comment: "")) { activeSheet = .premium }
             }
-            Button("Cancel", role: .cancel) {}
+            Button(NSLocalizedString("btn_cancel", comment: ""), role: .cancel) {}
         } message: {
             if userService.isPremium {
-                Text("You need \(generationCost) diamonds to generate an image. Please recharge to continue.")
+                Text(String(format: NSLocalizedString("alert_recharge_msg", comment: ""), generationCost))
             } else {
-                Text("You need \(generationCost) diamonds to generate an image. Subscribe to PRO to get bonus diamonds!")
+                Text(String(format: NSLocalizedString("alert_subscribe_pro_msg", comment: ""), generationCost))
             }
         }
     }
@@ -122,7 +122,7 @@ struct TextToImageView: View {
             } label: {
                 HStack(spacing: 4) {
                     Image(systemName: "arrow.clockwise")
-                    Text("Retry")
+                    Text(NSLocalizedString("btn_retry", comment: ""))
                 }
                 .font(.system(size: 12, weight: .bold))
                 .foregroundColor(AppTheme.accentSecondary)
@@ -135,7 +135,7 @@ struct TextToImageView: View {
     // MARK: - Prompt Section
     private var promptSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Label("Imagination Prompt", systemImage: "sparkles")
+            Label(NSLocalizedString("label_imagination_prompt", comment: ""), systemImage: "sparkles")
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(AppTheme.accentSecondary)
 
@@ -149,7 +149,7 @@ struct TextToImageView: View {
                     .foregroundColor(.white)
 
                 if promptText.isEmpty {
-                    Text("Paint a picture with words... Describe textures, lighting, and emotions.")
+                    Text(NSLocalizedString("placeholder_text_to_image", comment: ""))
                         .font(.system(size: 14))
                         .foregroundColor(AppTheme.textMuted)
                         .padding(.horizontal, 20)
@@ -163,7 +163,7 @@ struct TextToImageView: View {
     // MARK: - Aspect Ratio
     private var aspectRatioSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("CANVAS RATIO")
+            Text(NSLocalizedString("label_canvas_ratio", comment: ""))
                 .font(.system(size: 11, weight: .bold))
                 .tracking(1.5)
                 .foregroundColor(AppTheme.textMuted)
@@ -199,7 +199,7 @@ struct TextToImageView: View {
                 HStack(spacing: 12) {
                     Image(systemName: "paintpalette.fill")
                         .font(.system(size: 20, weight: .bold))
-                    Text("Render Masterpiece")
+                    Text(NSLocalizedString("btn_render_masterpiece", comment: ""))
                         .font(.system(size: 17, weight: .bold))
 
                     Spacer()
@@ -223,7 +223,7 @@ struct TextToImageView: View {
 
             HStack(spacing: 6) {
                 Image(systemName: "sparkles").foregroundColor(AppTheme.accentSecondary)
-                Text("AI Artist is ready for your command")
+                Text(NSLocalizedString("label_ai_artist_ready", comment: ""))
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(AppTheme.textMuted)
             }

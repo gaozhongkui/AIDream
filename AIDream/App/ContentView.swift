@@ -55,9 +55,9 @@ struct ContentView: View {
     // MARK: - HypeCut Style Tab Bar
     private var customTabBar: some View {
         HStack(spacing: 0) {
-            tabItem(icon: "square.grid.2x2.fill", label: "Explore", index: 0)
-            tabItem(icon: "wand.and.stars",       label: "Create",  index: 1)
-            tabItem(icon: "person.crop.circle",   label: "Profile", index: 2)
+            tabItem(icon: "square.grid.2x2.fill", label: NSLocalizedString("tab_explore", comment: ""), index: 0)
+            tabItem(icon: "wand.and.stars",       label: NSLocalizedString("tab_create", comment: ""),  index: 1)
+            tabItem(icon: "person.crop.circle",   label: NSLocalizedString("tab_profile", comment: ""), index: 2)
         }
         .frame(height: 55)
         .padding(.vertical, 6)

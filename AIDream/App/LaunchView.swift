@@ -78,7 +78,7 @@ struct LaunchView: View {
                         .tracking(8)
                         .foregroundColor(.white)
 
-                    Text("VISIONARY CREATIVITY")
+                    Text(NSLocalizedString("launch_visionary_creativity", comment: ""))
                         .font(.system(size: 14, weight: .bold))
                         .tracking(5)
                         .foregroundColor(Color(hex: "#2EB5FF").opacity(0.8))
@@ -150,7 +150,7 @@ struct PlayButtonNode: View {
             Image(systemName: "play.fill")
                 .font(.system(size: 18, weight: .bold))
                 .foregroundColor(.white)
-                .offset(x: 2) // 视觉修正居中
+                .offset(x: 2) // 视觉修正居중
         }
     }
 }

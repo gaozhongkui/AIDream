@@ -1,0 +1,175 @@
+/* Tabs */
+"tab_explore" = "Entdecken";
+"tab_create" = "Erstellen";
+"tab_profile" = "Profil";
+
+/* Navigation & Titles */
+"nav_vision_lab" = "Vision Lab";
+"nav_style_sync" = "Style Sync";
+"nav_dream_canvas" = "Dream Canvas";
+"title_creative_history" = "Kreativverlauf";
+"title_trending" = "Aktuelle Trends";
+"title_favorites" = "Favoriten";
+"title_diamond_store" = "Diamantenshop";
+
+/* Buttons */
+"btn_got_it" = "Verstanden";
+"btn_retry" = "Wiederholen";
+"btn_cancel" = "Abbrechen";
+"btn_restore" = "Wiederherstellen";
+"btn_upgrade_pro" = "Auf PRO upgraden";
+"btn_get_diamonds" = "Diamanten holen";
+"btn_cancel_gen" = "Generierung abbrechen";
+"btn_ok" = "OK";
+"btn_terms" = "Bedingungen";
+"btn_privacy" = "Datenschutz";
+"btn_render_masterpiece" = "Meisterwerk rendern";
+"btn_generate_creation" = "Erstellung generieren";
+"btn_sync_generate" = "Sync & Generieren";
+"btn_delete" = "Löschen";
+"btn_share" = "Teilen";
+"btn_download" = "Herunterladen";
+"btn_retake" = "Neu aufnehmen";
+"btn_recharge" = "Aufladen";
+"btn_reset_account" = "Kontodaten zurücksetzen";
+"btn_upload" = "Hochladen";
+
+/* Generation States */
+"state_ready" = "Bereit zum Erstellen";
+"state_uploading" = "Verbindung zur KI...";
+"state_generating" = "Wird generiert...";
+"state_generating_progress" = "Wird generiert... %d%%";
+"state_completed" = "Video bereit";
+"state_loading" = "Laden...";
+"state_downloading" = "Herunterladen...";
+"state_saving" = "Wird gespeichert...";
+"state_saved" = "Gespeichert!";
+
+/* Alerts & Tips */
+"alert_gen_tips_title" = "Generierungstipps";
+"alert_gen_tips_msg" = "Video: Laden Sie ein Startbild hoch, geben Sie einen Prompt ein, und die KI animiert es.\nReferenz: Laden Sie Referenzbilder hoch, um den Stil zu steuern.\nBild: Beschreiben Sie Ihre Vision mit Worten, und die KI malt sie.";
+"alert_insufficient_diamonds" = "Nicht genügend Diamanten";
+"alert_recharge_msg" = "Sie benötigen %d Diamanten zum Generieren. Bitte laden Sie auf, um fortzufahren.";
+"alert_subscribe_pro_msg" = "Sie benötigen %d Diamanten zum Generieren. Abonnieren Sie PRO, um Bonus-Diamanten zu erhalten!";
+"alert_purchase_error" = "Kauffehler";
+"alert_product_not_found" = "Produkt nicht gefunden. Bitte versuchen Sie es erneut.";
+"alert_delete_creation_title" = "Erstellung löschen";
+"alert_delete_creation_msg" = "Sind Sie sicher, dass Sie dieses Meisterwerk löschen möchten?";
+
+/* UI Labels */
+"label_source" = "Quelle";
+"label_duration" = "Dauer";
+"label_quality" = "Qualität";
+"label_aspect_ratio" = "Seitenverhältnis";
+"label_camera" = "Kamera";
+"label_library" = "Mediathek";
+"label_leave_screen_tip" = "Sie können diesen Bildschirm verlassen – wir arbeiten weiter.";
+"label_video" = "Video";
+"label_reference" = "Referenz";
+"label_image" = "Bild";
+"label_imagination_prompt" = "Fantasie-Prompt";
+"label_canvas_ratio" = "LEINWANDVERHÄLTNIS";
+"label_animate_vision" = "VISION ANIMIEREN";
+"label_start_frame" = "Startbild";
+"label_end_frame" = "Endbild";
+"label_style_sync_header" = "STYLE SYNC";
+"label_reference_images" = "Referenzbilder";
+"label_video_settings" = "VIDEO-EINSTELLUNGEN";
+"label_ai_artist_ready" = "KI-Künstler ist bereit für Ihre Befehle";
+"label_no_history" = "Noch keine Erstellungen";
+"label_history_subtitle" = "Ihre KI-generierten Meisterwerke werden hier erscheinen";
+"label_no_favorites" = "Noch keine Favoriten";
+"label_studio" = "Studio";
+"label_preferences" = "Einstellungen";
+"label_vision_artist" = "Vision Artist";
+"label_pro_member" = "PRO-MITGLIED";
+"label_free_member" = "KOSTENLOSES MITGLIED";
+"label_creations" = "Erstellungen";
+"label_likes" = "Gefällt mir";
+"label_diamonds" = "Diamanten";
+"label_pro_membership" = "PRO-Mitgliedschaft";
+"label_unlock_premium" = "Alle Premium-Funktionen freischalten";
+"label_diamond_balance" = "Diamanten-Guthaben";
+"label_app_version_format" = "AnimaPic AI v%@";
+"label_designed_for" = "Entwickelt für visionäre Künstler";
+"label_quality_guaranteed" = "Qualität garantiert · Rückerstattbar";
+
+/* Diamond Store specific */
+"label_current_balance" = "AKTUELLES GUTHABEN";
+"label_diamond_hero_tip" = "Verwenden Sie Diamanten, um KI-Meisterwerke zu generieren";
+"label_membership_bonus_tip" = "Bis zu 10.000 Bonus-Diamanten!";
+"label_diamond_packs" = "DIAMANTEN-PAKETE";
+"label_recharge_subtitle" = "Wählen Sie ein Paket zum Aufladen";
+"label_includes_bonus" = "Inklusive %d Bonus";
+"label_footer_secure" = "Sicher";
+"label_footer_instant" = "Sofort";
+"label_footer_no_expiry" = "Kein Verfall";
+"label_diamond_footer_disclaimer" = "Diamanten werden für KI-Generierungsdienste verwendet. Alle Käufe sind endgültig und nicht erstattungsfähig.";
+
+/* Placeholders */
+"placeholder_text_to_image" = "Malen Sie ein Bild mit Worten... Beschreiben Sie Texturen, Licht und Emotionen.";
+"placeholder_image_to_video" = "Beschreiben Sie die Bewegung oder Szenenwechsel...";
+"placeholder_reference_video" = "Beschreiben Sie die Geschichte oder Szene...";
+
+/* Toasts */
+"toast_download_from_player" = "Bitte vom Video-Player herunterladen";
+"toast_saved_to_gallery" = "In Galerie gespeichert";
+
+/* Generating Messages */
+"gen_msg_1" = "Fast geschafft – Großartiges braucht einen Moment...";
+"gen_msg_2" = "Jedes Frame wird mit neuronaler Präzision erstellt...";
+"gen_msg_3" = "Ihr Meisterwerk nimmt Gestalt an...";
+"gen_msg_4" = "Licht und Bewegung werden verwoben...";
+"gen_msg_5" = "Details werden Pixel für Pixel verfeinert...";
+"gen_msg_6" = "Ihre Vision wird in die Realität umgesetzt...";
+"gen_msg_7" = "KI malt Bewegung aus Ihrer Fantasie...";
+
+/* Errors */
+"err_unknown" = "Ein unerwarteter Fehler ist aufgetreten.";
+"err_missing_api_key" = "API-Schlüssel fehlt";
+"err_invalid_api_key" = "Ungültiger API-Schlüssel. Bitte überprüfen Sie Ihre Einstellungen.";
+"err_insufficient_credits" = "Nicht genügend Guthaben bei OpenRouter.";
+"err_service_error" = "Dienstfehler (%d)";
+"err_no_job_id" = "Akzeptiert, aber keine Video-Job-ID zurückgegeben.";
+"err_gen_failed" = "Generierung fehlgeschlagen";
+"err_url_not_found" = "Video generiert, aber Link wurde nicht gefunden.";
+"err_timeout" = "Generierung dauert zu lange. Bitte schauen Sie später noch einmal vorbei.";
+"err_creation_failed" = "Videoerstellung fehlgeschlagen.";
+"err_insecure_source" = "Unsichere Videoquelle.";
+"err_prefix" = "Fehler: %@";
+"err_invalid_url" = "Ungültige URL";
+"err_invalid_response" = "Ungültige Antwort";
+"err_no_permission" = "Keine Berechtigung";
+"err_failed" = "Fehlgeschlagen";
+
+/* Premium View */
+"premium_title" = "AnimaPic AI Pro";
+"premium_subtitle" = "Das volle Potenzial der KI freischalten";
+"premium_feature_1_title" = "Ultraschnell";
+"premium_feature_1_desc" = "Bevorzugter Zugriff";
+"premium_feature_2_title" = "4K Video";
+"premium_feature_2_desc" = "Cinematische Qualität";
+"premium_feature_3_title" = "1.200 Bonus";
+"premium_feature_3_desc" = "Monatlicher Anspruch";
+"premium_feature_4_title" = "Pro Modelle";
+"premium_feature_4_desc" = "Private künstlerische KI";
+
+"premium_plan_weekly" = "Wöchentlich";
+"premium_plan_monthly" = "Monatlich";
+"premium_plan_lifetime" = "Lebenslang";
+"premium_plan_diamonds_suffix" = "Diamanten";
+"premium_plan_lifetime_desc" = "10.000 Diamanten & Permanenter VIP";
+"premium_includes_diamonds" = "Inklusive %d Diamanten";
+
+"premium_tag_popular" = "BELIEBT";
+"premium_tag_best_value" = "BESTER WERT";
+"premium_tag_whale" = "WHALE";
+"premium_tag_active" = "AKTIV";
+
+"premium_btn_active" = "Aktuelles Abo aktiv";
+"premium_btn_switch" = "Abo wechseln";
+"premium_btn_unlock" = "Pro-Funktionen freischalten";
+"premium_footer_tip" = "Jederzeit kündbar. Sofortige Aktivierung.";
+
+/* Launch View */
+"launch_visionary_creativity" = "VISIONÄRE KREATIVITÄT";

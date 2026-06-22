@@ -1,0 +1,197 @@
+/* Tabs */
+"tab_explore" = "Explore";
+"tab_create" = "Create";
+"tab_profile" = "Profile";
+
+/* Navigation & Titles */
+"nav_vision_lab" = "Vision Lab";
+"nav_style_sync" = "Style Sync";
+"nav_dream_canvas" = "Dream Canvas";
+"title_creative_history" = "Creative History";
+"title_trending" = "Trending Now";
+"title_favorites" = "Favorites";
+"title_diamond_store" = "Diamond Store";
+"title_feedback" = "Feedback";
+
+/* Buttons */
+"btn_got_it" = "Got it";
+"btn_retry" = "Retry";
+"btn_cancel" = "Cancel";
+"btn_restore" = "Restore";
+"btn_upgrade_pro" = "Upgrade to PRO";
+"btn_get_diamonds" = "Get Diamonds";
+"btn_cancel_gen" = "Cancel Generation";
+"btn_ok" = "OK";
+"btn_terms" = "Terms";
+"btn_privacy" = "Privacy";
+"btn_render_masterpiece" = "Render Masterpiece";
+"btn_generate_creation" = "Generate Creation";
+"btn_sync_generate" = "Sync & Generate";
+"btn_delete" = "Delete";
+"btn_share" = "Share";
+"btn_download" = "Download";
+"btn_retake" = "Retake";
+"btn_recharge" = "Recharge";
+"btn_reset_account" = "Reset Account Data";
+"btn_upload" = "Upload";
+"btn_submit" = "Submit";
+
+/* Generation States */
+"state_ready" = "Ready to Create";
+"state_uploading" = "Connecting to AI...";
+"state_generating" = "Generating...";
+"state_generating_progress" = "Generating... %d%%";
+"state_completed" = "Video Ready";
+"state_loading" = "Loading...";
+"state_downloading" = "Downloading...";
+"state_saving" = "Saving...";
+"state_saved" = "Saved!";
+"state_preparing" = "Preparing...";
+"state_requesting_server" = "Requesting server...";
+"state_processing_image" = "Processing image...";
+"state_done" = "Done";
+
+/* Alerts & Tips */
+"alert_gen_tips_title" = "Generation Tips";
+"alert_gen_tips_msg" = "Video: Upload a start frame image, add a prompt, and AI will animate it.\nReference: Upload reference images to guide the style.\nImage: Describe your vision in words and AI will paint it.";
+"alert_insufficient_diamonds" = "Insufficient Diamonds";
+"alert_recharge_msg" = "You need %d diamonds to generate. Please recharge to continue.";
+"alert_subscribe_pro_msg" = "You need %d diamonds to generate. Subscribe to PRO to get bonus diamonds!";
+"alert_purchase_error" = "Purchase Error";
+"alert_product_not_found" = "Product not found. Please try again.";
+"alert_delete_creation_title" = "Delete Creation";
+"alert_delete_creation_msg" = "Are you sure you want to delete this masterpiece?";
+"alert_feedback_success_title" = "Feedback Successful";
+"alert_feedback_success_msg" = "Thank you for your feedback!";
+
+/* UI Labels */
+"label_source" = "Source";
+"label_duration" = "Duration";
+"label_quality" = "Quality";
+"label_aspect_ratio" = "Aspect Ratio";
+"label_camera" = "Camera";
+"label_library" = "Library";
+"label_leave_screen_tip" = "You can leave this screen — we'll keep working.";
+"label_video" = "Video";
+"label_reference" = "Reference";
+"label_image" = "Image";
+"label_imagination_prompt" = "Imagination Prompt";
+"label_canvas_ratio" = "CANVAS RATIO";
+"label_animate_vision" = "ANIMATE VISION";
+"label_start_frame" = "Start Frame Image";
+"label_end_frame" = "End Frame Image";
+"label_style_sync_header" = "STYLE SYNC";
+"label_reference_images" = "Reference Images";
+"label_video_settings" = "VIDEO SETTINGS";
+"label_ai_artist_ready" = "AI Artist is ready for your command";
+"label_no_history" = "No creations yet";
+"label_history_subtitle" = "Your AI-generated masterpieces will appear here";
+"label_no_favorites" = "No favorites yet";
+"label_no_favorites_subtitle" = "Find something you like in Explore and save it here!";
+"label_studio" = "Studio";
+"label_preferences" = "Preferences";
+"label_vision_artist" = "Vision Artist";
+"label_pro_member" = "PRO MEMBER";
+"label_free_member" = "FREE MEMBER";
+"label_creations" = "Creations";
+"label_likes" = "Likes";
+"label_diamonds" = "Diamonds";
+"label_pro_membership" = "PRO Membership";
+"label_unlock_premium" = "Unlock all premium features";
+"label_diamond_balance" = "Diamond Balance";
+"label_app_version_format" = "AnimaPic AI v%@";
+"label_designed_for" = "Designed for Visionary Artists";
+"label_quality_guaranteed" = "Quality Guaranteed · Refundable";
+"label_explore_subtitle" = "Discover AI-generated masterpieces";
+"label_feedback_subtitle" = "We value your feedback to improve our app. Please describe your experience below.";
+
+/* Diamond Store specific */
+"label_current_balance" = "CURRENT BALANCE";
+"label_diamond_hero_tip" = "Use diamonds to generate AI masterpieces";
+"label_membership_bonus_tip" = "Up to 10,000 bonus diamonds!";
+"label_diamond_packs" = "DIAMOND PACKS";
+"label_recharge_subtitle" = "Select a package to recharge";
+"label_includes_bonus" = "Includes %d bonus";
+"label_footer_secure" = "Secure";
+"label_footer_instant" = "Instant";
+"label_footer_no_expiry" = "No Expiry";
+"label_diamond_footer_disclaimer" = "Diamonds are used for AI generation services. All purchases are final and non-refundable.";
+
+/* Placeholders */
+"placeholder_text_to_image" = "Paint a picture with words... Describe textures, lighting, and emotions.";
+"placeholder_image_to_video" = "Describe the motion or scene changes...";
+"placeholder_reference_video" = "Describe the story or scene...";
+"placeholder_cinematic_video" = "A cinematic video with high quality motion";
+"placeholder_feedback" = "Write your feedback here...";
+
+/* Toasts */
+"toast_download_from_player" = "Please download from video player";
+"toast_saved_to_gallery" = "Saved to gallery";
+"toast_pull_to_refresh" = "Pull to refresh";
+"toast_network_error_retry" = "Network error — pull to retry";
+
+/* Generating Messages */
+"gen_msg_1" = "Almost there — greatness takes a moment...";
+"gen_msg_2" = "Crafting every frame with neural precision...";
+"gen_msg_3" = "Your masterpiece is materializing...";
+"gen_msg_4" = "Weaving light and motion together...";
+"gen_msg_5" = "Polishing details, one pixel at a time...";
+"gen_msg_6" = "Translating your vision into reality...";
+"gen_msg_7" = "AI is painting motion from your imagination...";
+
+/* Errors */
+"err_unknown" = "An unexpected error occurred.";
+"err_missing_api_key" = "API Key Missing";
+"err_invalid_api_key" = "Invalid API Key. Please check your settings.";
+"err_insufficient_credits" = "Insufficient credits on OpenRouter.";
+"err_service_error" = "Service Error (%d)";
+"err_no_job_id" = "Accepted, but no video job ID returned.";
+"err_gen_failed" = "Generation failed";
+"err_url_not_found" = "Video generated but link was not found.";
+"err_timeout" = "Generation took too long. Please check back later.";
+"err_creation_failed" = "Video creation failed.";
+"err_insecure_source" = "Insecure video source.";
+"err_prefix" = "Error: %@";
+"err_invalid_url" = "Invalid URL";
+"err_invalid_response" = "Invalid Response";
+"err_no_permission" = "No Permission";
+"err_failed" = "Failed";
+"err_all_providers_failed" = "All image providers failed, please try again later";
+"err_invalid_prompt" = "Invalid prompt";
+"err_invalid_image_data" = "Failed to parse image data";
+
+/* Premium View */
+"premium_title" = "AnimaPic AI Pro";
+"premium_subtitle" = "Unlock the full potential of AI";
+"premium_feature_1_title" = "Ultra-Fast";
+"premium_feature_1_desc" = "Priority access";
+"premium_feature_2_title" = "4K Video";
+"premium_feature_2_desc" = "Cinematic quality";
+"premium_feature_3_title" = "1,200 Bonus";
+"premium_feature_3_desc" = "Monthly claim";
+"premium_feature_4_title" = "Pro Models";
+"premium_feature_4_desc" = "Private artistic AI";
+
+"premium_plan_weekly" = "Weekly";
+"premium_plan_monthly" = "Monthly";
+"premium_plan_lifetime" = "Lifetime";
+"premium_plan_diamonds_suffix" = "Diamonds";
+"premium_plan_lifetime_desc" = "10,000 Diamonds & Permanent VIP";
+"premium_includes_diamonds" = "Includes %d Diamonds";
+
+"premium_tag_popular" = "POPULAR";
+"premium_tag_best_value" = "BEST VALUE";
+"premium_tag_whale" = "WHALE";
+"premium_tag_active" = "ACTIVE";
+
+"premium_btn_active" = "Current Plan Active";
+"premium_btn_switch" = "Switch Plan";
+"premium_btn_unlock" = "Unlock Pro Features";
+"premium_footer_tip" = "Cancel anytime. Instant activation.";
+
+/* Launch View */
+"launch_visionary_creativity" = "VISIONARY CREATIVITY";
+
+/* Video List */
+"label_end_of_universe" = "— End of the universe —";
+"label_no_videos" = "No videos yet";

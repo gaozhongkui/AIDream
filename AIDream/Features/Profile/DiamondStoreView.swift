@@ -29,19 +29,19 @@ struct DiamondStoreView: View {
         DiamondPackage(
             id: "900",
             productID: .diamonds1000,
-            diamonds: 800, price: "$4.99", bonus: 100, tag: "POPULAR",
+            diamonds: 800, price: "$4.99", bonus: 100, tag: NSLocalizedString("premium_tag_popular", comment: ""),
             icon: "bolt.fill", color: Color(hex: "#4FD1C5")
         ),
         DiamondPackage(
             id: "2000",
             productID: .diamonds2500,
-            diamonds: 1800, price: "$9.99", bonus: 200, tag: "BEST VALUE",
+            diamonds: 1800, price: "$9.99", bonus: 200, tag: NSLocalizedString("premium_tag_best_value", comment: ""),
             icon: "flame.fill", color: Color(hex: "#F6AD55")
         ),
         DiamondPackage(
             id: "5000",
             productID: .diamonds6000,
-            diamonds: 4000, price: "$19.99", bonus: 1000, tag: "WHALE",
+            diamonds: 4000, price: "$19.99", bonus: 1000, tag: NSLocalizedString("premium_tag_whale", comment: ""),
             icon: "crown.fill", color: Color(hex: "#F687B3")
         )
     ]
@@ -73,7 +73,7 @@ struct DiamondStoreView: View {
                         subscriptionBanner
 
                         VStack(alignment: .leading, spacing: 16) {
-                            sectionHeader(title: "DIAMOND PACKS", subtitle: "Select a package to recharge")
+                            sectionHeader(title: NSLocalizedString("label_diamond_packs", comment: ""), subtitle: NSLocalizedString("label_recharge_subtitle", comment: ""))
 
                             VStack(spacing: 12) {
                                 ForEach(packages) { pkg in
@@ -112,12 +112,12 @@ struct DiamondStoreView: View {
                     .background(Circle().fill(Color.white.opacity(0.1)))
             }
             Spacer()
-            Text("Recharge")
+            Text(NSLocalizedString("btn_recharge", comment: ""))
                 .font(.system(size: 18, weight: .bold))
                 .foregroundColor(.white)
             Spacer()
             Button(action: { Task { await storeKit.restorePurchases() } }) {
-                Text("Restore")
+                Text(NSLocalizedString("btn_restore", comment: ""))
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(AppTheme.textSecondary)
             }
@@ -129,7 +129,7 @@ struct DiamondStoreView: View {
 
     private var balanceHeroSection: some View {
         VStack(spacing: 12) {
-            Text("CURRENT BALANCE")
+            Text(NSLocalizedString("label_current_balance", comment: ""))
                 .font(.system(size: 12, weight: .bold))
                 .tracking(1.5)
                 .foregroundColor(AppTheme.textMuted)
@@ -145,7 +145,7 @@ struct DiamondStoreView: View {
             }
             .scaleEffect(appearAnimation ? 1.0 : 0.9)
 
-            Text("Use diamonds to generate AI masterpieces")
+            Text(NSLocalizedString("label_diamond_hero_tip", comment: ""))
                 .font(.system(size: 13))
                 .foregroundColor(AppTheme.textSecondary)
         }
@@ -167,10 +167,10 @@ struct DiamondStoreView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("PRO MEMBERSHIP")
+                    Text(NSLocalizedString("label_pro_membership", comment: ""))
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.white)
-                    Text("Up to 10,000 bonus diamonds!")
+                    Text(NSLocalizedString("label_membership_bonus_tip", comment: ""))
                         .font(.system(size: 12))
                         .foregroundColor(AppTheme.textSecondary)
                 }
@@ -236,13 +236,13 @@ struct DiamondStoreView: View {
                         Text("\(pkg.totalDiamonds)")
                             .font(.system(size: 18, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
-                        Text("Diamonds")
+                        Text(NSLocalizedString("label_diamonds", comment: ""))
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(AppTheme.textSecondary)
                     }
 
                     if pkg.bonus > 0 {
-                        Text("Includes \(pkg.bonus) bonus")
+                        Text(String(format: NSLocalizedString("label_includes_bonus", comment: ""), pkg.bonus))
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(AppTheme.success)
                     }
@@ -293,12 +293,12 @@ struct DiamondStoreView: View {
     private var footerSection: some View {
         VStack(spacing: 20) {
             HStack(spacing: 24) {
-                footerIconItem(icon: "shield.fill", text: "Secure")
-                footerIconItem(icon: "bolt.fill", text: "Instant")
-                footerIconItem(icon: "clock.fill", text: "No Expiry")
+                footerIconItem(icon: "shield.fill", text: NSLocalizedString("label_footer_secure", comment: ""))
+                footerIconItem(icon: "bolt.fill", text: NSLocalizedString("label_footer_instant", comment: ""))
+                footerIconItem(icon: "clock.fill", text: NSLocalizedString("label_footer_no_expiry", comment: ""))
             }
 
-            Text("Diamonds are used for AI generation services. All purchases are final and non-refundable.")
+            Text(NSLocalizedString("label_diamond_footer_disclaimer", comment: ""))
                 .font(.system(size: 11))
                 .foregroundColor(AppTheme.textMuted)
                 .multilineTextAlignment(.center)

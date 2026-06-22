@@ -23,7 +23,7 @@ struct HistoryView: View {
                             .overlay(Circle().stroke(Color.white.opacity(0.15), lineWidth: 0.5))
                     }
                     Spacer()
-                    Text("Creative History")
+                    Text(NSLocalizedString("title_creative_history", comment: ""))
                         .font(.system(size: 18, weight: .bold))
                         .foregroundColor(.white)
                     Spacer()
@@ -66,10 +66,10 @@ struct HistoryView: View {
                     .font(.system(size: 36))
                     .foregroundStyle(AppTheme.accentGrad)
             }
-            Text("No creations yet")
+            Text(NSLocalizedString("label_no_history", comment: ""))
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(AppTheme.textSecondary)
-            Text("Your AI-generated masterpieces will appear here")
+            Text(NSLocalizedString("label_history_subtitle", comment: ""))
                 .font(.system(size: 13))
                 .foregroundColor(AppTheme.textMuted)
                 .multilineTextAlignment(.center)
@@ -200,7 +200,7 @@ struct HistoryCard: View {
                     // 媒体类型标签
                     VStack {
                         HStack {
-                            Text(item.type == .video ? "VIDEO" : "IMAGE")
+                            Text(item.type == .video ? NSLocalizedString("label_video", comment: "") : NSLocalizedString("label_image", comment: ""))
                                 .font(.system(size: 9, weight: .black))
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 8)
@@ -327,7 +327,7 @@ struct HistoryCard: View {
                 UISaveVideoAtPathToSavedPhotosAlbum(url.path, nil, nil, nil)
             } else {
                 // 如果是远程视频，跳转到详情页下载更好，或者这里提示不支持直接从预览保存
-                toastMessage = "Please download from video player"
+                toastMessage = NSLocalizedString("toast_download_from_player", comment: "")
                 return
             }
         } else {
@@ -335,7 +335,7 @@ struct HistoryCard: View {
                 UIImageWriteToSavedPhotosAlbum(img, nil, nil, nil)
             }
         }
-        toastMessage = "Saved to gallery"
+        toastMessage = NSLocalizedString("toast_saved_to_gallery", comment: "")
     }
 
     private func shareMedia() {

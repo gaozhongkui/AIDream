@@ -22,12 +22,14 @@ struct PremiumView: View {
         let color: Color
     }
 
-    private let features = [
-        FeatureItem(icon: "bolt.fill", title: "Ultra-Fast", description: "Priority access", color: Color(hex: "#FFD700")),
-        FeatureItem(icon: "sparkles", title: "4K Video", description: "Cinematic quality", color: Color(hex: "#A07BFF")),
-        FeatureItem(icon: "diamond.fill", title: "1,200 Bonus", description: "Monthly claim", color: Color(hex: "#6F31D5")),
-        FeatureItem(icon: "crown.fill", title: "Pro Models", description: "Private artistic AI", color: Color(hex: "#FF8C00"))
-    ]
+    private var features: [FeatureItem] {
+        [
+            FeatureItem(icon: "bolt.fill", title: NSLocalizedString("premium_feature_1_title", comment: ""), description: NSLocalizedString("premium_feature_1_desc", comment: ""), color: Color(hex: "#FFD700")),
+            FeatureItem(icon: "sparkles", title: NSLocalizedString("premium_feature_2_title", comment: ""), description: NSLocalizedString("premium_feature_2_desc", comment: ""), color: Color(hex: "#A07BFF")),
+            FeatureItem(icon: "diamond.fill", title: NSLocalizedString("premium_feature_3_title", comment: ""), description: NSLocalizedString("premium_feature_3_desc", comment: ""), color: Color(hex: "#6F31D5")),
+            FeatureItem(icon: "crown.fill", title: NSLocalizedString("premium_feature_4_title", comment: ""), description: NSLocalizedString("premium_feature_4_desc", comment: ""), color: Color(hex: "#FF8C00"))
+        ]
+    }
 
     var body: some View {
         ZStack {
@@ -91,11 +93,11 @@ struct PremiumView: View {
                 SafariView(url: url).ignoresSafeArea()
             }
         }
-        .alert("Purchase Error", isPresented: Binding(
+        .alert(NSLocalizedString("alert_purchase_error", comment: ""), isPresented: Binding(
             get: { storeKit.purchaseError != nil && purchasingID == nil },
             set: { if !$0 { storeKit.purchaseError = nil } }
         )) {
-            Button("OK") { storeKit.purchaseError = nil }
+            Button(NSLocalizedString("btn_ok", comment: "")) { storeKit.purchaseError = nil }
         } message: {
             Text(storeKit.purchaseError ?? "")
         }
@@ -116,7 +118,7 @@ struct PremiumView: View {
             }
             Spacer()
             Button(action: { Task { await storeKit.restorePurchases() } }) {
-                Text("Restore")
+                Text(NSLocalizedString("btn_restore", comment: ""))
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(AppTheme.textSecondary)
             }
@@ -148,11 +150,11 @@ struct PremiumView: View {
             .scaleEffect(appearAnimation ? 1.0 : 0.8)
 
             VStack(spacing: 6) {
-                Text("AnimaPic AI Pro")
+                Text(NSLocalizedString("premium_title", comment: ""))
                     .font(.system(size: 28, weight: .black))
                     .foregroundColor(.white)
 
-                Text("Unlock the full potential of AI")
+                Text(NSLocalizedString("premium_subtitle", comment: ""))
                     .font(.system(size: 15))
                     .foregroundColor(AppTheme.textSecondary)
             }
@@ -204,7 +206,7 @@ struct PremiumView: View {
                     planCard(title: product.displayName,
                              price: product.displayPrice,
                              id: product.id,
-                             subTitle: diamondAmount > 0 ? "Includes \(diamondAmount) Diamonds" : product.description)
+                             subTitle: diamondAmount > 0 ? String(format: NSLocalizedString("premium_includes_diamonds", comment: ""), diamondAmount) : product.description)
                 }
             }
         }
@@ -213,9 +215,9 @@ struct PremiumView: View {
 
     private var fallbackPlans: some View {
         VStack(spacing: 10) {
-            planCard(title: "Weekly", price: "$4.99", id: StoreProductID.premiumWeekly.rawValue, subTitle: "500 Diamonds")
-            planCard(title: "Monthly", price: "$12.99", id: StoreProductID.premiumMonthly.rawValue, subTitle: "1,200 Diamonds", tag: "POPULAR")
-            planCard(title: "Lifetime", price: "$129.99", id: StoreProductID.premiumLifetime.rawValue, subTitle: "10,000 Diamonds & Permanent VIP", tag: "BEST VALUE")
+            planCard(title: NSLocalizedString("premium_plan_weekly", comment: ""), price: "$4.99", id: StoreProductID.premiumWeekly.rawValue, subTitle: "500 " + NSLocalizedString("premium_plan_diamonds_suffix", comment: ""))
+            planCard(title: NSLocalizedString("premium_plan_monthly", comment: ""), price: "$12.99", id: StoreProductID.premiumMonthly.rawValue, subTitle: "1,200 " + NSLocalizedString("premium_plan_diamonds_suffix", comment: ""), tag: NSLocalizedString("premium_tag_popular", comment: ""))
+            planCard(title: NSLocalizedString("premium_plan_lifetime", comment: ""), price: "$129.99", id: StoreProductID.premiumLifetime.rawValue, subTitle: NSLocalizedString("premium_plan_lifetime_desc", comment: ""), tag: NSLocalizedString("premium_tag_best_value", comment: ""))
         }
     }
 
@@ -240,7 +242,7 @@ struct PremiumView: View {
                                 .minimumScaleFactor(0.8)
 
                             if isActive {
-                                Text("ACTIVE")
+                                Text(NSLocalizedString("premium_tag_active", comment: ""))
                                     .font(.system(size: 10, weight: .bold))
                                     .padding(.horizontal, 6)
                                     .padding(.vertical, 2)
@@ -308,7 +310,7 @@ struct PremiumView: View {
             }
             
             guard let product = storeKit.subscriptionProducts.first(where: { $0.id == selectedProductID }) else {
-                storeKit.purchaseError = "Product not found. Please try again."
+                storeKit.purchaseError = NSLocalizedString("alert_product_not_found", comment: "")
                 return
             }
             
@@ -326,7 +328,7 @@ struct PremiumView: View {
                 if purchasingID != nil {
                     ProgressView().tint(AppTheme.vipBg)
                 } else {
-                    Text(isCurrentProductActive ? "Current Plan Active" : (userService.isPremium ? "Switch Plan" : "Unlock Pro Features"))
+                    Text(isCurrentProductActive ? NSLocalizedString("premium_btn_active", comment: "") : (userService.isPremium ? NSLocalizedString("premium_btn_switch", comment: "") : NSLocalizedString("premium_btn_unlock", comment: "")))
                         .font(.system(size: 18, weight: .bold))
                 }
             }
@@ -348,22 +350,22 @@ struct PremiumView: View {
 
     private var footerLinks: some View {
         VStack(spacing: 8) {
-            Text("Cancel anytime. Instant activation.")
+            Text(NSLocalizedString("premium_footer_tip", comment: ""))
                 .font(.system(size: 12))
                 .foregroundColor(AppTheme.textMuted)
 
             HStack(spacing: 12) {
-                Button("Terms") {
+                Button(NSLocalizedString("btn_terms", comment: "")) {
                     safariURL = URL(string: AIConfig.shared.termsOfServiceURL)
                     showSafari = true
                 }
                 Text("•")
-                Button("Privacy") {
+                Button(NSLocalizedString("btn_privacy", comment: "")) {
                     safariURL = URL(string: AIConfig.shared.privacyPolicyURL)
                     showSafari = true
                 }
                 Text("•")
-                Button("Restore") {
+                Button(NSLocalizedString("btn_restore", comment: "")) {
                     Task { await storeKit.restorePurchases() }
                 }
             }

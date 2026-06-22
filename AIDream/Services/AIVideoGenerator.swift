@@ -18,11 +18,11 @@ class AIVideoGenerator: ObservableObject {
 
         var description: String {
             switch self {
-            case .idle:               return "Ready to Create"
-            case .uploading:          return "Connecting to AI..."
-            case .generating(let p):  return "Generating... \(Int(p * 100))%"
-            case .completed(_):       return "Video Ready"
-            case .failed(let e):      return "Error: \(e)"
+            case .idle:               return NSLocalizedString("state_ready", comment: "")
+            case .uploading:          return NSLocalizedString("state_uploading", comment: "")
+            case .generating(let p):  return String(format: NSLocalizedString("state_generating_progress", comment: ""), Int(p * 100))
+            case .completed(_):       return NSLocalizedString("state_completed", comment: "")
+            case .failed(let e):      return String(format: NSLocalizedString("err_prefix", comment: ""), e)
             }
         }
     }
@@ -77,7 +77,7 @@ class AIVideoGenerator: ObservableObject {
                 // 验证 URL 合法性
                 guard videoURL.scheme == "https" || videoURL.isFileURL else {
                     logger.error("Security Risk: AI returned an invalid URL: \(videoURL.absoluteString)")
-                    throw VideoError.serverError("Insecure video source.")
+                    throw VideoError.serverError(NSLocalizedString("err_insecure_source", comment: ""))
                 }
 
                 state = .completed(videoURL)
@@ -91,7 +91,7 @@ class AIVideoGenerator: ObservableObject {
                 state = .failed(error.localizedDescription)
             } catch {
                 logger.error("Unknown Failure: \(error.localizedDescription)")
-                state = .failed("An unexpected error occurred.")
+                state = .failed(NSLocalizedString("err_unknown", comment: ""))
             }
         }
     }
@@ -128,7 +128,7 @@ class AIVideoGenerator: ObservableObject {
         // 构造标准的多模态视频 Body 骨架
         var body: [String: Any] = [
             "model": AIConfig.shared.openRouterVideoModel,
-            "prompt": prompt.isEmpty ? "A cinematic video with high quality motion" : prompt,
+            "prompt": prompt.isEmpty ? NSLocalizedString("placeholder_cinematic_video", comment: "") : prompt,
             "aspect_ratio": ratio
         ]
 
@@ -182,13 +182,13 @@ class AIVideoGenerator: ObservableObject {
         guard let http = response as? HTTPURLResponse else { throw VideoError.invalidResponse }
 
         if http.statusCode == 401 {
-            throw VideoError.serverError("Invalid API Key. Please check your settings.")
+            throw VideoError.serverError(NSLocalizedString("err_invalid_api_key", comment: ""))
         } else if http.statusCode == 402 {
-            throw VideoError.serverError("Insufficient credits on OpenRouter.")
+            throw VideoError.serverError(NSLocalizedString("err_insufficient_credits", comment: ""))
         } else if http.statusCode >= 400 {
-            let rawBody = String(data: data, encoding: .utf8) ?? "Unknown Error"
+            let rawBody = String(data: data, encoding: .utf8) ?? NSLocalizedString("err_unknown", comment: "")
             logger.error("HTTP \(http.statusCode) Error Response: \(rawBody)")
-            throw VideoError.serverError("Service Error (\(http.statusCode))")
+            throw VideoError.serverError(String(format: NSLocalizedString("err_service_error", comment: ""), http.statusCode))
         }
 
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
@@ -197,7 +197,7 @@ class AIVideoGenerator: ObservableObject {
 
         // 解析下发的异步生成 Job ID
         guard let jobId = json["id"] as? String ?? (json["data"] as? [String: Any])?["id"] as? String else {
-            throw VideoError.serverError("Accepted, but no video job ID returned.")
+            throw VideoError.serverError(NSLocalizedString("err_no_job_id", comment: ""))
         }
 
         logger.info("Job Created Successfully. ID: \(jobId)")
@@ -260,7 +260,7 @@ class AIVideoGenerator: ObservableObject {
                 case "failed", "error", "cancelled", "expired":
                     let msg = jobInfo["error"] as? String ??
                               (jobInfo["data"] as? [String: Any])?["error"] as? String ??
-                              "Generation failed"
+                              NSLocalizedString("err_gen_failed", comment: "")
                     throw VideoError.serverError(msg)
 
                 default:
@@ -341,11 +341,13 @@ class AIVideoGenerator: ObservableObject {
         case missingApiKey, invalidURL, serverError(String), invalidResponse, urlNotFound, timeout
         var errorDescription: String? {
             switch self {
-            case .missingApiKey: return "API Key Missing"
+            case .missingApiKey: return NSLocalizedString("err_missing_api_key", comment: "")
             case .serverError(let s): return s
-            case .timeout: return "Generation took too long. Please check back later."
-            case .urlNotFound: return "Video generated but link was not found."
-            default: return "Video creation failed."
+            case .timeout: return NSLocalizedString("err_timeout", comment: "")
+            case .urlNotFound: return NSLocalizedString("err_url_not_found", comment: "")
+            case .invalidURL: return NSLocalizedString("err_invalid_url", comment: "")
+            case .invalidResponse: return NSLocalizedString("err_invalid_response", comment: "")
+            default: return NSLocalizedString("err_creation_failed", comment: "")
             }
         }
     }

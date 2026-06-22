@@ -34,13 +34,13 @@ class AIImageGenerator {
 
         var description: String {
             switch self {
-            case .idle: return "Ready"
-            case .preparing: return "Preparing..."
-            case .requesting: return "Requesting server..."
-            case .downloading(let p): return "Downloading \(Int(p * 100))%"
-            case .processing: return "Processing image..."
-            case .completed: return "Done"
-            case .failed(let e): return "Failed: \(e)"
+            case .idle: return NSLocalizedString("state_ready", comment: "")
+            case .preparing: return NSLocalizedString("state_preparing", comment: "")
+            case .requesting: return NSLocalizedString("state_requesting_server", comment: "")
+            case .downloading(let p): return String(format: NSLocalizedString("state_downloading_progress", comment: ""), Int(p * 100))
+            case .processing: return NSLocalizedString("state_processing_image", comment: "")
+            case .completed: return NSLocalizedString("state_done", comment: "")
+            case .failed(let e): return String(format: NSLocalizedString("err_failed_prefix", comment: ""), e)
             }
         }
     }
@@ -526,13 +526,13 @@ class AIImageGenerator {
 
         var errorDescription: String? {
             switch self {
-            case .invalidPrompt:       return "Invalid prompt"
-            case .invalidURL:          return "Failed to build URL"
-            case .networkError(let e): return "Network error: \(e.localizedDescription)"
-            case .invalidImageData:    return "Failed to parse image data"
-            case .httpError(let code): return "Server error: HTTP \(code)"
-            case .missingAPIKey:        return "Missing API key"
-            case .allProvidersFailed:  return "All image providers failed, please try again later"
+            case .invalidPrompt:       return NSLocalizedString("err_invalid_prompt", comment: "")
+            case .invalidURL:          return NSLocalizedString("err_invalid_url", comment: "")
+            case .networkError(let e): return String(format: NSLocalizedString("err_network_error_prefix", comment: ""), e.localizedDescription)
+            case .invalidImageData:    return NSLocalizedString("err_invalid_image_data", comment: "")
+            case .httpError(let code): return String(format: NSLocalizedString("err_service_error", comment: ""), code)
+            case .missingAPIKey:        return NSLocalizedString("err_missing_api_key", comment: "")
+            case .allProvidersFailed:  return NSLocalizedString("err_all_providers_failed", comment: "")
             }
         }
     }

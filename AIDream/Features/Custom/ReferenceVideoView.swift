@@ -58,11 +58,11 @@ struct ReferenceVideoView: View {
                     promptSection
 
                     VStack(spacing: 24) {
-                        optionRow(title: "Duration",
+                        optionRow(title: NSLocalizedString("label_duration", comment: ""),
                                   options: ["6s", "10s"],
                                   selection: $selectedDuration,
                                   proOptions: ["10s"])
-                        optionRow(title: "Quality",
+                        optionRow(title: NSLocalizedString("label_quality", comment: ""),
                                   options: ["Standard", "High", "Ultra HD"],
                                   selection: $selectedQuality,
                                   proOptions: ["High", "Ultra HD"])
@@ -92,7 +92,7 @@ struct ReferenceVideoView: View {
                         Text(msg)
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(AppTheme.error)
-                        Button("Retry") { handleGenerate() }
+                        Button(NSLocalizedString("btn_retry", comment: "")) { handleGenerate() }
                             .font(.system(size: 13, weight: .bold))
                             .foregroundColor(AppTheme.accentSecondary)
                     }
@@ -183,18 +183,18 @@ struct ReferenceVideoView: View {
             }
             .ignoresSafeArea()
         }
-        .alert("Insufficient Diamonds", isPresented: $showInsufficientDiamondsAlert) {
+        .alert(NSLocalizedString("alert_insufficient_diamonds", comment: ""), isPresented: $showInsufficientDiamondsAlert) {
             if userService.isPremium {
-                Button("Get Diamonds") { activeSheet = .diamondStore }
+                Button(NSLocalizedString("btn_get_diamonds", comment: "")) { activeSheet = .diamondStore }
             } else {
-                Button("Upgrade to PRO") { activeSheet = .premium }
+                Button(NSLocalizedString("btn_upgrade_pro", comment: "")) { activeSheet = .premium }
             }
-            Button("Cancel", role: .cancel) {}
+            Button(NSLocalizedString("btn_cancel", comment: ""), role: .cancel) {}
         } message: {
             if userService.isPremium {
-                Text("You need \(generationCost) diamonds to generate a video. Please recharge to continue.")
+                Text(String(format: NSLocalizedString("alert_recharge_msg", comment: ""), generationCost))
             } else {
-                Text("You need \(generationCost) diamonds to generate a video. Subscribe to PRO to get 500 bonus diamonds!")
+                Text(String(format: NSLocalizedString("alert_subscribe_pro_msg", comment: ""), generationCost))
             }
         }
     }
@@ -202,7 +202,7 @@ struct ReferenceVideoView: View {
     // MARK: - Components
     private var referenceImageUploadSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Label("Visual References", systemImage: "photo.stack.fill")
+            Label(NSLocalizedString("label_reference_images", comment: ""), systemImage: "photo.stack.fill")
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(AppTheme.accentSecondary)
             HStack(spacing: 12) {
@@ -233,8 +233,10 @@ struct ReferenceVideoView: View {
                     VStack(spacing: 8) {
                         Image(systemName: index == 0 ? "plus.viewfinder" : "plus")
                             .font(.system(size: 20, weight: .semibold))
-                        Text(index == 0 ? "Key Frame" : "Add")
+                        Text(index == 0 ? NSLocalizedString("label_start_frame", comment: "") : NSLocalizedString("btn_upload", comment: ""))
                             .font(.system(size: 10, weight: .bold))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
                     }
                 }
             }
@@ -249,7 +251,7 @@ struct ReferenceVideoView: View {
 
     private var promptSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Label("Evolution Description", systemImage: "sparkles")
+            Label(NSLocalizedString("label_style_sync_header", comment: ""), systemImage: "sparkles")
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(AppTheme.accentSecondary)
             ZStack(alignment: .topLeading) {
@@ -261,7 +263,7 @@ struct ReferenceVideoView: View {
                     .font(.system(size: 15))
                     .foregroundColor(.white)
                 if promptText.isEmpty {
-                    Text("How should the images transform?...")
+                    Text(NSLocalizedString("placeholder_reference_video", comment: ""))
                         .font(.system(size: 14))
                         .foregroundColor(AppTheme.textMuted)
                         .padding(20)
@@ -303,7 +305,7 @@ struct ReferenceVideoView: View {
 
     private var aspectRatioSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("ASPECT RATIO").font(.system(size: 11, weight: .bold)).tracking(1.5).foregroundColor(AppTheme.textMuted)
+            Text(NSLocalizedString("label_aspect_ratio", comment: "")).font(.system(size: 11, weight: .bold)).tracking(1.5).foregroundColor(AppTheme.textMuted)
             HStack(spacing: 12) {
                 ratioButton(label: "9:16", icon: "iphone.gen3", isSelected: selectedRatio == "9:16") { selectedRatio = "9:16" }
                 ratioButton(label: "1:1",  icon: "square", isSelected: selectedRatio == "1:1")  { selectedRatio = "1:1" }
@@ -332,7 +334,7 @@ struct ReferenceVideoView: View {
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "film.fill").font(.system(size: 20, weight: .bold))
-                    Text("Sync & Generate")
+                    Text(NSLocalizedString("btn_sync_generate", comment: ""))
                         .font(.system(size: 17, weight: .bold))
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)

@@ -76,7 +76,11 @@ final class VideoDetailViewController: UIViewController {
     }
 
     private func showSuccessToast() {
-        let toast = UIAlertController(title: "Feedback Successful", message: "Thank you for your feedback!", preferredStyle: .alert)
+        let toast = UIAlertController(
+            title: NSLocalizedString("alert_feedback_success_title", comment: ""),
+            message: NSLocalizedString("alert_feedback_success_msg", comment: ""),
+            preferredStyle: .alert
+        )
         present(toast, animated: true)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             toast.dismiss(animated: true)
@@ -127,7 +131,7 @@ final class FeedbackPopupViewController: UIViewController {
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "FeedBack"
+        label.text = NSLocalizedString("title_feedback", comment: "")
         label.textColor = .white
         label.font = .systemFont(ofSize: 20, weight: .bold)
         label.textAlignment = .center
@@ -136,7 +140,7 @@ final class FeedbackPopupViewController: UIViewController {
 
     private let subtitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "We value your feedback to improve our app. Please describe your experience below."
+        label.text = NSLocalizedString("label_feedback_subtitle", comment: "")
         label.textColor = UIColor.white.withAlphaComponent(0.6)
         label.font = .systemFont(ofSize: 14)
         label.textAlignment = .center
@@ -156,7 +160,7 @@ final class FeedbackPopupViewController: UIViewController {
 
     private let placeholderLabel: UILabel = {
         let label = UILabel()
-        label.text = "Write your feedback here..."
+        label.text = NSLocalizedString("placeholder_feedback", comment: "")
         label.textColor = UIColor.white.withAlphaComponent(0.3)
         label.font = .systemFont(ofSize: 15)
         return label
@@ -164,7 +168,7 @@ final class FeedbackPopupViewController: UIViewController {
 
     private lazy var submitButton: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setTitle("Submit", for: .normal)
+        btn.setTitle(NSLocalizedString("btn_submit", comment: ""), for: .normal)
         btn.setTitleColor(.white, for: .normal)
         btn.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         btn.backgroundColor = UIColor(red: 111/255, green: 49/255, blue: 213/255, alpha: 1) // accentPrimary
@@ -176,7 +180,7 @@ final class FeedbackPopupViewController: UIViewController {
 
     private let cancelButton: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setTitle("Cancel", for: .normal)
+        btn.setTitle(NSLocalizedString("btn_cancel", comment: ""), for: .normal)
         btn.setTitleColor(UIColor.white.withAlphaComponent(0.5), for: .normal)
         btn.titleLabel?.font = .systemFont(ofSize: 15)
         return btn
