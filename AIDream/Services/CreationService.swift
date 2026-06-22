@@ -142,6 +142,15 @@ final class CreationService: ObservableObject {
         saveCreations()
     }
 
+    /// 清除所有历史作品及本地文件
+    func clearAll() {
+        for item in creations {
+            try? FileManager.default.removeItem(at: item.fileURL)
+        }
+        creations = []
+        UserDefaults.standard.removeObject(forKey: storageKey)
+    }
+
     private func saveCreations() {
         if let encoded = try? JSONEncoder().encode(creations) {
             UserDefaults.standard.set(encoded, forKey: storageKey)

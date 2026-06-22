@@ -290,19 +290,19 @@ final class VideoDetailCell: UICollectionViewCell {
         }
     }
 
-    @objc private func backTapped() { onBackTapped?() }
-    @objc private func remixTapped() { onRemixTapped?() }
-
-    @objc private func feedbackTapped() {
-        onFeedbackTapped?()
+    @objc private func backTapped() {
+        HapticManager.shared.impact(style: .light)
+        onBackTapped?()
     }
 
-    private func showToast(message: String) {
-        let toast = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        self.window?.rootViewController?.present(toast, animated: true)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            toast.dismiss(animated: true)
-        }
+    @objc private func remixTapped() {
+        HapticManager.shared.impact(style: .medium)
+        onRemixTapped?()
+    }
+
+    @objc private func feedbackTapped() {
+        HapticManager.shared.selection()
+        onFeedbackTapped?()
     }
 
     @objc private func likeTapped() {
@@ -328,7 +328,7 @@ final class VideoDetailCell: UICollectionViewCell {
             animation.values = [1.0, 1.3, 0.9, 1.0]
             animation.duration = 0.25
             likeButton.layer.add(animation, forKey: "bounce")
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            HapticManager.shared.impact(style: .medium)
         }
     }
 

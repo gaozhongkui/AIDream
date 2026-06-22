@@ -46,6 +46,7 @@ struct ContentView: View {
         .preferredColorScheme(.dark)
         .onReceive(NotificationCenter.default.publisher(for: .switchToReferenceMode)) { _ in
             customSelectedMode = .reference
+            HapticManager.shared.impact(style: .medium)
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                 selectedTab = 1
             }
@@ -69,7 +70,10 @@ struct ContentView: View {
     private func tabItem(icon: String, label: String, index: Int) -> some View {
         let active = selectedTab == index
         return Button {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { selectedTab = index }
+            if selectedTab != index {
+                HapticManager.shared.selection()
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { selectedTab = index }
+            }
         } label: {
             VStack(spacing: 4) {
                 ZStack {

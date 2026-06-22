@@ -11,6 +11,7 @@ struct ProfileView: View {
     @State private var showHistory = false
     @State private var safariURL: URL?
     @State private var showSafari = false
+    @State private var showResetAlert = false
 
     var body: some View {
         NavigationView {
@@ -29,7 +30,10 @@ struct ProfileView: View {
 
                         // 菜单区域
                         VStack(spacing: 0) {
-                            Button(action: { showFavorites = true }) {
+                            Button(action: {
+                                HapticManager.shared.impact(style: .light)
+                                showFavorites = true
+                            }) {
                                 menuRowContent(icon: "heart.square.fill", title: NSLocalizedString("title_favorites", comment: ""))
                             }
 
@@ -38,7 +42,10 @@ struct ProfileView: View {
                                 .frame(height: 1)
                                 .padding(.leading, 72)
 
-                            Button(action: { showHistory = true }) {
+                            Button(action: {
+                                HapticManager.shared.impact(style: .light)
+                                showHistory = true
+                            }) {
                                 menuRowContent(icon: "video.badge.plus.fill", title: NSLocalizedString("title_creative_history", comment: ""))
                             }
                         }
@@ -49,6 +56,7 @@ struct ProfileView: View {
 
                         VStack(spacing: 0) {
                             Button(action: {
+                                HapticManager.shared.impact(style: .light)
                                 safariURL = URL(string: AIConfig.shared.privacyPolicyURL)
                                 showSafari = true
                             }) {
@@ -61,22 +69,60 @@ struct ProfileView: View {
                                 .padding(.leading, 72)
 
                             Button(action: {
+                                HapticManager.shared.impact(style: .light)
                                 safariURL = URL(string: AIConfig.shared.termsOfServiceURL)
                                 showSafari = true
                             }) {
                                 menuRowContent(icon: "scroll.fill", title: NSLocalizedString("btn_terms", comment: ""))
                             }
+
+                            Rectangle()
+                                .fill(Color.white.opacity(0.05))
+                                .frame(height: 1)
+                                .padding(.leading, 72)
+
+                            // 数据清除 (App Store 隐私合规：即使无账户也需提供数据删除路径)
+                            Button(action: {
+                                HapticManager.shared.notification(type: .warning)
+                                showResetAlert = true
+                            }) {
+                                HStack(spacing: 16) {
+                                    Image(systemName: "trash.fill")
+                                        .font(.system(size: 18))
+                                        .foregroundColor(.red.opacity(0.8))
+                                        .frame(width: 40, height: 40)
+                                        .background(Circle().fill(Color.red.opacity(0.1)))
+                                    Text(NSLocalizedString("btn_reset_all_data", comment: ""))
+                                        .font(.system(size: 16, weight: .medium))
+                                        .foregroundColor(.red.opacity(0.8))
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 12, weight: .bold))
+                                        .foregroundColor(AppTheme.textMuted)
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 14)
+                            }
                         }
                         .glassStyle(cornerRadius: 22)
                         .padding(.horizontal, 20)
 
-                        resetButton.padding(.top, 40)
-
-                        versionInfo.padding(.top, 24).padding(.bottom, 110)
+                        versionInfo.padding(.top, 40).padding(.bottom, 110)
                     }
                 }
             }
             .navigationBarHidden(true)
+            .alert(isPresented: $showResetAlert) {
+                Alert(
+                    title: Text(NSLocalizedString("alert_reset_title", comment: "")),
+                    message: Text(NSLocalizedString("alert_reset_message", comment: "")),
+                    primaryButton: .destructive(Text(NSLocalizedString("btn_confirm_reset", comment: ""))) {
+                        userService.resetAllData()
+                        HapticManager.shared.notification(type: .success)
+                    },
+                    secondaryButton: .cancel()
+                )
+            }
             .sheet(isPresented: $showPremiumSheet) {
                 PremiumView()
             }
@@ -101,7 +147,10 @@ struct ProfileView: View {
     // MARK: - Components
     private var profileHeader: some View {
         VStack(spacing: 18) {
-            Button(action: { showPremiumSheet = true }) {
+            Button(action: {
+                HapticManager.shared.impact(style: .medium)
+                showPremiumSheet = true
+            }) {
                 ZStack {
                     Circle()
                         .fill(userService.isPremium ? AppTheme.vipGold.opacity(0.3) : AppTheme.accentGlow)
@@ -173,7 +222,10 @@ struct ProfileView: View {
     }
 
     private var vipMembershipCard: some View {
-        Button(action: { showPremiumSheet = true }) {
+        Button(action: {
+            HapticManager.shared.impact(style: .medium)
+            showPremiumSheet = true
+        }) {
             HStack(spacing: 16) {
                 ZStack {
                     Circle().fill(AppTheme.vipGold.opacity(0.15)).frame(width: 46, height: 46)
@@ -191,7 +243,10 @@ struct ProfileView: View {
     }
 
     private var diamondBalanceCard: some View {
-        Button(action: { showDiamondStore = true }) {
+        Button(action: {
+            HapticManager.shared.impact(style: .medium)
+            showDiamondStore = true
+        }) {
             HStack(spacing: 0) {
                 HStack(spacing: 14) {
                     ZStack {
@@ -206,15 +261,6 @@ struct ProfileView: View {
                 Spacer()
                 Text(NSLocalizedString("btn_recharge", comment: "")).font(.system(size: 14, weight: .bold)).foregroundColor(.white).padding(.horizontal, 18).padding(.vertical, 10).background(AppTheme.accentGradH).clipShape(Capsule())
             }.padding(18).glassStyle(cornerRadius: 20)
-        }.padding(.horizontal, 20)
-    }
-
-    private var resetButton: some View {
-        Button(action: {
-            userService.addDiamonds(100)
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        }) {
-            Text(NSLocalizedString("btn_reset_account", comment: "")).font(.system(size: 15, weight: .bold)).foregroundColor(AppTheme.textMuted).frame(maxWidth: .infinity).frame(height: 56).glassStyle(cornerRadius: 20)
         }.padding(.horizontal, 20)
     }
 

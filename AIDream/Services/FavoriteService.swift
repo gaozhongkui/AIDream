@@ -42,6 +42,19 @@ final class FavoriteService: ObservableObject {
         )
     }
 
+    /// 清除所有收藏记录
+    func clearAll() {
+        favoriteIds = []
+        favoriteVideos = []
+        UserDefaults.standard.removeObject(forKey: storageKey)
+
+        // 发送通知刷新所有列表状态
+        NotificationCenter.default.post(
+            name: Self.favoritesChangedNotification,
+            object: nil
+        )
+    }
+
     private func saveFavorites() {
         do {
             let encoded = try JSONEncoder().encode(favoriteVideos)

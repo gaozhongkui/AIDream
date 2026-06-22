@@ -74,7 +74,7 @@ final class VideoListViewController: UIViewController {
 
     private let refreshControl: UIRefreshControl = {
         let rc = UIRefreshControl()
-        rc.tintColor = UIColor(red: 0.3, green: 0.62, blue: 1.0, alpha: 1)
+        rc.tintColor = UIColor(red: 111/255, green: 49/255, blue: 213/255, alpha: 1) // AppTheme.accentPrimary
         let attributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: UIColor.white.withAlphaComponent(0.5),
             .font: UIFont.systemFont(ofSize: 12, weight: .medium)
@@ -85,7 +85,7 @@ final class VideoListViewController: UIViewController {
 
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
-        indicator.color = UIColor(red: 0.3, green: 0.62, blue: 1.0, alpha: 1)
+        indicator.color = UIColor(red: 111/255, green: 49/255, blue: 213/255, alpha: 1)
         indicator.hidesWhenStopped = true
         return indicator
     }()
@@ -134,7 +134,6 @@ final class VideoListViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor(red: 5/255, green: 5/255, blue: 5/255, alpha: 1)
 
-        // Setup order: background content first, then overlay header
         setupUI()
         setupHeader()
         setupRefreshControl()
@@ -146,11 +145,8 @@ final class VideoListViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
-        // Ensure header stays on top
         view.bringSubviewToFront(headerContainer)
 
-        // Calculate header height including safe area to set the collection view's top inset
         let headerHeight = headerContainer.frame.height
         let bottomPadding = view.safeAreaInsets.bottom + 20
 
@@ -158,7 +154,6 @@ final class VideoListViewController: UIViewController {
             collectionView.contentInset = UIEdgeInsets(top: headerHeight, left: 10, bottom: bottomPadding, right: 10)
             collectionView.scrollIndicatorInsets = UIEdgeInsets(top: headerHeight, left: 0, bottom: view.safeAreaInsets.bottom, right: 0)
 
-            // Adjust initial offset
             if collectionView.contentOffset.y == 0 {
                 collectionView.contentOffset = CGPoint(x: 0, y: -headerHeight)
             }
@@ -188,18 +183,15 @@ final class VideoListViewController: UIViewController {
         }
 
         NSLayoutConstraint.activate([
-            // Header container pins to the very top of the screen (ignoring safe area)
             headerContainer.topAnchor.constraint(equalTo: view.topAnchor),
             headerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             headerContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-            // Blur view fills the entire container
             headerBlurView.topAnchor.constraint(equalTo: headerContainer.topAnchor),
             headerBlurView.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor),
             headerBlurView.trailingAnchor.constraint(equalTo: headerContainer.trailingAnchor),
             headerBlurView.bottomAnchor.constraint(equalTo: headerContainer.bottomAnchor),
 
-            // Text content inside header uses safeAreaLayoutGuide for top positioning
             headerTitleLabel.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor, constant: 24),
             headerTitleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
 
@@ -229,7 +221,6 @@ final class VideoListViewController: UIViewController {
         }
 
         NSLayoutConstraint.activate([
-            // CollectionView covers the whole screen
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -270,7 +261,6 @@ final class VideoListViewController: UIViewController {
     @objc private func networkBack() {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            // If we have no videos and we're not already loading, try to load
             if self.allVideos.isEmpty && !self.isLoadingPage {
                 self.loadPage(reset: true)
             }
@@ -279,10 +269,12 @@ final class VideoListViewController: UIViewController {
 
     @objc private func handleRefresh() {
         errorBanner.isHidden = true
+        HapticManager.shared.impact(style: .light)
         loadPage(reset: true)
     }
 
     @objc private func vipButtonTapped() {
+        HapticManager.shared.impact(style: .medium)
         let premiumVC = UIHostingController(rootView: PremiumView())
         premiumVC.modalPresentationStyle = .fullScreen
         present(premiumVC, animated: true)
@@ -362,7 +354,7 @@ final class VideoListViewController: UIViewController {
                             self.updateFooterStatus()
                         }
                     }
-                case .failure(let error):
+                case .failure(_):
                     self.showErrorBanner(NSLocalizedString("toast_network_error_retry", comment: ""))
                     self.emptyStateView.isHidden = !self.allVideos.isEmpty
                     self.updateFooterStatus()
@@ -387,6 +379,7 @@ final class VideoListViewController: UIViewController {
     }
 
     private func presentDetail(at indexPath: IndexPath) {
+        HapticManager.shared.impact(style: .medium)
         let detailVC = VideoDetailViewController(videos: allVideos, initialIndex: indexPath.item)
         present(detailVC, animated: true)
     }
@@ -406,7 +399,6 @@ extension VideoListViewController: UICollectionViewDataSource, UICollectionViewD
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: LoadingFooterView.identifier, for: indexPath) as! LoadingFooterView
-        // 只有在已有数据时才显示底部的加载状态，避免与中央的 activityIndicator 冲突
         let shouldShowLoading = isLoadingPage && !allVideos.isEmpty
         footer.setStatus(isLoading: shouldShowLoading, hasMore: hasMorePages)
         return footer
@@ -426,8 +418,6 @@ extension VideoListViewController: UICollectionViewDataSource, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         (cell as? VideoCell)?.stopPlayback()
     }
-
-
 }
 
 // MARK: - WaterfallLayoutDelegate

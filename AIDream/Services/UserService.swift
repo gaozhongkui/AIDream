@@ -33,13 +33,17 @@ class UserService: ObservableObject {
     private let transactionsKey = "com.aidream.user.transactions"
 
     private init() {
-        self.diamonds = UserDefaults.standard.integer(forKey: diamondsKey)
-        if UserDefaults.standard.object(forKey: diamondsKey) == nil {
-            self.diamonds = 100 // Initial gift (Changed from 500)
+        // 使用 Keychain 读取关键资产，若无则初始化
+        self.diamonds = KeychainHelper.shared.readInt(key: diamondsKey) ?? 0
+
+        // 首次安装赠送逻辑
+        if KeychainHelper.shared.readInt(key: diamondsKey) == nil {
+            self.diamonds = 100
             saveDiamonds()
             logTransaction(amount: 100, reason: "Welcome gift")
         }
-        self.isPremium = UserDefaults.standard.bool(forKey: premiumKey)
+
+        self.isPremium = KeychainHelper.shared.readBool(key: premiumKey) ?? false
         loadTransactions()
     }
 
@@ -61,8 +65,27 @@ class UserService: ObservableObject {
 
     func setPremium(_ status: Bool) {
         isPremium = status
-        UserDefaults.standard.set(status, forKey: premiumKey)
-        // Note: Diamond gifts are handled in StoreKitService based on product type
+        KeychainHelper.shared.saveBool(status, key: premiumKey)
+    }
+
+    /// 清除所有本地数据与隐私标识 (App Store 合规项，适用于无账户系统)
+    func resetAllData() {
+        KeychainHelper.shared.delete(service: "com.aidream.auth", account: diamondsKey)
+        KeychainHelper.shared.delete(service: "com.aidream.auth", account: premiumKey)
+        UserDefaults.standard.removeObject(forKey: transactionsKey)
+
+        // 清除其他业务数据
+        CreationService.shared.clearAll()
+        FavoriteService.shared.clearAll()
+
+        self.diamonds = 0
+        self.isPremium = false
+        self.transactions = []
+
+        // 重新给予初始赠送 (可选)
+        self.diamonds = 100
+        saveDiamonds()
+        logTransaction(amount: 100, reason: "Reset reward")
     }
 
     // MARK: - Transaction Log
@@ -75,7 +98,6 @@ class UserService: ObservableObject {
             balanceAfter: diamonds
         )
         transactions.insert(tx, at: 0)
-        // 只保留最近 200 条
         if transactions.count > 200 {
             transactions = Array(transactions.prefix(200))
         }
@@ -83,7 +105,7 @@ class UserService: ObservableObject {
     }
 
     private func saveDiamonds() {
-        UserDefaults.standard.set(diamonds, forKey: diamondsKey)
+        KeychainHelper.shared.saveInt(diamonds, key: diamondsKey)
     }
 
     private func saveTransactions() {
