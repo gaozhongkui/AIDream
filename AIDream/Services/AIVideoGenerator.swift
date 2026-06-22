@@ -115,7 +115,8 @@ class AIVideoGenerator: ObservableObject {
         let apiKey = AIConfig.shared.openRouterApiKey
         guard !apiKey.isEmpty else { throw VideoError.missingApiKey }
 
-        let url = URL(string: "https://openrouter.ai/api/v1/videos")!
+        // 使用 AIConfig 中的 BaseURL
+        let url = URL(string: "\(AIConfig.shared.openRouterBaseURL)/videos")!
 
         var request = URLRequest(url: url, timeoutInterval: 120)
         request.httpMethod = "POST"
@@ -206,7 +207,8 @@ class AIVideoGenerator: ObservableObject {
     // MARK: - 2. 轮询专属视频状态 (GET /api/v1/videos/{id})
     private func pollVideoJob(jobId: String) async throws -> URL {
         let apiKey = AIConfig.shared.openRouterApiKey
-        let url = URL(string: "https://openrouter.ai/api/v1/videos/\(jobId)")!
+        // 使用 AIConfig 中的 BaseURL
+        let url = URL(string: "\(AIConfig.shared.openRouterBaseURL)/videos/\(jobId)")!
         
         var request = URLRequest(url: url, timeoutInterval: 30)
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")

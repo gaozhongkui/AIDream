@@ -6,12 +6,16 @@
 //
 
 import SwiftUI
+import FirebaseCore
 
 @main
 struct AIDreamApp: App {
     @State private var showLaunch = true
 
     init() {
+        // Initialize Firebase
+        FirebaseApp.configure()
+
         // Initialize network monitor to start tracking connectivity
         _ = NetworkMonitor.shared
     }
@@ -28,12 +32,30 @@ struct AIDreamApp: App {
                 }
             }
             .onAppear {
-                // 启动页展示 2.5 秒后切换到主界面
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                    withAnimation(.easeInOut(duration: 0.5)) {
-                        showLaunch = false
-                    }
-                }
+                startAppLaunchSequence()
+            }
+        }
+    }
+
+    /// 启动序列：并行执行配置获取和最小等待时间
+    private func startAppLaunchSequence() {
+        Task {
+            let startTime = Date()
+
+            // 1. 请求远程配置 (设置 3 秒超时)
+            await AIConfig.shared.fetchConfigWithTimeout(seconds: 3.0)
+
+            // 2. 确保闪屏动画至少展示 2.0 秒，提升品牌感
+            let elapsed = Date().timeIntervalSince(startTime)
+            let minimumDisplayTime: Double = 2.0
+            if elapsed < minimumDisplayTime {
+                let remaining = minimumDisplayTime - elapsed
+                try? await Task.sleep(nanoseconds: UInt64(remaining * 1_000_000_000))
+            }
+
+            // 3. 切换到主界面
+            withAnimation(.easeInOut(duration: 0.5)) {
+                showLaunch = false
             }
         }
     }
