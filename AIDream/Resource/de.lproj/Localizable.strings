@@ -23,6 +23,7 @@
 "btn_ok" = "OK";
 "btn_terms" = "Bedingungen";
 "btn_privacy" = "Datenschutz";
+"btn_feedback" = "Feedback";
 "btn_render_masterpiece" = "Meisterwerk rendern";
 "btn_generate_creation" = "Erstellung generieren";
 "btn_sync_generate" = "Sync & Generieren";

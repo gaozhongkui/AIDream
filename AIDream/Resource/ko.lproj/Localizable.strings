@@ -23,6 +23,7 @@
 "btn_ok" = "확인";
 "btn_terms" = "이용약관";
 "btn_privacy" = "개인정보처리방침";
+"btn_feedback" = "피드백";
 "btn_render_masterpiece" = "걸작 렌더링";
 "btn_generate_creation" = "창작물 생성";
 "btn_sync_generate" = "동기화 및 생성";

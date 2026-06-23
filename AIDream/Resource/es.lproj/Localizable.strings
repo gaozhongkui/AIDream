@@ -24,6 +24,7 @@
 "btn_ok" = "Aceptar";
 "btn_terms" = "Términos";
 "btn_privacy" = "Privacidad";
+"btn_feedback" = "Comentarios";
 "btn_render_masterpiece" = "Renderizar Obra Maestra";
 "btn_generate_creation" = "Generar Creación";
 "btn_sync_generate" = "Sincronizar y Generar";

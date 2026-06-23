@@ -23,6 +23,7 @@
 "btn_ok" = "OK";
 "btn_terms" = "Conditions";
 "btn_privacy" = "Confidentialité";
+"btn_feedback" = "Commentaires";
 "btn_render_masterpiece" = "Rendre le Chef-d'œuvre";
 "btn_generate_creation" = "Générer la Création";
 "btn_sync_generate" = "Synchroniser & Générer";

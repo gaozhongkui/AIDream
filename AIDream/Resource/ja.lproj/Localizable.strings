@@ -24,6 +24,7 @@
 "btn_ok" = "OK";
 "btn_terms" = "規約";
 "btn_privacy" = "プライバシー";
+"btn_feedback" = "フィードバック";
 "btn_render_masterpiece" = "傑作をレンダリング";
 "btn_generate_creation" = "作成物を生成";
 "btn_sync_generate" = "同期して生成";

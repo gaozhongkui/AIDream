@@ -23,6 +23,7 @@
 "btn_ok" = "موافق";
 "btn_terms" = "الشروط";
 "btn_privacy" = "الخصوصية";
+"btn_feedback" = "ملاحظات";
 "btn_render_masterpiece" = "عرض التحفة الفنية";
 "btn_generate_creation" = "إنشاء العمل";
 "btn_sync_generate" = "مزامنة وإنشاء";

@@ -24,6 +24,7 @@
 "btn_ok" = "ठीक है";
 "btn_terms" = "शर्तें";
 "btn_privacy" = "गोपनीयता";
+"btn_feedback" = "प्रतिक्रिया";
 "btn_render_masterpiece" = "मास्टरपीस रेंडर करें";
 "btn_generate_creation" = "रचना जेनरेट करें";
 "btn_sync_generate" = "सिंक और जेनरेट";
