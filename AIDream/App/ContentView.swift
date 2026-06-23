@@ -8,17 +8,19 @@ struct ContentView: View {
         ZStack {
             AppTheme.bgPrimary.ignoresSafeArea()
 
-            // 主内容区域 —— TabView 复用子视图，避免每次切换重建 VC
-            TabView(selection: $selectedTab) {
+            // 主内容区域 —— ZStack 保持 VC 存活，且不限制 safe area
+            ZStack {
                 VideoListViewWrapper()
                     .ignoresSafeArea(edges: .top)
-                    .tag(0)
+                    .opacity(selectedTab == 0 ? 1 : 0)
+                    .allowsHitTesting(selectedTab == 0)
                 CustomView(externalMode: $customSelectedMode)
-                    .tag(1)
+                    .opacity(selectedTab == 1 ? 1 : 0)
+                    .allowsHitTesting(selectedTab == 1)
                 ProfileView()
-                    .tag(2)
+                    .opacity(selectedTab == 2 ? 1 : 0)
+                    .allowsHitTesting(selectedTab == 2)
             }
-            .tabViewStyle(.page(indexDisplayMode: .never))
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             // Tab Bar Layer - 强制固定在屏幕底部，完全忽略键盘

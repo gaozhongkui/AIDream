@@ -11,8 +11,8 @@ class WaterfallLayout: UICollectionViewLayout {
     weak var delegate: WaterfallLayoutDelegate?
 
     private let numberOfColumns = 2
-    private let cellPadding: CGFloat = 8
-    private let columnSpacing: CGFloat = 8
+    private let cellPadding: CGFloat = 5
+    private let columnSpacing: CGFloat = 4
     private var cache: [UICollectionViewLayoutAttributes] = []
     private var footerAttributes: UICollectionViewLayoutAttributes?
     private var contentHeight: CGFloat = 0

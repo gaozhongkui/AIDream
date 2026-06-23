@@ -8,6 +8,7 @@ final class VideoListViewController: UIViewController {
     private var currentOffset = 0
     private var isLoadingPage = false
     private var hasMorePages = true
+    private var headerTopConstraint: NSLayoutConstraint?
 
     private var hideBannerWorkItem: DispatchWorkItem?
 
@@ -132,7 +133,11 @@ final class VideoListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(red: 5/255, green: 5/255, blue: 5/255, alpha: 1)
+
+        // 让 view 延伸到状态栏后面，headerBlurView 的模糊才能覆盖通知栏
+        edgesForExtendedLayout = .all
+        extendedLayoutIncludesOpaqueBars = true
+        view.backgroundColor = .clear
 
         setupUI()
         setupHeader()
@@ -147,11 +152,19 @@ final class VideoListViewController: UIViewController {
         super.viewDidLayoutSubviews()
         view.bringSubviewToFront(headerContainer)
 
-        let headerHeight = headerContainer.frame.height
+        // 如果 safe area 没穿透到状态栏，手动将 header 向上延伸
+        let statusBarHeight = view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
+        if statusBarHeight > 0, view.safeAreaInsets.top == 0 {
+            headerTopConstraint?.constant = -statusBarHeight
+        }
+        view.clipsToBounds = false
+
+        let extraTop = headerTopConstraint?.constant ?? 0
+        let headerHeight = headerContainer.frame.height - extraTop
         let bottomPadding = view.safeAreaInsets.bottom + 20
 
         if headerHeight > 0 && collectionView.contentInset.top != headerHeight {
-            collectionView.contentInset = UIEdgeInsets(top: headerHeight, left: 10, bottom: bottomPadding, right: 10)
+            collectionView.contentInset = UIEdgeInsets(top: headerHeight, left: 8, bottom: bottomPadding, right: 8)
             collectionView.scrollIndicatorInsets = UIEdgeInsets(top: headerHeight, left: 0, bottom: view.safeAreaInsets.bottom, right: 0)
 
             if collectionView.contentOffset.y == 0 {
@@ -182,8 +195,11 @@ final class VideoListViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
+        let topConstraint = headerContainer.topAnchor.constraint(equalTo: view.topAnchor)
+        headerTopConstraint = topConstraint
+
         NSLayoutConstraint.activate([
-            headerContainer.topAnchor.constraint(equalTo: view.topAnchor),
+            topConstraint,
             headerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             headerContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
