@@ -45,6 +45,14 @@ final class VideoDetailCell: UICollectionViewCell {
     private var isLiked: Bool = false
     private var currentStarCount: Int = 0
 
+    // MARK: - Loading
+    private let loadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .white
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
+
     // MARK: - Player & Cover
     private let playerContainer: UIView = {
         let view = UIView()
@@ -194,6 +202,7 @@ final class VideoDetailCell: UICollectionViewCell {
     private func setupUI() {
         contentView.addSubview(playerContainer)
         contentView.addSubview(coverImageView)
+        contentView.addSubview(loadingIndicator)
         contentView.layer.addSublayer(topGradient)
         contentView.layer.addSublayer(bottomGradient)
 
@@ -206,7 +215,7 @@ final class VideoDetailCell: UICollectionViewCell {
         contentView.addSubview(likeButton)
         contentView.addSubview(remixButton)
 
-        [playerContainer, coverImageView, backButtonBlur, backButton, feedbackButton, infoStackView, likeButtonBlur, likeButton, remixButton].forEach {
+        [playerContainer, coverImageView, loadingIndicator, backButtonBlur, backButton, feedbackButton, infoStackView, likeButtonBlur, likeButton, remixButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -219,6 +228,9 @@ final class VideoDetailCell: UICollectionViewCell {
             playerContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             playerContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             playerContainer.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+
+            loadingIndicator.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            loadingIndicator.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
 
             coverImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             coverImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -357,6 +369,7 @@ final class VideoDetailCell: UICollectionViewCell {
 
         stopPlayback()
         coverImageView.alpha = 1 // 关键：确保在视频准备好之前显示封面，防止黑屏
+        loadingIndicator.startAnimating()
 
         let item = AVPlayerItem(url: url)
         player = AVPlayer(playerItem: item)
@@ -373,6 +386,7 @@ final class VideoDetailCell: UICollectionViewCell {
         playerLayerObserver = layer.observe(\.isReadyForDisplay, options: [.new]) { [weak self] layer, _ in
             if layer.isReadyForDisplay {
                 DispatchQueue.main.async {
+                    self?.loadingIndicator.stopAnimating()
                     UIView.animate(withDuration: 0.3) { self?.coverImageView.alpha = 0 }
                 }
             }
@@ -395,6 +409,7 @@ final class VideoDetailCell: UICollectionViewCell {
         playerLayer = nil
         playerLayerObserver?.invalidate()
         playerLayerObserver = nil
+        loadingIndicator.stopAnimating()
     }
 
     override func layoutSubviews() {
