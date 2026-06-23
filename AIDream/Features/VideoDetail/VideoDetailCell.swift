@@ -355,14 +355,19 @@ final class VideoDetailCell: UICollectionViewCell {
         self.isLiked = FavoriteService.shared.isFavorited(video.id)
         updateLikeButtonStyle(animated: false)
         coverImageView.kf.setImage(with: video.coverURL, options: [.keepCurrentImageWhileLoading])
-        startPlayback()
+
+        // 我们不在这里立即调用 startPlayback，
+        // 而是由 VideoDetailViewController 在 willDisplay 或 initialScroll 触发。
     }
 
     func startPlayback() {
         guard let url = videoURL else { return }
 
+        // 1. 优先检查本地缓存路径
+        let finalURL = VideoCacheService.shared.cachedLocation(for: url) ?? url
+
         // 如果已经有 Player 且 URL 一致，直接播放
-        if let currentPlayer = player, (currentPlayer.currentItem?.asset as? AVURLAsset)?.url == url {
+        if let currentPlayer = player, (currentPlayer.currentItem?.asset as? AVURLAsset)?.url == finalURL {
             currentPlayer.play()
             return
         }
@@ -371,8 +376,10 @@ final class VideoDetailCell: UICollectionViewCell {
         coverImageView.alpha = 1 // 关键：确保在视频准备好之前显示封面，防止黑屏
         loadingIndicator.startAnimating()
 
-        let item = AVPlayerItem(url: url)
+        let item = AVPlayerItem(url: finalURL)
         player = AVPlayer(playerItem: item)
+        // 减少起播等待时间
+        player?.automaticallyWaitsToMinimizeStalling = false
 
         // 循环播放
         NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: item)

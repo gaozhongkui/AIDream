@@ -51,7 +51,7 @@ final class VideoCell: UICollectionViewCell {
         return iv
     }()
 
-    // MARK: - Gradient View (改为使用 View 而不是直接用 Layer)
+    // MARK: - Gradient View
     private let gradientView = GradientOverlayView()
 
     // MARK: - Floating Info
@@ -95,7 +95,7 @@ final class VideoCell: UICollectionViewCell {
         layer.shadowRadius = 6
 
         contentView.addSubview(coverImageView)
-        contentView.addSubview(gradientView) // 放在 coverImageView 之上
+        contentView.addSubview(gradientView)
 
         contentView.addSubview(titleLabel)
         contentView.addSubview(metaLabel)
@@ -111,7 +111,6 @@ final class VideoCell: UICollectionViewCell {
             coverImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             coverImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
 
-            // 渐变视图完全覆盖整个 Cell 或底部
             gradientView.topAnchor.constraint(equalTo: contentView.topAnchor),
             gradientView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             gradientView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
@@ -187,7 +186,6 @@ final class VideoCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        // playerLayer 仍然需要手动管理 frame，因为它不是 UIView
         if let playerLayer = playerLayer {
             CATransaction.begin()
             CATransaction.setDisableActions(true)
@@ -236,10 +234,16 @@ final class VideoCell: UICollectionViewCell {
     // MARK: - Playback
     func startPlayback() {
         guard let url = videoURL, player == nil else { return }
-        let item = AVPlayerItem(url: url)
+
+        // 使用缓存路径（如果存在）
+        let finalURL = VideoCacheService.shared.cachedLocation(for: url) ?? url
+
+        let item = AVPlayerItem(url: finalURL)
         player = AVPlayer(playerItem: item)
         player?.isMuted = true
         player?.actionAtItemEnd = .none
+        // 减少起播等待
+        player?.automaticallyWaitsToMinimizeStalling = false
 
         let layer = AVPlayerLayer(player: player)
         layer.videoGravity = .resizeAspectFill
@@ -249,7 +253,6 @@ final class VideoCell: UICollectionViewCell {
         layer.frame = coverImageView.bounds
         CATransaction.commit()
 
-        // 插入在 coverImageView 的最底层
         coverImageView.layer.insertSublayer(layer, at: 0)
         playerLayer = layer
 

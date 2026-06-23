@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 extension Notification.Name {
     static let switchToReferenceMode = Notification.Name("SwitchToReferenceMode")
@@ -24,6 +25,7 @@ final class VideoDetailViewController: UIViewController {
         cv.register(VideoDetailCell.self, forCellWithReuseIdentifier: VideoDetailCell.identifier)
         cv.dataSource = self
         cv.delegate = self
+        cv.prefetchDataSource = self
         return cv
     }()
 
@@ -65,11 +67,24 @@ final class VideoDetailViewController: UIViewController {
                     cell.startPlayback()
                 }
             }
+
+            // 预加载相邻视频
+            preloadAdjacentVideos(around: initialIndex)
         }
     }
 
     override var prefersStatusBarHidden: Bool {
         return true
+    }
+
+    private func preloadAdjacentVideos(around index: Int) {
+        let indicesToPreload = [index + 1, index - 1].filter { $0 >= 0 && $0 < videos.count }
+        for idx in indicesToPreload {
+            let video = videos[idx]
+            if let videoURL = video.videoURL {
+                VideoCacheService.shared.preloadVideo(url: videoURL)
+            }
+        }
     }
 
     private func showFeedbackAlert() {
@@ -120,10 +135,32 @@ extension VideoDetailViewController: UICollectionViewDataSource, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         // 当 Cell 即将显示时，重新开始播放
         (cell as? VideoDetailCell)?.startPlayback()
+
+        // 当滑动到某一项时，主动预加载它后面的一项
+        preloadAdjacentVideos(around: indexPath.item)
     }
 
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         (cell as? VideoDetailCell)?.stopPlayback()
+    }
+}
+
+// MARK: - UICollectionViewDataSourcePrefetching
+extension VideoDetailViewController: UICollectionViewDataSourcePrefetching {
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        for indexPath in indexPaths {
+            if indexPath.item < videos.count {
+                let video = videos[indexPath.item]
+                // 预加载封面
+                if let coverURL = video.coverURL {
+                    KingfisherManager.shared.retrieveImage(with: coverURL, completionHandler: nil)
+                }
+                // 激进预加载视频文件
+                if let videoURL = video.videoURL {
+                    VideoCacheService.shared.preloadVideo(url: videoURL)
+                }
+            }
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 import AVKit
 import UIKit
 import SwiftUI
+import Kingfisher
 
 final class VideoListViewController: UIViewController {
     private let pageSize = 20
@@ -68,6 +69,7 @@ final class VideoListViewController: UIViewController {
         collectionView.register(LoadingFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: LoadingFooterView.identifier)
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.prefetchDataSource = self
         collectionView.alwaysBounceVertical = true
         collectionView.refreshControl = refreshControl
         return collectionView
@@ -445,6 +447,23 @@ extension VideoListViewController: UICollectionViewDataSource, UICollectionViewD
 
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         (cell as? VideoCell)?.stopPlayback()
+    }
+}
+
+// MARK: - UICollectionViewDataSourcePrefetching
+extension VideoListViewController: UICollectionViewDataSourcePrefetching {
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        for indexPath in indexPaths {
+            if indexPath.item < allVideos.count {
+                let video = allVideos[indexPath.item]
+                if let videoURL = video.videoURL {
+                    // 预加载封面
+                    KingfisherManager.shared.retrieveImage(with: videoURL, completionHandler: nil)
+                    // 预加载视频文件（列表页适当加载）
+                    VideoCacheService.shared.preloadVideo(url: videoURL)
+                }
+            }
+        }
     }
 }
 
