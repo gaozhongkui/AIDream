@@ -2,6 +2,36 @@ import AVFoundation
 import UIKit
 import Kingfisher
 
+/// 专门用于展示底部渐变的视图，自动处理 Layer 布局
+final class GradientOverlayView: UIView {
+    override class var layerClass: AnyClass {
+        return CAGradientLayer.self
+    }
+
+    private var gradientLayer: CAGradientLayer {
+        return layer as! CAGradientLayer
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupGradient()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupGradient()
+    }
+
+    private func setupGradient() {
+        gradientLayer.colors = [
+            UIColor.clear.cgColor,
+            UIColor.clear.cgColor,
+            UIColor.black.withAlphaComponent(0.72).cgColor
+        ]
+        gradientLayer.locations = [0.0, 0.52, 1.0]
+    }
+}
+
 final class VideoCell: UICollectionViewCell {
     static let identifier = "VideoCell"
 
@@ -21,17 +51,8 @@ final class VideoCell: UICollectionViewCell {
         return iv
     }()
 
-    // MARK: - Gradient (bottom fade only)
-    private let gradientLayer: CAGradientLayer = {
-        let layer = CAGradientLayer()
-        layer.colors = [
-            UIColor.clear.cgColor,
-            UIColor.clear.cgColor,
-            UIColor.black.withAlphaComponent(0.72).cgColor
-        ]
-        layer.locations = [0.0, 0.52, 1.0]
-        return layer
-    }()
+    // MARK: - Gradient View (改为使用 View 而不是直接用 Layer)
+    private let gradientView = GradientOverlayView()
 
     // MARK: - Floating Info
     private let titleLabel: UILabel = {
@@ -74,13 +95,13 @@ final class VideoCell: UICollectionViewCell {
         layer.shadowRadius = 6
 
         contentView.addSubview(coverImageView)
-        coverImageView.layer.addSublayer(gradientLayer)
+        contentView.addSubview(gradientView) // 放在 coverImageView 之上
 
         contentView.addSubview(titleLabel)
         contentView.addSubview(metaLabel)
         contentView.addSubview(likeButton)
 
-        [coverImageView, titleLabel, metaLabel, likeButton].forEach {
+        [coverImageView, gradientView, titleLabel, metaLabel, likeButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -89,6 +110,12 @@ final class VideoCell: UICollectionViewCell {
             coverImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             coverImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             coverImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+
+            // 渐变视图完全覆盖整个 Cell 或底部
+            gradientView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            gradientView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            gradientView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            gradientView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
 
             likeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             likeButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
@@ -159,19 +186,14 @@ final class VideoCell: UICollectionViewCell {
     // MARK: - Layout
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-        // 确保子视图约束已完全应用
-        self.contentView.layoutIfNeeded()
-        
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        
-        // 使用 coverImageView 的准确 bounds
-        let bounds = coverImageView.bounds
-        gradientLayer.frame = bounds
-        playerLayer?.frame = bounds
-        
-        CATransaction.commit()
+
+        // playerLayer 仍然需要手动管理 frame，因为它不是 UIView
+        if let playerLayer = playerLayer {
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
+            playerLayer.frame = coverImageView.bounds
+            CATransaction.commit()
+        }
     }
 
     // MARK: - Reuse
@@ -209,9 +231,6 @@ final class VideoCell: UICollectionViewCell {
         )
 
         updateLikeState()
-
-        // 强制触发布局更新，确保 gradientLayer 在复用时位置正确
-        setNeedsLayout()
     }
 
     // MARK: - Playback
@@ -225,13 +244,12 @@ final class VideoCell: UICollectionViewCell {
         let layer = AVPlayerLayer(player: player)
         layer.videoGravity = .resizeAspectFill
 
-        // 初始设置 frame
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         layer.frame = coverImageView.bounds
         CATransaction.commit()
 
-        // 确保 playerLayer 在 gradientLayer 下方，这样渐变遮罩始终有效
+        // 插入在 coverImageView 的最底层
         coverImageView.layer.insertSublayer(layer, at: 0)
         playerLayer = layer
 
