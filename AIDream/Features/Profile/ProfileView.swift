@@ -57,6 +57,18 @@ struct ProfileView: View {
                         VStack(spacing: 0) {
                             Button(action: {
                                 HapticManager.shared.impact(style: .light)
+                                sendFeedback()
+                            }) {
+                                menuRowContent(icon: "envelope.fill", title: NSLocalizedString("btn_feedback", comment: ""))
+                            }
+
+                            Rectangle()
+                                .fill(Color.white.opacity(0.05))
+                                .frame(height: 1)
+                                .padding(.leading, 72)
+
+                            Button(action: {
+                                HapticManager.shared.impact(style: .light)
                                 safariURL = URL(string: AIConfig.shared.privacyPolicyURL)
                                 showSafari = true
                             }) {
@@ -113,6 +125,20 @@ struct ProfileView: View {
             .fullScreenCover(isPresented: $showHistory) {
                 HistoryView()
             }
+        }
+    }
+
+    // MARK: - Actions
+
+    private func sendFeedback() {
+        let email = "hhyteam@zhongkuitech.cn"
+        let subject = "Feedback for AIDream"
+        let body = "\n\n--- Device Info ---\nApp Version: 1.0.0\nSystem: \(UIDevice.current.systemVersion)"
+
+        let mailtoString = "mailto:\(email)?subject=\(subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&body=\(body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+
+        if let url = URL(string: mailtoString) {
+            UIApplication.shared.open(url)
         }
     }
 

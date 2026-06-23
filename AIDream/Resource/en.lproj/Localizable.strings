@@ -24,6 +24,7 @@
 "btn_ok" = "OK";
 "btn_terms" = "Terms";
 "btn_privacy" = "Privacy";
+"btn_feedback" = "Feedback";
 "btn_render_masterpiece" = "Render Masterpiece";
 "btn_generate_creation" = "Generate Creation";
 "btn_sync_generate" = "Sync & Generate";
