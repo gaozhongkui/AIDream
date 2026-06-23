@@ -256,6 +256,7 @@ final class VideoListViewController: UIViewController {
 
     private func setupNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(networkBack), name: .networkBecameReachable, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleForegroundRefresh), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
 
     @objc private func networkBack() {
@@ -271,6 +272,16 @@ final class VideoListViewController: UIViewController {
         errorBanner.isHidden = true
         HapticManager.shared.impact(style: .light)
         loadPage(reset: true)
+    }
+
+    @objc private func handleForegroundRefresh() {
+        // 应用从后台返回前台时刷新数据
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            if !self.isLoadingPage {
+                self.loadPage(reset: true)
+            }
+        }
     }
 
     @objc private func vipButtonTapped() {
@@ -305,7 +316,8 @@ final class VideoListViewController: UIViewController {
         guard !isLoadingPage else { return }
 
         if reset {
-            currentOffset = 0
+            // 使用随机 offset 确保每次进入页面都能看到不同的数据
+            currentOffset = Int.random(in: 0..<50) * pageSize
             hasMorePages = true
             if allVideos.isEmpty {
                 activityIndicator.startAnimating()
