@@ -158,18 +158,18 @@ final class VideoCell: UICollectionViewCell {
 
     // MARK: - Layout
     override func layoutSubviews() {
-        // 1. 先确保父类及 Auto Layout 约束把视图尺寸完全计算好
         super.layoutSubviews()
         
-        // 2. 强制让当前 cell 的子视图立即根据最新约束刷新 frame
+        // 确保子视图约束已完全应用
         self.contentView.layoutIfNeeded()
         
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         
-        // 3. 使用此时已经绝对精准的 bounds
-        gradientLayer.frame = coverImageView.bounds
-        playerLayer?.frame = coverImageView.bounds
+        // 使用 coverImageView 的准确 bounds
+        let bounds = coverImageView.bounds
+        gradientLayer.frame = bounds
+        playerLayer?.frame = bounds
         
         CATransaction.commit()
     }
@@ -209,6 +209,9 @@ final class VideoCell: UICollectionViewCell {
         )
 
         updateLikeState()
+
+        // 强制触发布局更新，确保 gradientLayer 在复用时位置正确
+        setNeedsLayout()
     }
 
     // MARK: - Playback
@@ -221,7 +224,14 @@ final class VideoCell: UICollectionViewCell {
 
         let layer = AVPlayerLayer(player: player)
         layer.videoGravity = .resizeAspectFill
+
+        // 初始设置 frame
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
         layer.frame = coverImageView.bounds
+        CATransaction.commit()
+
+        // 确保 playerLayer 在 gradientLayer 下方，这样渐变遮罩始终有效
         coverImageView.layer.insertSublayer(layer, at: 0)
         playerLayer = layer
 
