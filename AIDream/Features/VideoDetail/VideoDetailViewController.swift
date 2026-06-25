@@ -3,6 +3,7 @@ import Kingfisher
 
 extension Notification.Name {
     static let switchToReferenceMode = Notification.Name("SwitchToReferenceMode")
+    static let dismissFavoritesView = Notification.Name("DismissFavoritesView")
 }
 
 final class VideoDetailViewController: UIViewController {
@@ -124,6 +125,7 @@ extension VideoDetailViewController: UICollectionViewDataSource, UICollectionVie
         cell.onRemixTapped = { [weak self] in
             self?.dismiss(animated: true) {
                 NotificationCenter.default.post(name: .switchToReferenceMode, object: nil)
+                NotificationCenter.default.post(name: .dismissFavoritesView, object: nil)
             }
         }
         cell.onFeedbackTapped = { [weak self] in

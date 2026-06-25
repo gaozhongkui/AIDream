@@ -96,6 +96,9 @@ struct ProfileView: View {
                 }
             }
             .navigationBarHidden(true)
+            .onReceive(NotificationCenter.default.publisher(for: .dismissFavoritesView)) { _ in
+                showFavorites = false
+            }
             .alert(isPresented: $showResetAlert) {
                 Alert(
                     title: Text(NSLocalizedString("alert_reset_title", comment: "")),
