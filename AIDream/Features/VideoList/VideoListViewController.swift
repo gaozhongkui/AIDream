@@ -9,9 +9,29 @@ final class VideoListViewController: UIViewController {
     private var currentOffset = 0
     private var isLoadingPage = false
     private var hasMorePages = true
-    private var headerTopConstraint: NSLayoutConstraint?
 
     private var hideBannerWorkItem: DispatchWorkItem?
+
+    // MARK: - Safe Area Sync
+    // When hosted via UIViewControllerRepresentable with .ignoresSafeArea(edges: .top), SwiftUI stops
+    // propagating the top safe area to this VC. We compensate by reading from the window directly.
+    private func syncWindowSafeArea() {
+        guard let window = view.window else { return }
+        let windowInsets = window.safeAreaInsets
+        // Subtract our own additionalSafeAreaInsets to get the base insets actually propagated from SwiftUI,
+        // preventing double-counting on each subsequent call.
+        let baseTop = view.safeAreaInsets.top - additionalSafeAreaInsets.top
+        let baseBottom = view.safeAreaInsets.bottom - additionalSafeAreaInsets.bottom
+        let neededTop = max(0, windowInsets.top - baseTop)
+        let neededBottom = max(0, windowInsets.bottom - baseBottom)
+        guard additionalSafeAreaInsets.top != neededTop || additionalSafeAreaInsets.bottom != neededBottom else { return }
+        additionalSafeAreaInsets = UIEdgeInsets(top: neededTop, left: 0, bottom: neededBottom, right: 0)
+    }
+
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        syncWindowSafeArea()
+    }
 
     // MARK: - Custom Header
     private let headerContainer: UIView = {
@@ -153,16 +173,9 @@ final class VideoListViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         view.bringSubviewToFront(headerContainer)
-
-        // 如果 safe area 没穿透到状态栏，手动将 header 向上延伸
-        let statusBarHeight = view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
-        if statusBarHeight > 0, view.safeAreaInsets.top == 0 {
-            headerTopConstraint?.constant = -statusBarHeight
-        }
         view.clipsToBounds = false
 
-        let extraTop = headerTopConstraint?.constant ?? 0
-        let headerHeight = headerContainer.frame.height - extraTop
+        let headerHeight = headerContainer.frame.height
         let bottomPadding = view.safeAreaInsets.bottom + 20
 
         if headerHeight > 0 && collectionView.contentInset.top != headerHeight {
@@ -178,6 +191,13 @@ final class VideoListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
+        syncWindowSafeArea()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // viewWillAppear may fire before the window is attached; viewDidAppear is a guaranteed fallback.
+        syncWindowSafeArea()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -197,11 +217,8 @@ final class VideoListViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        let topConstraint = headerContainer.topAnchor.constraint(equalTo: view.topAnchor)
-        headerTopConstraint = topConstraint
-
         NSLayoutConstraint.activate([
-            topConstraint,
+            headerContainer.topAnchor.constraint(equalTo: view.topAnchor),
             headerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             headerContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
