@@ -232,6 +232,13 @@ final class VideoCell: UICollectionViewCell {
     }
 
     // MARK: - Layout
+    override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        super.apply(layoutAttributes)
+        CATransaction.commit()
+    }
+
     override func layoutSubviews() {
         super.layoutSubviews()
 
@@ -249,6 +256,7 @@ final class VideoCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         stopPlayback()
+        coverImageView.kf.cancelDownloadTask()
         coverImageView.image = nil
         titleLabel.text = nil
         metaLabel.text = nil
@@ -276,7 +284,6 @@ final class VideoCell: UICollectionViewCell {
             with: video.coverURL,
             options: [
                 .transition(.fade(0.25)),
-                .keepCurrentImageWhileLoading,
                 .onFailureImage(UIImage(systemName: "play.slash")?.withTintColor(
                     UIColor.white.withAlphaComponent(0.15), renderingMode: .alwaysOriginal
                 ))

@@ -25,7 +25,7 @@ class AIConfig {
             "huggingFaceSpaceURL": "https://wangfuyun-animatelcm.hf.space" as NSObject,
             "huggingFaceSpaceFnIndex": 0 as NSObject,
             "openRouterBaseURL": "https://openrouter.ai/api/v1" as NSObject,
-            "openRouterApiKey": "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" as NSObject,
+            "openRouterApiKey": "" as NSObject,
             "openRouterImageModel": "google/gemini-2.5-flash-image" as NSObject,
             "openRouterVideoModel": "minimax/hailuo-2.3" as NSObject,
             "privacyPolicyURL": "https://sites.google.com/view/anima-pic-ai-privacy-policy" as NSObject,
