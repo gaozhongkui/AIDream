@@ -136,7 +136,8 @@ struct ProfileView: View {
     private func sendFeedback() {
         let email = "hhyteam@zhongkuitech.cn"
         let subject = "Feedback for AIDream"
-        let body = "\n\n--- Device Info ---\nApp Version: 1.0.0\nSystem: \(UIDevice.current.systemVersion)"
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+        let body = "\n\n--- Device Info ---\nApp Version: \(appVersion)\nSystem: \(UIDevice.current.systemVersion)"
 
         let mailtoString = "mailto:\(email)?subject=\(subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&body=\(body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
 
@@ -283,7 +284,7 @@ struct ProfileView: View {
 
     private var versionInfo: some View {
         VStack(spacing: 4) {
-            Text(String(format: NSLocalizedString("label_app_version_format", comment: ""), "1.0.0"))
+            Text(String(format: NSLocalizedString("label_app_version_format", comment: ""), Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""))
             Text(NSLocalizedString("label_designed_for", comment: ""))
         }
         .font(.system(size: 11, weight: .medium))

@@ -10,7 +10,6 @@ struct CustomView: View {
     @Binding var externalMode: GenerationMode
     @State private var selectedMode: GenerationMode = .imageToVideo
     @State private var showTip = false
-    @State private var hasSyncedExternal = false
     @State private var showDiamondStore = false
     @ObservedObject var userService = UserService.shared
 
@@ -46,11 +45,8 @@ struct CustomView: View {
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }
             .onChange(of: externalMode) { newMode in
-                if !hasSyncedExternal {
-                    hasSyncedExternal = true
-                    withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
-                        selectedMode = newMode
-                    }
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
+                    selectedMode = newMode
                 }
             }
             .alert(NSLocalizedString("alert_gen_tips_title", comment: ""), isPresented: $showTip) {

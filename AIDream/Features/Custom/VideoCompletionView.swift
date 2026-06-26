@@ -245,7 +245,7 @@ struct VideoCompletionView: View {
             Spacer()
 
             // 标题
-            Text(NSLocalizedString("title_trending", comment: ""))
+            Text(NSLocalizedString("title_your_creation", comment: ""))
                 .font(.system(size: 18, weight: .bold))
                 .foregroundColor(.white)
 
