@@ -8,18 +8,19 @@ struct ContentView: View {
         ZStack {
             AppTheme.bgPrimary.ignoresSafeArea()
 
-            // 主内容区域 —— ZStack 保持 VC 存活，且不限制 safe area
+            // 主内容区域
             ZStack {
-                VideoListViewWrapper()
-                    .ignoresSafeArea(edges: .top)
-                    .opacity(selectedTab == 0 ? 1 : 0)
-                    .allowsHitTesting(selectedTab == 0)
-                CustomView(externalMode: $customSelectedMode)
-                    .opacity(selectedTab == 1 ? 1 : 0)
-                    .allowsHitTesting(selectedTab == 1)
-                ProfileView()
-                    .opacity(selectedTab == 2 ? 1 : 0)
-                    .allowsHitTesting(selectedTab == 2)
+                if selectedTab == 0 {
+                    VideoListViewWrapper()
+                        .ignoresSafeArea(edges: .top)
+                        .transition(.opacity)
+                } else if selectedTab == 1 {
+                    CustomView(externalMode: $customSelectedMode)
+                        .transition(.opacity)
+                } else if selectedTab == 2 {
+                    ProfileView()
+                        .transition(.opacity)
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
