@@ -23,25 +23,32 @@ struct DiamondStoreView: View {
         DiamondPackage(
             id: "300",
             productID: .diamonds300,
-            diamonds: 300, price: "$1.99", bonus: 0, tag: nil,
+            diamonds: StoreProductID.diamonds300.baseDiamonds,
+            price: "$1.99", bonus: StoreProductID.diamonds300.bonusDiamonds, tag: nil,
             icon: "sparkles", color: Color(hex: "#A0AEC0")
         ),
         DiamondPackage(
             id: "900",
-            productID: .diamonds1000,
-            diamonds: 800, price: "$4.99", bonus: 100, tag: NSLocalizedString("premium_tag_popular", comment: ""),
+            productID: .diamonds900,
+            diamonds: StoreProductID.diamonds900.baseDiamonds,
+            price: "$4.99", bonus: StoreProductID.diamonds900.bonusDiamonds,
+            tag: NSLocalizedString("premium_tag_popular", comment: ""),
             icon: "bolt.fill", color: Color(hex: "#4FD1C5")
         ),
         DiamondPackage(
             id: "2000",
-            productID: .diamonds2500,
-            diamonds: 1800, price: "$9.99", bonus: 200, tag: NSLocalizedString("premium_tag_best_value", comment: ""),
+            productID: .diamonds2000,
+            diamonds: StoreProductID.diamonds2000.baseDiamonds,
+            price: "$9.99", bonus: StoreProductID.diamonds2000.bonusDiamonds,
+            tag: NSLocalizedString("premium_tag_best_value", comment: ""),
             icon: "flame.fill", color: Color(hex: "#F6AD55")
         ),
         DiamondPackage(
             id: "5000",
-            productID: .diamonds6000,
-            diamonds: 4000, price: "$19.99", bonus: 1000, tag: NSLocalizedString("premium_tag_whale", comment: ""),
+            productID: .diamonds5000,
+            diamonds: StoreProductID.diamonds5000.baseDiamonds,
+            price: "$19.99", bonus: StoreProductID.diamonds5000.bonusDiamonds,
+            tag: NSLocalizedString("premium_tag_whale", comment: ""),
             icon: "crown.fill", color: Color(hex: "#F687B3")
         )
     ]

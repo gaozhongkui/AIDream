@@ -7,25 +7,37 @@ private let logger = Logger(subsystem: "com.aidream", category: "StoreKit")
 
 // MARK: - Product ID Constants
 enum StoreProductID: String, CaseIterable {
-    case diamonds300  = "com.aidream.diamonds.100"  // $1.99
-    case diamonds1000 = "com.aidream.diamonds.500"  // $4.99
-    case diamonds2500 = "com.aidream.diamonds.1200" // $9.99
-    case diamonds6000 = "com.aidream.diamonds.3000" // $19.99
+    case diamonds300  = "com.aidream.diamonds.100"  // $1.99 → 300
+    case diamonds900  = "com.aidream.diamonds.500"  // $4.99 → 800 + 100 bonus
+    case diamonds2000 = "com.aidream.diamonds.1200" // $9.99 → 1800 + 200 bonus
+    case diamonds5000 = "com.aidream.diamonds.3000" // $19.99 → 4000 + 1000 bonus
     case premiumWeekly = "com.aidream.premium.weekly"
     case premiumMonthly = "com.aidream.premium.monthly"
     case premiumLifetime = "com.aidream.premium.lifetime"
 
-    var diamondAmount: Int {
+    var baseDiamonds: Int {
         switch self {
-        case .diamonds300:  return 300   // $1.99 -> 300钻
-        case .diamonds1000: return 900   // $4.99 -> 800 + 100 bonus
-        case .diamonds2500: return 2000  // $9.99 -> 1800 + 200 bonus
-        case .diamonds6000: return 5000  // $19.99 -> 4000 + 1000 bonus
-        case .premiumWeekly: return 500  // 周订阅送 500
-        case .premiumMonthly: return 1200 // 月度订阅送 1200
-        case .premiumLifetime: return 10000 // 永久订阅送 10,000
+        case .diamonds300:  return 300
+        case .diamonds900:  return 800
+        case .diamonds2000: return 1800
+        case .diamonds5000: return 4000
+        case .premiumWeekly: return 500
+        case .premiumMonthly: return 1200
+        case .premiumLifetime: return 10000
         }
     }
+
+    var bonusDiamonds: Int {
+        switch self {
+        case .diamonds300:  return 0
+        case .diamonds900:  return 100
+        case .diamonds2000: return 200
+        case .diamonds5000: return 1000
+        default: return 0
+        }
+    }
+
+    var diamondAmount: Int { baseDiamonds + bonusDiamonds }
 
     var isSubscription: Bool {
         switch self {
