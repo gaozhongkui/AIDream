@@ -51,6 +51,27 @@ final class VideoCell: UICollectionViewCell {
         return iv
     }()
 
+    // MARK: - Shimmer Skeleton
+    private let shimmerView: UIView = {
+        let v = UIView()
+        v.backgroundColor = UIColor(white: 0.12, alpha: 1)
+        v.isUserInteractionEnabled = false
+        return v
+    }()
+
+    private let shimmerGradientLayer: CAGradientLayer = {
+        let g = CAGradientLayer()
+        g.colors = [
+            UIColor(white: 0.12, alpha: 1).cgColor,
+            UIColor(white: 0.22, alpha: 1).cgColor,
+            UIColor(white: 0.12, alpha: 1).cgColor
+        ]
+        g.locations = [0, 0.5, 1]
+        g.startPoint = CGPoint(x: 0, y: 0.5)
+        g.endPoint   = CGPoint(x: 1, y: 0.5)
+        return g
+    }()
+
     // MARK: - Gradient View
     private let gradientView = GradientOverlayView()
 
@@ -95,13 +116,15 @@ final class VideoCell: UICollectionViewCell {
         layer.shadowRadius = 6
 
         contentView.addSubview(coverImageView)
+        contentView.addSubview(shimmerView)
+        shimmerView.layer.addSublayer(shimmerGradientLayer)
         contentView.addSubview(gradientView)
 
         contentView.addSubview(titleLabel)
         contentView.addSubview(metaLabel)
         contentView.addSubview(likeButton)
 
-        [coverImageView, gradientView, titleLabel, metaLabel, likeButton].forEach {
+        [coverImageView, shimmerView, gradientView, titleLabel, metaLabel, likeButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -110,6 +133,11 @@ final class VideoCell: UICollectionViewCell {
             coverImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             coverImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             coverImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+
+            shimmerView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            shimmerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            shimmerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            shimmerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
 
             gradientView.topAnchor.constraint(equalTo: contentView.topAnchor),
             gradientView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -182,9 +210,32 @@ final class VideoCell: UICollectionViewCell {
         )
     }
 
+    // MARK: - Shimmer
+    private func startShimmer() {
+        shimmerView.isHidden = false
+        shimmerGradientLayer.frame = shimmerView.bounds
+
+        let animation = CABasicAnimation(keyPath: "locations")
+        animation.fromValue = [-1.0, -0.5, 0.0]
+        animation.toValue   = [1.0,  1.5,  2.0]
+        animation.duration  = 1.2
+        animation.repeatCount = .infinity
+        shimmerGradientLayer.add(animation, forKey: "shimmer")
+    }
+
+    private func stopShimmer() {
+        shimmerGradientLayer.removeAnimation(forKey: "shimmer")
+        UIView.animate(withDuration: 0.25) { self.shimmerView.alpha = 0 } completion: { _ in
+            self.shimmerView.isHidden = true
+            self.shimmerView.alpha = 1
+        }
+    }
+
     // MARK: - Layout
     override func layoutSubviews() {
         super.layoutSubviews()
+
+        shimmerGradientLayer.frame = shimmerView.bounds
 
         if let playerLayer = playerLayer {
             CATransaction.begin()
@@ -202,6 +253,9 @@ final class VideoCell: UICollectionViewCell {
         titleLabel.text = nil
         metaLabel.text = nil
         videoData = nil
+        shimmerGradientLayer.removeAnimation(forKey: "shimmer")
+        shimmerView.alpha = 1
+        shimmerView.isHidden = false
     }
 
     // MARK: - Configure
@@ -217,6 +271,7 @@ final class VideoCell: UICollectionViewCell {
         let stars = formatCount(video.starCount)
         metaLabel.text = "@\(video.userName) · ★\(stars)"
 
+        startShimmer()
         coverImageView.kf.setImage(
             with: video.coverURL,
             options: [
@@ -225,7 +280,10 @@ final class VideoCell: UICollectionViewCell {
                 .onFailureImage(UIImage(systemName: "play.slash")?.withTintColor(
                     UIColor.white.withAlphaComponent(0.15), renderingMode: .alwaysOriginal
                 ))
-            ]
+            ],
+            completionHandler: { [weak self] _ in
+                self?.stopShimmer()
+            }
         )
 
         updateLikeState()
