@@ -20,9 +20,10 @@ class AIConfig {
         let defaults: [String: NSObject] = [
             "pollinationsBaseURL": "https://gen.pollinations.ai/image" as NSObject,
             "pollinationsApiKey": "sk_UhsZmc01AcRpoVcqd9I83kLCJLGy8OS8" as NSObject,
-            "huggingFaceBaseURL": "https://api-inference.huggingface.co/models" as NSObject,
             "huggingFaceToken": "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" as NSObject,
-            "huggingFaceVideoModel": "stabilityai/stable-video-diffusion-img2vid-xt" as NSObject,
+            // Gradio Space for image-to-video (configurable via Remote Config)
+            "huggingFaceSpaceURL": "https://wangfuyun-animatelcm.hf.space" as NSObject,
+            "huggingFaceSpaceFnIndex": 0 as NSObject,
             "openRouterBaseURL": "https://openrouter.ai/api/v1" as NSObject,
             "openRouterApiKey": "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" as NSObject,
             "openRouterImageModel": "google/gemini-2.5-flash-image" as NSObject,
@@ -73,15 +74,19 @@ class AIConfig {
     }
 
     var huggingFaceBaseURL: String {
-        remoteConfig["huggingFaceBaseURL"].stringValue
+        "https://api-inference.huggingface.co/models"
     }
 
     var huggingFaceToken: String {
         remoteConfig["huggingFaceToken"].stringValue
     }
 
-    var huggingFaceVideoModel: String {
-        remoteConfig["huggingFaceVideoModel"].stringValue
+    var huggingFaceSpaceURL: String {
+        remoteConfig["huggingFaceSpaceURL"].stringValue
+    }
+
+    var huggingFaceSpaceFnIndex: Int {
+        Int(remoteConfig["huggingFaceSpaceFnIndex"].numberValue)
     }
 
     var openRouterBaseURL: String {

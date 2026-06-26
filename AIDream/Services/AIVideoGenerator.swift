@@ -276,51 +276,115 @@ class AIVideoGenerator: ObservableObject {
         throw VideoError.timeout
     }
 
-    // MARK: - 3. Hugging Face 视频生成 (方案 A)
+    // MARK: - 3. HuggingFace Space Gradio API (方案 A)
     private func generateWithHuggingFace(prompt: String, image: UIImage?) async throws -> URL {
-        let model = AIConfig.shared.huggingFaceVideoModel
         let token = AIConfig.shared.huggingFaceToken
+        let spaceURL = AIConfig.shared.huggingFaceSpaceURL
+        let fnIndex = AIConfig.shared.huggingFaceSpaceFnIndex
 
-        // 如果没有配置 Token 且不是公开端点，抛出错误以触发回退
-        guard !token.isEmpty, token != "hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" else {
-            throw VideoError.missingApiKey
+        guard !spaceURL.isEmpty else { throw VideoError.missingApiKey }
+
+        // 随机 session hash（12位小写字母数字）
+        let sessionHash = UUID().uuidString
+            .lowercased()
+            .replacingOccurrences(of: "-", with: "")
+            .prefix(12)
+            .description
+
+        // 构造输入数组：[图片 base64, prompt]
+        var inputs: [Any] = []
+        if let img = image, let b64 = processAndEncodeImage(img, maxDim: 768) {
+            inputs.append(["data": "data:image/jpeg;base64,\(b64)", "name": "input.jpg"])
+        }
+        inputs.append(prompt.isEmpty ? NSLocalizedString("placeholder_cinematic_video", comment: "") : prompt)
+
+        // Step 1: 加入 Gradio 队列
+        guard let joinURL = URL(string: "\(spaceURL)/queue/join") else { throw VideoError.invalidURL }
+
+        var joinReq = URLRequest(url: joinURL, timeoutInterval: 30)
+        joinReq.httpMethod = "POST"
+        joinReq.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if !token.isEmpty { joinReq.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
+
+        joinReq.httpBody = try JSONSerialization.data(withJSONObject: [
+            "data": inputs,
+            "fn_index": fnIndex,
+            "session_hash": sessionHash
+        ])
+
+        let (_, joinResp) = try await URLSession.shared.data(for: joinReq)
+        guard let joinHTTP = joinResp as? HTTPURLResponse, joinHTTP.statusCode == 200 else {
+            let code = (joinResp as? HTTPURLResponse)?.statusCode ?? -1
+            throw VideoError.serverError("HF Space unavailable (HTTP \(code))")
         }
 
-        let endpoint = "\(AIConfig.shared.huggingFaceBaseURL)/\(model)"
-        guard let url = URL(string: endpoint) else { throw VideoError.invalidURL }
+        logger.info("[HF Space] Queue joined, session: \(sessionHash)")
 
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.timeoutInterval = 30 // 缩短连接超时，以便快速回退到 OpenRouter
-
-        // 构造输入，SVD 等模型通常需要图片输入
-        var payload: [String: Any] = ["inputs": prompt]
-        if let img = image, let b64 = processAndEncodeImage(img, maxDim: 1024) {
-            payload["image"] = "data:image/jpeg;base64,\(b64)"
+        // Step 2: 通过 SSE 流等待生成结果
+        guard let sseURL = URL(string: "\(spaceURL)/queue/data?session_hash=\(sessionHash)") else {
+            throw VideoError.invalidURL
         }
 
-        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+        var sseReq = URLRequest(url: sseURL, timeoutInterval: 180)
+        if !token.isEmpty { sseReq.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
 
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (bytes, _) = try await URLSession.shared.bytes(for: sseReq)
 
-        guard let http = response as? HTTPURLResponse else { throw VideoError.invalidResponse }
+        for try await line in bytes.lines {
+            try Task.checkCancellation()
 
-        // 处理 HF 的 503 (模型加载中) 或其他错误
-        if http.statusCode != 200 {
-            let msg = String(data: data, encoding: .utf8) ?? "HTTP \(http.statusCode)"
-            logger.warning("HF API Error: \(msg)")
-            throw VideoError.serverError("HF API Error: \(http.statusCode)")
+            guard line.hasPrefix("data: "),
+                  let eventData = String(line.dropFirst(6)).data(using: .utf8),
+                  let event = try? JSONSerialization.jsonObject(with: eventData) as? [String: Any],
+                  let msg = event["msg"] as? String
+            else { continue }
+
+            logger.debug("[HF Space] Event: \(msg)")
+
+            switch msg {
+            case "process_completed":
+                guard let output = event["output"] as? [String: Any],
+                      let dataArr = output["data"] as? [Any]
+                else { throw VideoError.urlNotFound }
+                return try extractGradioVideoURL(from: dataArr, spaceURL: spaceURL)
+
+            case "queue_full":
+                throw VideoError.serverError("HF Space queue is full")
+
+            case "process_errored":
+                let errMsg = (event["output"] as? [String: Any])?["error"] as? String
+                    ?? NSLocalizedString("err_gen_failed", comment: "")
+                throw VideoError.serverError(errMsg)
+
+            default:
+                // send_hash / estimation / process_starts — 继续等待
+                if let rank = (event["rank"] as? Int), let queueSize = (event["queue_size"] as? Int) {
+                    let progress = max(0.05, 1.0 - Double(rank) / Double(max(queueSize, 1)))
+                    state = .generating(progress * 0.5) // HF 阶段最多占 50%，留给后续处理
+                }
+                continue
+            }
         }
 
-        // 很多 HF 视频接口直接返回视频二进制流，将其存入临时文件
-        let tempURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent(UUID().uuidString)
-            .appendingPathExtension("mp4")
+        throw VideoError.timeout
+    }
 
-        try data.write(to: tempURL)
-        return tempURL
+    // 从 Gradio 输出数组中提取视频 URL
+    private func extractGradioVideoURL(from dataArr: [Any], spaceURL: String) throws -> URL {
+        for item in dataArr {
+            // Gradio 标准文件 dict: {"name": "/tmp/gradio/xxx/output.mp4", "is_file": true}
+            if let dict = item as? [String: Any], let name = dict["name"] as? String {
+                let fileURL = "\(spaceURL)/file=\(name)"
+                if let url = URL(string: fileURL) { return url }
+            }
+            // 直接 URL 字符串
+            if let urlStr = item as? String, let url = URL(string: urlStr), url.scheme != nil { return url }
+            // 嵌套数组
+            if let arr = item as? [Any] {
+                if let nested = try? extractGradioVideoURL(from: arr, spaceURL: spaceURL) { return nested }
+            }
+        }
+        throw VideoError.urlNotFound
     }
 
     // MARK: - 辅助：高质量图片缩放编码
