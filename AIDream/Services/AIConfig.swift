@@ -6,7 +6,7 @@ class AIConfig {
     static let shared = AIConfig()
 
     private let remoteConfig = RemoteConfig.remoteConfig()
-    private let logger = Logger(subsystem: "com.aidream.app", category: "RemoteConfig")
+    private let logger = Logger(subsystem: "com.aidream", category: "RemoteConfig")
 
     private init() {
         let settings = RemoteConfigSettings()
@@ -30,37 +30,68 @@ class AIConfig {
             "openRouterVideoModel": "minimax/hailuo-2.3" as NSObject,
             "privacyPolicyURL": "https://sites.google.com/view/anima-pic-ai-privacy-policy" as NSObject,
             "termsOfServiceURL": "https://sites.google.com/view/anima-pic-ai-terms-of-service" as NSObject,
-            "initialDiamonds": 200 as NSObject
+            "initialDiamonds": 200 as NSObject,
+            "imageGenerationCost": 100 as NSObject,
+            "videoGenerationCost": 500 as NSObject
         ]
         remoteConfig.setDefaults(defaults)
     }
 
     func fetchRemoteConfig() {
-        remoteConfig.fetchAndActivate { status, error in
-            if let error {
-                self.logger.error("Remote Config 获取失败: \(error.localizedDescription)")
+        logger.info("RemoteConfig: 开始获取配置...")
+        remoteConfig.fetchAndActivate { [weak self] status, error in
+            guard let self = self else { return }
+
+            if let error = error {
+                self.logger.error("RemoteConfig: 获取异常 - \(error.localizedDescription)")
                 return
             }
-            self.logger.info("Remote Config 已激活，状态: \(status.rawValue)")
+
+            // 打印详细状态
+            let lastStatus = self.remoteConfig.lastFetchStatus
+            self.logger.info("RemoteConfig: 激活状态: \(status.rawValue), 上次获取状态: \(lastStatus.rawValue)")
+
+            // 审计：列出所有从云端拿到的 Key
+            let allKeys = self.remoteConfig.allKeys(from: .remote)
+            self.logger.info("RemoteConfig: 云端当前包含的 Keys: \(allKeys)")
+
+            if allKeys.contains("initialDiamonds") {
+                self.logger.info("RemoteConfig: 成功找到 initialDiamonds, 值: \(self.initialDiamonds)")
+            } else {
+                self.logger.warning("RemoteConfig: ！！！警告：云端配置中没有找到 'initialDiamonds' 这个 Key ！！！")
+            }
         }
     }
 
     func fetchConfigWithTimeout(seconds: Double) async {
-        await withTaskGroup(of: Void.self) { group in
+        logger.info("RemoteConfig: 开始异步获取 (超时设定: \(seconds)s)...")
+
+        let success = await withTaskGroup(of: Bool.self) { group in
+            // 任务 1: 获取云端配置
             group.addTask {
                 do {
-                    let status = try await self.remoteConfig.fetchAndActivate()
-                    self.logger.info("Remote Config Fetch Finished: \(status.rawValue)")
+                    let _ = try await self.remoteConfig.fetchAndActivate()
+                    return true
                 } catch {
-                    self.logger.error("Remote Config Fetch Failed: \(error.localizedDescription)")
+                    return false
                 }
             }
+
+            // 任务 2: 超时控制
             group.addTask {
                 try? await Task.sleep(for: .seconds(seconds))
-                self.logger.warning("Remote Config Fetch Timeout reached (\(seconds)s)")
+                return false
             }
-            await group.next()
+
+            let firstResult = await group.next()
             group.cancelAll()
+            return firstResult ?? false
+        }
+
+        if success {
+            logger.info("RemoteConfig: 同步成功，当前 initialDiamonds = \(self.initialDiamonds)")
+        } else {
+            logger.warning("RemoteConfig: 同步超时或失败，将使用本地缓存/默认值")
         }
     }
 
@@ -116,5 +147,13 @@ class AIConfig {
 
     var initialDiamonds: Int {
         Int(remoteConfig["initialDiamonds"].numberValue)
+    }
+
+    var imageGenerationCost: Int {
+        Int(remoteConfig["imageGenerationCost"].numberValue)
+    }
+
+    var videoGenerationCost: Int {
+        Int(remoteConfig["videoGenerationCost"].numberValue)
     }
 }

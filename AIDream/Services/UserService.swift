@@ -1,6 +1,9 @@
 import Foundation
 import SwiftUI
 import Combine
+import OSLog
+
+private let logger = Logger(subsystem: "com.aidream", category: "UserService")
 
 // MARK: - 钻石交易记录
 struct DiamondTransaction: Identifiable, Codable {
@@ -33,20 +36,26 @@ class UserService: ObservableObject {
     private let transactionsKey = "com.aidream.user.transactions"
 
     private init() {
-        // 使用 Keychain 读取关键资产，若无则初始化
+        // 使用 Keychain 读取关键资产
         let storedDiamonds = KeychainHelper.shared.readInt(key: diamondsKey)
         self.diamonds = storedDiamonds ?? 0
+        self.isPremium = KeychainHelper.shared.readBool(key: premiumKey) ?? false
 
-        // 首次安装赠送逻辑
-        if storedDiamonds == nil {
+        logger.info("UserService Initialized: diamonds=\(self.diamonds), isPremium=\(self.isPremium)")
+        loadTransactions()
+    }
+
+    /// 检查并执行首次安装赠送
+    func checkAndApplyWelcomeGift() {
+        // 如果 Keychain 中没有记录，说明是真正意义上的首次启动
+        if KeychainHelper.shared.readInt(key: diamondsKey) == nil {
             let initial = AIConfig.shared.initialDiamonds
+            logger.info("Applying welcome gift from RemoteConfig: \(initial)")
+
             self.diamonds = initial
             saveDiamonds()
             logTransaction(amount: initial, reason: "Welcome gift")
         }
-
-        self.isPremium = KeychainHelper.shared.readBool(key: premiumKey) ?? false
-        loadTransactions()
     }
 
     func addDiamonds(_ amount: Int, reason: String = "Purchase") {

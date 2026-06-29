@@ -43,7 +43,7 @@ struct ImageToVideoView: View {
     @ObservedObject private var videoGenerator = AIVideoGenerator.shared
     @ObservedObject private var userService = UserService.shared
 
-    private let generationCost = 300 // 每次以图生成视频 消耗300砖石
+    private var generationCost: Int { AIConfig.shared.videoGenerationCost }
 
     private var isInputValid: Bool {
         let hasPrompt = !promptText.trimmingCharacters(in: .whitespaces).isEmpty

@@ -30,7 +30,7 @@ struct TextToImageView: View {
     @State private var activeSheet: ActiveSheet? = nil
 
     @ObservedObject private var userService = UserService.shared
-    private let generationCost = 100 // 文字生成图片 消耗100砖石
+    private var generationCost: Int { AIConfig.shared.imageGenerationCost }
 
     private var isInputValid: Bool {
         !promptText.trimmingCharacters(in: .whitespaces).isEmpty

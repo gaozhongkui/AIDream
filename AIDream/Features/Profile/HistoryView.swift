@@ -1,5 +1,8 @@
 import AVKit
 import SwiftUI
+import OSLog
+
+private let logger = Logger(subsystem: "com.aidream", category: "History")
 
 struct HistoryView: View {
     @ObservedObject var creationService = CreationService.shared
@@ -52,6 +55,9 @@ struct HistoryView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear {
+            logger.info("HistoryView appeared. Creations count: \(creationService.creations.count)")
+        }
     }
 
     private var emptyState: some View {
@@ -114,7 +120,11 @@ struct LoopedVideoPlayer: UIViewRepresentable {
         }
 
         private func setupPlayer() {
-            guard let url = url else { return }
+            guard let url = url else {
+                logger.warning("LoopedVideoPlayer: URL is nil")
+                return
+            }
+            logger.debug("Setting up player for URL: \(url.absoluteString)")
             player?.pause()
 
             var headers = [
@@ -147,6 +157,7 @@ struct LoopedVideoPlayer: UIViewRepresentable {
         }
 
         @objc private func reachEnd() {
+            logger.debug("LoopedVideoPlayer: Video reached end, looping...")
             player?.seek(to: .zero)
             player?.play()
         }
@@ -171,7 +182,10 @@ struct HistoryCard: View {
     @State private var thumbnail: UIImage?
 
     var body: some View {
-        Button { showDetail = true } label: {
+        Button {
+            logger.info("HistoryCard: Opening detail for item \(item.id.uuidString)")
+            showDetail = true
+        } label: {
             VStack(alignment: .leading, spacing: 0) {
                 // 预览区
                 ZStack {
@@ -294,14 +308,23 @@ struct HistoryCard: View {
     }
 
     private func loadThumbnail() {
-        guard let url = item.availableURL else { return }
+        guard let url = item.availableURL else {
+            logger.error("HistoryCard: No available URL for item \(item.id.uuidString)")
+            return
+        }
         if item.type == .image {
             // 图片直接读取
             DispatchQueue.global(qos: .userInitiated).async {
-                if let data = try? Data(contentsOf: url), let img = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self.thumbnail = img
+                do {
+                    let data = try Data(contentsOf: url)
+                    if let img = UIImage(data: data) {
+                        DispatchQueue.main.async {
+                            self.thumbnail = img
+                            logger.debug("Loaded image thumbnail for: \(item.id.uuidString)")
+                        }
                     }
+                } catch {
+                    logger.error("Failed to load image data for \(item.id.uuidString): \(error.localizedDescription)")
                 }
             }
         } else {
@@ -313,11 +336,15 @@ struct HistoryCard: View {
 
             let time = CMTime(seconds: 0.0, preferredTimescale: 600)
 
-            generator.generateCGImagesAsynchronously(forTimes: [NSValue(time: time)]) { _, image, _, _, _ in
+            generator.generateCGImagesAsynchronously(forTimes: [NSValue(time: time)]) { _, image, _, _, error in
+                if let error = error {
+                    logger.error("Failed to generate video thumbnail for \(item.id.uuidString): \(error.localizedDescription)")
+                }
                 if let image = image {
                     let uiImage = UIImage(cgImage: image)
                     DispatchQueue.main.async {
                         self.thumbnail = uiImage
+                        logger.debug("Generated video thumbnail for: \(item.id.uuidString)")
                     }
                 }
             }
@@ -326,6 +353,7 @@ struct HistoryCard: View {
 
     private func saveToLibrary() {
         guard let url = item.availableURL else { return }
+        logger.info("Saving media to library: \(url.lastPathComponent)")
         if item.type == .video {
             if url.isFileURL {
                 UISaveVideoAtPathToSavedPhotosAlbum(url.path, nil, nil, nil)
@@ -344,6 +372,7 @@ struct HistoryCard: View {
 
     private func shareMedia() {
         guard let url = item.availableURL else { return }
+        logger.info("Sharing media: \(url.lastPathComponent)")
         let items: [Any] = item.type == .video ? [url] : [thumbnail ?? url]
         let av = UIActivityViewController(activityItems: items, applicationActivities: nil)
         if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
