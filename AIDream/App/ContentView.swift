@@ -8,18 +8,21 @@ struct ContentView: View {
         ZStack {
             AppTheme.bgPrimary.ignoresSafeArea()
 
-            // 主内容区域 —— ZStack 保持 VC 存活，且不限制 safe area
-            ZStack {
+            // 主内容区域 —— 使用 TabView 保持页面状态并隔离安全区域
+            TabView(selection: $selectedTab) {
                 VideoListViewWrapper()
                     .ignoresSafeArea(edges: .top)
-                    .opacity(selectedTab == 0 ? 1 : 0)
-                    .allowsHitTesting(selectedTab == 0)
+                    .tag(0)
+
                 CustomView(externalMode: $customSelectedMode)
-                    .opacity(selectedTab == 1 ? 1 : 0)
-                    .allowsHitTesting(selectedTab == 1)
+                    .tag(1)
+
                 ProfileView()
-                    .opacity(selectedTab == 2 ? 1 : 0)
-                    .allowsHitTesting(selectedTab == 2)
+                    .tag(2)
+            }
+            .onAppear {
+                // 隐藏原生 TabBar 样式
+                UITabBar.appearance().isHidden = true
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
