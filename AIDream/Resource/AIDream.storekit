@@ -1,6 +1,18 @@
 {
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
   "identifier" : "AIDreamStoreKit",
-  "nonRenewingSubscriptions" : [ ],
+  "nonRenewingSubscriptions" : [
+
+  ],
   "products" : [
     {
       "displayPrice" : "1.99",
@@ -13,7 +25,7 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "com.aidream.diamonds.100",
+      "productID" : "com.aidream.diamonds.300",
       "referenceName" : "300 Diamonds",
       "type" : "Consumable"
     },
@@ -23,13 +35,13 @@
       "internalID" : "CONSUMABLE_2",
       "localizations" : [
         {
-          "description" : "1000 Diamonds Pack",
-          "displayName" : "1000 Diamonds",
+          "description" : "900 Diamonds (800 + 100 Bonus)",
+          "displayName" : "900 Diamonds",
           "locale" : "en_US"
         }
       ],
-      "productID" : "com.aidream.diamonds.500",
-      "referenceName" : "1000 Diamonds",
+      "productID" : "com.aidream.diamonds.900",
+      "referenceName" : "900 Diamonds",
       "type" : "Consumable"
     },
     {
@@ -38,13 +50,13 @@
       "internalID" : "CONSUMABLE_3",
       "localizations" : [
         {
-          "description" : "2500 Diamonds Mega Pack",
-          "displayName" : "2500 Diamonds",
+          "description" : "2000 Diamonds (1800 + 200 Bonus)",
+          "displayName" : "2000 Diamonds",
           "locale" : "en_US"
         }
       ],
-      "productID" : "com.aidream.diamonds.1200",
-      "referenceName" : "2500 Diamonds",
+      "productID" : "com.aidream.diamonds.2000",
+      "referenceName" : "2000 Diamonds",
       "type" : "Consumable"
     },
     {
@@ -53,13 +65,13 @@
       "internalID" : "CONSUMABLE_4",
       "localizations" : [
         {
-          "description" : "6000 Diamonds Whale Pack",
-          "displayName" : "6000 Diamonds",
+          "description" : "5000 Diamonds (4000 + 1000 Bonus)",
+          "displayName" : "5000 Diamonds",
           "locale" : "en_US"
         }
       ],
-      "productID" : "com.aidream.diamonds.3000",
-      "referenceName" : "6000 Diamonds",
+      "productID" : "com.aidream.diamonds.5000",
+      "referenceName" : "5000 Diamonds",
       "type" : "Consumable"
     },
     {
@@ -80,71 +92,75 @@
   ],
   "settings" : {
     "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_disableDialogs" : false,
     "_failTransactionsEnabled" : false,
     "_locale" : "en_US",
+    "_renewalBillingIssuesEnabled" : false,
     "_storefront" : "USA",
     "_storeKitErrors" : [
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Load Products"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Purchase"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Verification"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "App Store Sync"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Subscription Status"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "App Transaction"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Manage Subscriptions Sheet"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Refund Request Sheet"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Offer Code Redeem Sheet"
       }
-    ]
+    ],
+    "_timeRate" : 0
   },
   "subscriptionGroups" : [
     {
       "id" : "SUBS_GROUP_1",
-      "localizations" : [ ],
+      "localizations" : [
+
+      ],
       "name" : "Pro Subscriptions",
       "subscriptions" : [
         {
-          "adHocOffers" : [ ],
-          "codeOffers" : [ ],
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
           "displayPrice" : "4.99",
           "familyShareable" : true,
           "groupNumber" : 1,
           "internalID" : "SUB_WEEKLY",
-          "introductoryOffer" : null,
+          "introductoryOffers" : [
+
+          ],
           "localizations" : [
             {
               "description" : "Unlock all Pro features weekly",
@@ -156,16 +172,25 @@
           "recurringSubscriptionPeriod" : "P1W",
           "referenceName" : "Weekly Pro",
           "subscriptionGroupID" : "SUBS_GROUP_1",
-          "type" : "RecurringSubscription"
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
         },
         {
-          "adHocOffers" : [ ],
-          "codeOffers" : [ ],
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
           "displayPrice" : "12.99",
           "familyShareable" : true,
           "groupNumber" : 1,
           "internalID" : "SUB_MONTHLY",
-          "introductoryOffer" : null,
+          "introductoryOffers" : [
+
+          ],
           "localizations" : [
             {
               "description" : "Unlock all Pro features monthly",
@@ -177,13 +202,16 @@
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "Monthly Pro",
           "subscriptionGroupID" : "SUBS_GROUP_1",
-          "type" : "RecurringSubscription"
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
         }
       ]
     }
   ],
   "version" : {
-    "major" : 3,
+    "major" : 5,
     "minor" : 0
   }
 }

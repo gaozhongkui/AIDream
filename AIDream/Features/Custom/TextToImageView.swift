@@ -205,7 +205,7 @@ struct TextToImageView: View {
                     Spacer()
 
                     HStack(spacing: 4) {
-                        Image(systemName: "bolt.fill")
+                        Text("💎")
                         Text("\(generationCost)")
                     }
                     .font(.system(size: 14, weight: .bold))
