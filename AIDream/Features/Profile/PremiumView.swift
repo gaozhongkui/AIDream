@@ -215,8 +215,8 @@ struct PremiumView: View {
 
     private var fallbackPlans: some View {
         VStack(spacing: 10) {
-            planCard(title: NSLocalizedString("premium_plan_weekly", comment: ""), price: "$4.99", id: StoreProductID.premiumWeekly.rawValue, subTitle: "500 " + NSLocalizedString("premium_plan_diamonds_suffix", comment: ""))
-            planCard(title: NSLocalizedString("premium_plan_monthly", comment: ""), price: "$12.99", id: StoreProductID.premiumMonthly.rawValue, subTitle: "1,200 " + NSLocalizedString("premium_plan_diamonds_suffix", comment: ""), tag: NSLocalizedString("premium_tag_popular", comment: ""))
+            planCard(title: NSLocalizedString("premium_plan_weekly", comment: ""), price: "$4.99", id: StoreProductID.premiumWeekly.rawValue, subTitle: "700 " + NSLocalizedString("premium_plan_diamonds_suffix", comment: ""))
+            planCard(title: NSLocalizedString("premium_plan_monthly", comment: ""), price: "$12.99", id: StoreProductID.premiumMonthly.rawValue, subTitle: "2,000 " + NSLocalizedString("premium_plan_diamonds_suffix", comment: ""), tag: NSLocalizedString("premium_tag_popular", comment: ""))
             planCard(title: NSLocalizedString("premium_plan_lifetime", comment: ""), price: "$129.99", id: StoreProductID.premiumLifetime.rawValue, subTitle: NSLocalizedString("premium_plan_lifetime_desc", comment: ""), tag: NSLocalizedString("premium_tag_best_value", comment: ""))
         }
     }

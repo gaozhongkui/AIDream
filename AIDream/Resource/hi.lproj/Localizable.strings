@@ -110,7 +110,7 @@
 /* Diamond Store specific */
 "label_current_balance" = "वर्तमान शेष";
 "label_diamond_hero_tip" = "AI मास्टरपीस जेनरेट करने के लिए हीरों का उपयोग करें";
-"label_membership_bonus_tip" = "10,000 बोनस हीरों तक!";
+"label_membership_bonus_tip" = "20,000 बोनस हीरों तक!";
 "label_diamond_packs" = "हीरा पैक";
 "label_recharge_subtitle" = "रिचार्ज करने के लिए एक पैक चुनें";
 "label_includes_bonus" = "%d बोनस शामिल है";
@@ -169,7 +169,7 @@
 "premium_feature_1_desc" = "प्राथमिकता पहुंच";
 "premium_feature_2_title" = "4K वीडियो";
 "premium_feature_2_desc" = "सिनेमाई गुणवत्ता";
-"premium_feature_3_title" = "1,200 बोनस";
+"premium_feature_3_title" = "2,000 बोनस";
 "premium_feature_3_desc" = "मासिक दावा";
 "premium_feature_4_title" = "Pro मॉडल";
 "premium_feature_4_desc" = "निजी कलात्मक AI";
@@ -178,7 +178,7 @@
 "premium_plan_monthly" = "मासिक";
 "premium_plan_lifetime" = "आजीवन";
 "premium_plan_diamonds_suffix" = "हीरे";
-"premium_plan_lifetime_desc" = "10,000 हीरे और स्थायी VIP";
+"premium_plan_lifetime_desc" = "20,000 हीरे और स्थायी VIP";
 "premium_includes_diamonds" = "%d हीरे शामिल हैं";
 
 "premium_tag_popular" = "लोकप्रिय";

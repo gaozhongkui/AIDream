@@ -99,7 +99,7 @@
 /* Diamond Store specific */
 "label_current_balance" = "AKTUELLES GUTHABEN";
 "label_diamond_hero_tip" = "Verwenden Sie Diamanten, um KI-Meisterwerke zu generieren";
-"label_membership_bonus_tip" = "Bis zu 10.000 Bonus-Diamanten!";
+"label_membership_bonus_tip" = "Bis zu 20.000 Bonus-Diamanten!";
 "label_diamond_packs" = "DIAMANTEN-PAKETE";
 "label_recharge_subtitle" = "Wählen Sie ein Paket zum Aufladen";
 "label_includes_bonus" = "Inklusive %d Bonus";
@@ -151,7 +151,7 @@
 "premium_feature_1_desc" = "Bevorzugter Zugriff";
 "premium_feature_2_title" = "4K Video";
 "premium_feature_2_desc" = "Cinematische Qualität";
-"premium_feature_3_title" = "1.200 Bonus";
+"premium_feature_3_title" = "2.000 Bonus";
 "premium_feature_3_desc" = "Monatlicher Anspruch";
 "premium_feature_4_title" = "Pro Modelle";
 "premium_feature_4_desc" = "Private künstlerische KI";
@@ -160,7 +160,7 @@
 "premium_plan_monthly" = "Monatlich";
 "premium_plan_lifetime" = "Lebenslang";
 "premium_plan_diamonds_suffix" = "Diamanten";
-"premium_plan_lifetime_desc" = "10.000 Diamanten & Permanenter VIP";
+"premium_plan_lifetime_desc" = "20.000 Diamanten & Permanenter VIP";
 "premium_includes_diamonds" = "Inklusive %d Diamanten";
 
 "premium_tag_popular" = "BELIEBT";

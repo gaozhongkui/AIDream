@@ -7,10 +7,10 @@ private let logger = Logger(subsystem: "com.aidream", category: "StoreKit")
 
 // MARK: - Product ID Constants
 enum StoreProductID: String, CaseIterable {
-    case diamonds300  = "com.aidream.diamonds.100"  // $1.99 → 300
-    case diamonds900  = "com.aidream.diamonds.500"  // $4.99 → 800 + 100 bonus
-    case diamonds2000 = "com.aidream.diamonds.1200" // $9.99 → 1800 + 200 bonus
-    case diamonds5000 = "com.aidream.diamonds.3000" // $19.99 → 4000 + 1000 bonus
+    case diamonds300  = "com.aidream.diamonds.300"  // $1.99 → 300 diamonds
+    case diamonds900  = "com.aidream.diamonds.900"  // $4.99 → 800 + 100 bonus = 900
+    case diamonds2000 = "com.aidream.diamonds.2000" // $9.99 → 1800 + 200 bonus = 2000
+    case diamonds5000 = "com.aidream.diamonds.5000" // $19.99 → 4000 + 1000 bonus = 5000
     case premiumWeekly = "com.aidream.premium.weekly"
     case premiumMonthly = "com.aidream.premium.monthly"
     case premiumLifetime = "com.aidream.premium.lifetime"
@@ -21,9 +21,9 @@ enum StoreProductID: String, CaseIterable {
         case .diamonds900:  return 800
         case .diamonds2000: return 1800
         case .diamonds5000: return 4000
-        case .premiumWeekly: return 500
-        case .premiumMonthly: return 1200
-        case .premiumLifetime: return 10000
+        case .premiumWeekly: return 700
+        case .premiumMonthly: return 2000
+        case .premiumLifetime: return 20000
         }
     }
 

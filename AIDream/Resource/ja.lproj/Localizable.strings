@@ -110,7 +110,7 @@
 /* Diamond Store specific */
 "label_current_balance" = "現在の残高";
 "label_diamond_hero_tip" = "ダイヤモンドを使ってAIの傑作を生成しましょう";
-"label_membership_bonus_tip" = "最大10,000ボーナスダイヤモンド！";
+"label_membership_bonus_tip" = "最大20,000ボーナスダイヤモンド！";
 "label_diamond_packs" = "ダイヤモンドパック";
 "label_recharge_subtitle" = "チャージするパッケージを選択してください";
 "label_includes_bonus" = "%d ボーナスを含む";
@@ -169,7 +169,7 @@
 "premium_feature_1_desc" = "優先アクセス";
 "premium_feature_2_title" = "4Kビデオ";
 "premium_feature_2_desc" = "シネマティック品質";
-"premium_feature_3_title" = "1,200ボーナス";
+"premium_feature_3_title" = "2,000ボーナス";
 "premium_feature_3_desc" = "毎月の請求";
 "premium_feature_4_title" = "プロモデル";
 "premium_feature_4_desc" = "プライベートな芸術的AI";
@@ -178,7 +178,7 @@
 "premium_plan_monthly" = "月間";
 "premium_plan_lifetime" = "生涯";
 "premium_plan_diamonds_suffix" = "ダイヤモンド";
-"premium_plan_lifetime_desc" = "10,000ダイヤモンド & 永久VIP";
+"premium_plan_lifetime_desc" = "20,000ダイヤモンド & 永久VIP";
 "premium_includes_diamonds" = "%d 個のダイヤモンドを含む";
 
 "premium_tag_popular" = "人気";

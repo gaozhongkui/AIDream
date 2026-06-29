@@ -110,7 +110,7 @@
 /* Diamond Store specific */
 "label_current_balance" = "SALDO ACTUAL";
 "label_diamond_hero_tip" = "Usa diamantes para generar obras maestras de IA";
-"label_membership_bonus_tip" = "¡Hasta 10,000 diamantes extra!";
+"label_membership_bonus_tip" = "¡Hasta 20,000 diamantes extra!";
 "label_diamond_packs" = "PAQUETES DE DIAMANTES";
 "label_recharge_subtitle" = "Selecciona un paquete para recargar";
 "label_includes_bonus" = "Incluye %d extra";
@@ -169,7 +169,7 @@
 "premium_feature_1_desc" = "Acceso prioritario";
 "premium_feature_2_title" = "Video 4K";
 "premium_feature_2_desc" = "Calidad cinematográfica";
-"premium_feature_3_title" = "Bono de 1,200";
+"premium_feature_3_title" = "Bono de 2,000";
 "premium_feature_3_desc" = "Reclamo mensual";
 "premium_feature_4_title" = "Pro Modelos";
 "premium_feature_4_desc" = "IA artística privada";
@@ -178,7 +178,7 @@
 "premium_plan_monthly" = "Mensual";
 "premium_plan_lifetime" = "De por vida";
 "premium_plan_diamonds_suffix" = "Diamantes";
-"premium_plan_lifetime_desc" = "10,000 Diamantes y VIP Permanente";
+"premium_plan_lifetime_desc" = "20,000 Diamantes y VIP Permanente";
 "premium_includes_diamonds" = "Incluye %d Diamantes";
 
 "premium_tag_popular" = "POPULAR";
