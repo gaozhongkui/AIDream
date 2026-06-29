@@ -34,13 +34,15 @@ class UserService: ObservableObject {
 
     private init() {
         // 使用 Keychain 读取关键资产，若无则初始化
-        self.diamonds = KeychainHelper.shared.readInt(key: diamondsKey) ?? 0
+        let storedDiamonds = KeychainHelper.shared.readInt(key: diamondsKey)
+        self.diamonds = storedDiamonds ?? 0
 
         // 首次安装赠送逻辑
-        if KeychainHelper.shared.readInt(key: diamondsKey) == nil {
-            self.diamonds = 100
+        if storedDiamonds == nil {
+            let initial = AIConfig.shared.initialDiamonds
+            self.diamonds = initial
             saveDiamonds()
-            logTransaction(amount: 100, reason: "Welcome gift")
+            logTransaction(amount: initial, reason: "Welcome gift")
         }
 
         self.isPremium = KeychainHelper.shared.readBool(key: premiumKey) ?? false
@@ -83,9 +85,10 @@ class UserService: ObservableObject {
         self.transactions = []
 
         // 重新给予初始赠送 (可选)
-        self.diamonds = 100
+        let initial = AIConfig.shared.initialDiamonds
+        self.diamonds = initial
         saveDiamonds()
-        logTransaction(amount: 100, reason: "Reset reward")
+        logTransaction(amount: initial, reason: "Reset reward")
     }
 
     // MARK: - Transaction Log

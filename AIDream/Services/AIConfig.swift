@@ -29,7 +29,8 @@ class AIConfig {
             "openRouterImageModel": "google/gemini-2.5-flash-image" as NSObject,
             "openRouterVideoModel": "minimax/hailuo-2.3" as NSObject,
             "privacyPolicyURL": "https://sites.google.com/view/anima-pic-ai-privacy-policy" as NSObject,
-            "termsOfServiceURL": "https://sites.google.com/view/anima-pic-ai-terms-of-service" as NSObject
+            "termsOfServiceURL": "https://sites.google.com/view/anima-pic-ai-terms-of-service" as NSObject,
+            "initialDiamonds": 200 as NSObject
         ]
         remoteConfig.setDefaults(defaults)
     }
@@ -111,5 +112,9 @@ class AIConfig {
 
     var termsOfServiceURL: String {
         remoteConfig["termsOfServiceURL"].stringValue
+    }
+
+    var initialDiamonds: Int {
+        Int(remoteConfig["initialDiamonds"].numberValue)
     }
 }
