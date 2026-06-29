@@ -43,6 +43,16 @@ class UserService: ObservableObject {
 
         logger.info("UserService Initialized: diamonds=\(self.diamonds), isPremium=\(self.isPremium)")
         loadTransactions()
+        setupObservers()
+    }
+
+    private func setupObservers() {
+        // 监听 RemoteConfig 同步成功的通知
+        NotificationCenter.default.addObserver(forName: .remoteConfigActivated, object: nil, queue: .main) { [weak self] _ in
+            guard let self = self else { return }
+            logger.info("UserService: 监听到 RemoteConfig 激活，尝试同步初始钻石...")
+            self.checkAndApplyWelcomeGift()
+        }
     }
 
     /// 检查并执行首次安装赠送

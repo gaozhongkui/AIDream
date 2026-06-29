@@ -9,6 +9,7 @@ class AIConfig {
     private let logger = Logger(subsystem: "com.aidream", category: "RemoteConfig")
 
     private init() {
+        setupObservers()
         let settings = RemoteConfigSettings()
         #if DEBUG
         settings.minimumFetchInterval = 0
@@ -63,8 +64,15 @@ class AIConfig {
         }
     }
 
+    private var isFetching = false
+
     func fetchConfigWithTimeout(seconds: Double) async {
+        guard !isFetching else { return }
+        isFetching = true
+        defer { isFetching = false }
+
         logger.info("RemoteConfig: 开始异步获取 (超时设定: \(seconds)s)...")
+        // ... (保持之前的 fetch 逻辑)
 
         let success = await withTaskGroup(of: Bool.self) { group in
             // 任务 1: 获取云端配置
@@ -90,8 +98,20 @@ class AIConfig {
 
         if success {
             logger.info("RemoteConfig: 同步成功，当前 initialDiamonds = \(self.initialDiamonds)")
+            NotificationCenter.default.post(name: .remoteConfigActivated, object: nil)
         } else {
             logger.warning("RemoteConfig: 同步超时或失败，将使用本地缓存/默认值")
+        }
+    }
+
+    private func setupObservers() {
+        // 监听网络从无到有的恢复（例如用户在授权框点了允许）
+        NotificationCenter.default.addObserver(forName: .networkBecameReachable, object: nil, queue: .main) { [weak self] _ in
+            guard let self = self else { return }
+            self.logger.info("RemoteConfig: 检测到网络恢复，自动尝试重新同步配置...")
+            Task {
+                await self.fetchConfigWithTimeout(seconds: 5.0)
+            }
         }
     }
 
@@ -156,4 +176,8 @@ class AIConfig {
     var videoGenerationCost: Int {
         Int(remoteConfig["videoGenerationCost"].numberValue)
     }
+}
+
+extension Notification.Name {
+    static let remoteConfigActivated = Notification.Name("remoteConfigActivated")
 }
