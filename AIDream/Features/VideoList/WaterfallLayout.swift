@@ -27,6 +27,16 @@ class WaterfallLayout: UICollectionViewLayout {
         return CGSize(width: contentWidth, height: contentHeight)
     }
 
+    // 重写以清空缓存 —— UICollectionView.reloadData() 可能直接调用
+    // invalidateLayout(with:) 绕过 invalidateLayout()，不重写会导致
+    // prepare() 的 guard cache.isEmpty 短路，用旧布局渲染 cell。
+    override func invalidateLayout(with context: UICollectionViewLayoutInvalidationContext) {
+        super.invalidateLayout(with: context)
+        cache.removeAll()
+        footerAttributes = nil
+        contentHeight = 0
+    }
+
     override func invalidateLayout() {
         super.invalidateLayout()
         cache.removeAll()
@@ -36,6 +46,9 @@ class WaterfallLayout: UICollectionViewLayout {
 
     override func prepare() {
         guard cache.isEmpty, let collectionView = collectionView else { return }
+        // 防御 SwiftUI 桥接导致的零宽度布局周期：contentWidth ≤ 0 时会算出
+        // 负数 columnWidth，产生非法 cell frame，直接跳过等下次正确布局。
+        guard contentWidth > 0 else { return }
 
         let totalSpacing = columnSpacing * CGFloat(numberOfColumns - 1)
         let columnWidth = (contentWidth - totalSpacing) / CGFloat(numberOfColumns)
