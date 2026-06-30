@@ -229,24 +229,34 @@ struct ImageToVideoView: View {
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(AppTheme.accentSecondary)
 
-            HStack(spacing: 16) {
-                imageCard(title: NSLocalizedString("label_start_frame", comment: ""), image: startImage) { openImagePicker(for: .start) }
-                imageCard(title: NSLocalizedString("label_end_frame", comment: ""), image: endImage) { openImagePicker(for: .end) }
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                imageCard(title: NSLocalizedString("label_start_frame", comment: ""), image: startImage)
+                imageCard(title: NSLocalizedString("label_end_frame", comment: ""), image: endImage)
             }
+            .frame(maxWidth: .infinity)
         }
     }
 
-    private func imageCard(title: String, image: UIImage?, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
+    private func imageCard(title: String, image: UIImage?) -> some View {
+        Button(action: {
+            openImagePicker(for: title == NSLocalizedString("label_start_frame", comment: "") ? .start : .end)
+        }) {
             VStack(spacing: 12) {
                 ZStack {
+                    // 1. 基础背景
+                    AppTheme.bgCard
+                        .frame(height: 140)
+
                     if let image = image {
-                        Image(uiImage: image)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(height: 140)
-                            .clipShape(RoundedRectangle(cornerRadius: 22))
+                        // 2. 图片层：GeometryReader 确保图片不会撑开父容器
+                        GeometryReader { proxy in
+                            Image(uiImage: image)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: proxy.size.width, height: proxy.size.height)
+                        }
                     } else {
+                        // 3. 占位层
                         VStack(spacing: 8) {
                             Image(systemName: "plus.circle.fill")
                                 .font(.system(size: 28))
@@ -255,16 +265,19 @@ struct ImageToVideoView: View {
                                 .font(.system(size: 13, weight: .medium))
                                 .foregroundColor(AppTheme.textSecondary)
                         }
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 140)
-                        .glassStyle(cornerRadius: 22)
                     }
                 }
+                .frame(height: 140)
+                .frame(maxWidth: .infinity)
+                .glassStyle(cornerRadius: 22)
+                .clipped()
                 .primaryBorder(cornerRadius: 22, active: image != nil)
 
                 Text(title)
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(image != nil ? .white : AppTheme.textMuted)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
         }
         .buttonStyle(.plain)
