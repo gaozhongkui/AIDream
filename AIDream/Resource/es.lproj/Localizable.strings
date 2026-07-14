@@ -169,7 +169,7 @@
 "premium_feature_1_desc" = "Acceso prioritario";
 "premium_feature_2_title" = "Video 4K";
 "premium_feature_2_desc" = "Calidad cinematográfica";
-"premium_feature_3_title" = "Bono de 2,000";
+"premium_feature_3_title" = "Bono de 3,000";
 "premium_feature_3_desc" = "Reclamo mensual";
 "premium_feature_4_title" = "Pro Modelos";
 "premium_feature_4_desc" = "IA artística privada";
@@ -198,3 +198,5 @@
 "label_end_of_universe" = "— Fin del universo —";
 "label_no_videos" = "No hay videos todavía";
 "title_your_creation" = "Tu Creación";
+
+"premium_autorenew_desc" = "El pago se cargará a tu cuenta de Apple ID al confirmar la compra. La suscripción se renueva automáticamente a menos que se cancele al menos 24 horas antes del final del período actual. Se cobrará la renovación dentro de las 24 horas previas al final del período actual. Puedes gestionar o cancelar tu suscripción en cualquier momento en los ajustes de tu cuenta de App Store.";

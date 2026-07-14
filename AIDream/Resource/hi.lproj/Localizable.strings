@@ -169,7 +169,7 @@
 "premium_feature_1_desc" = "प्राथमिकता पहुंच";
 "premium_feature_2_title" = "4K वीडियो";
 "premium_feature_2_desc" = "सिनेमाई गुणवत्ता";
-"premium_feature_3_title" = "2,000 बोनस";
+"premium_feature_3_title" = "3,000 बोनस";
 "premium_feature_3_desc" = "मासिक दावा";
 "premium_feature_4_title" = "Pro मॉडल";
 "premium_feature_4_desc" = "निजी कलात्मक AI";
@@ -198,3 +198,5 @@
 "label_end_of_universe" = "— ब्रह्मांड का अंत —";
 "label_no_videos" = "अभी तक कोई वीडियो नहीं";
 "title_your_creation" = "आपकी रचना";
+
+"premium_autorenew_desc" = "खरीद की पुष्टि पर भुगतान आपके Apple ID खाते से लिया जाएगा। मौजूदा अवधि समाप्त होने से कम से कम 24 घंटे पहले रद्द न करने पर सदस्यता स्वतः नवीनीकृत हो जाती है। नवीनीकरण शुल्क मौजूदा अवधि समाप्त होने से 24 घंटे के भीतर लिया जाएगा। आप App Store खाता सेटिंग में कभी भी सदस्यता प्रबंधित या रद्द कर सकते हैं।";

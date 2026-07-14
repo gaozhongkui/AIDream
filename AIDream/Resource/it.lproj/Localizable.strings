@@ -176,7 +176,7 @@
 "premium_feature_1_desc" = "Accesso prioritario";
 "premium_feature_2_title" = "Video 4K";
 "premium_feature_2_desc" = "Qualità cinematografica";
-"premium_feature_3_title" = "2.000 Bonus";
+"premium_feature_3_title" = "3.000 Bonus";
 "premium_feature_3_desc" = "Richiesta mensile";
 "premium_feature_4_title" = "Modelli Pro";
 "premium_feature_4_desc" = "IA artistica privata";
@@ -205,3 +205,5 @@
 "label_end_of_universe" = "— Fine dell'universo —";
 "label_no_videos" = "Nessun video ancora";
 "title_your_creation" = "La Tua Creazione";
+
+"premium_autorenew_desc" = "Il pagamento verrà addebitato sul tuo account Apple ID alla conferma dell'acquisto. L'abbonamento si rinnova automaticamente se non viene annullato almeno 24 ore prima della fine del periodo in corso. Il rinnovo viene addebitato entro 24 ore prima della fine del periodo in corso. Puoi gestire o annullare l'abbonamento in qualsiasi momento nelle impostazioni del tuo account App Store.";

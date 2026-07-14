@@ -169,7 +169,7 @@
 "premium_feature_1_desc" = "優先アクセス";
 "premium_feature_2_title" = "4Kビデオ";
 "premium_feature_2_desc" = "シネマティック品質";
-"premium_feature_3_title" = "2,000ボーナス";
+"premium_feature_3_title" = "3,000ボーナス";
 "premium_feature_3_desc" = "毎月の請求";
 "premium_feature_4_title" = "プロモデル";
 "premium_feature_4_desc" = "プライベートな芸術的AI";
@@ -198,3 +198,5 @@
 "label_end_of_universe" = "— 宇宙の終わり —";
 "label_no_videos" = "ビデオがまだありません";
 "title_your_creation" = "あなたの作品";
+
+"premium_autorenew_desc" = "購入確定時に Apple ID アカウントに料金が請求されます。サブスクリプションは、現在の期間の終了の24時間以上前に解約しない限り自動的に更新されます。更新料は現在の期間終了前の24時間以内に請求されます。App Store のアカウント設定からいつでも管理・解約できます。";

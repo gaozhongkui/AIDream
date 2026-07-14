@@ -176,7 +176,7 @@
 "premium_feature_1_desc" = "Priority access";
 "premium_feature_2_title" = "4K Video";
 "premium_feature_2_desc" = "Cinematic quality";
-"premium_feature_3_title" = "2,000 Bonus";
+"premium_feature_3_title" = "3,000 Bonus";
 "premium_feature_3_desc" = "Monthly claim";
 "premium_feature_4_title" = "Pro Models";
 "premium_feature_4_desc" = "Private artistic AI";
@@ -205,3 +205,5 @@
 "label_end_of_universe" = "— End of the universe —";
 "label_no_videos" = "No videos yet";
 "title_your_creation" = "Your Creation";
+
+"premium_autorenew_desc" = "Payment will be charged to your Apple ID account at confirmation of purchase. The subscription automatically renews unless it is canceled at least 24 hours before the end of the current period. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage or cancel your subscription anytime in your App Store account settings.";

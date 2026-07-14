@@ -151,7 +151,7 @@
 "premium_feature_1_desc" = "Bevorzugter Zugriff";
 "premium_feature_2_title" = "4K Video";
 "premium_feature_2_desc" = "Cinematische Qualität";
-"premium_feature_3_title" = "2.000 Bonus";
+"premium_feature_3_title" = "3.000 Bonus";
 "premium_feature_3_desc" = "Monatlicher Anspruch";
 "premium_feature_4_title" = "Pro Modelle";
 "premium_feature_4_desc" = "Private künstlerische KI";
@@ -176,3 +176,5 @@
 /* Launch View */
 "launch_visionary_creativity" = "VISIONÄRE KREATIVITÄT";
 "title_your_creation" = "Deine Kreation";
+
+"premium_autorenew_desc" = "Die Zahlung wird bei Kaufbestätigung deinem Apple-ID-Konto belastet. Das Abo verlängert sich automatisch, sofern es nicht mindestens 24 Stunden vor Ablauf der aktuellen Periode gekündigt wird. Die Verlängerung wird innerhalb von 24 Stunden vor Ablauf der aktuellen Periode berechnet. Du kannst dein Abo jederzeit in den Einstellungen deines App-Store-Kontos verwalten oder kündigen.";

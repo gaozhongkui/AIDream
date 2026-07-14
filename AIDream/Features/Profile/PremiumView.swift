@@ -350,6 +350,14 @@ struct PremiumView: View {
 
     private var footerLinks: some View {
         VStack(spacing: 8) {
+            Text(NSLocalizedString("premium_autorenew_desc", comment: ""))
+                .font(.system(size: 10))
+                .foregroundColor(AppTheme.textMuted)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 4)
+
             Text(NSLocalizedString("premium_footer_tip", comment: ""))
                 .font(.system(size: 12))
                 .foregroundColor(AppTheme.textMuted)
