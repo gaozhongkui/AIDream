@@ -21,9 +21,9 @@ enum StoreProductID: String, CaseIterable {
         case .diamonds900:  return 800
         case .diamonds2000: return 1800
         case .diamonds5000: return 4000
-        case .premiumWeekly: return 700
-        case .premiumMonthly: return 2000
-        case .premiumLifetime: return 20000
+        case .premiumWeekly: return 1000
+        case .premiumMonthly: return 3000
+        case .premiumLifetime: return 30000
         }
     }
 

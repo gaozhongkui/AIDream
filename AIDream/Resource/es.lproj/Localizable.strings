@@ -110,7 +110,7 @@
 /* Diamond Store specific */
 "label_current_balance" = "SALDO ACTUAL";
 "label_diamond_hero_tip" = "Usa diamantes para generar obras maestras de IA";
-"label_membership_bonus_tip" = "¡Hasta 20,000 diamantes extra!";
+"label_membership_bonus_tip" = "¡Hasta 30,000 diamantes extra!";
 "label_diamond_packs" = "PAQUETES DE DIAMANTES";
 "label_recharge_subtitle" = "Selecciona un paquete para recargar";
 "label_includes_bonus" = "Incluye %d extra";
@@ -178,7 +178,7 @@
 "premium_plan_monthly" = "Mensual";
 "premium_plan_lifetime" = "De por vida";
 "premium_plan_diamonds_suffix" = "Diamantes";
-"premium_plan_lifetime_desc" = "20,000 Diamantes y VIP Permanente";
+"premium_plan_lifetime_desc" = "30,000 Diamantes y VIP Permanente";
 "premium_includes_diamonds" = "Incluye %d Diamantes";
 
 "premium_tag_popular" = "POPULAR";

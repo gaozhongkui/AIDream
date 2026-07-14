@@ -98,7 +98,7 @@
 /* Diamond Store specific */
 "label_current_balance" = "الرصيد الحالي";
 "label_diamond_hero_tip" = "استخدم الماس لإنشاء تحف فنية بالذكاء الاصطناعي";
-"label_membership_bonus_tip" = "ما يصل إلى 20,000 ماسة إضافية!";
+"label_membership_bonus_tip" = "ما يصل إلى 30,000 ماسة إضافية!";
 "label_diamond_packs" = "حزم الماس";
 "label_recharge_subtitle" = "اختر حزمة للشحن";
 "label_includes_bonus" = "يتضمن %d إضافية";
@@ -159,7 +159,7 @@
 "premium_plan_monthly" = "شهري";
 "premium_plan_lifetime" = "مدى الحياة";
 "premium_plan_diamonds_suffix" = "ماسة";
-"premium_plan_lifetime_desc" = "20,000 ماسة و VIP دائم";
+"premium_plan_lifetime_desc" = "30,000 ماسة و VIP دائم";
 "premium_includes_diamonds" = "يتضمن %d ماسة";
 
 "premium_tag_popular" = "شائع";
